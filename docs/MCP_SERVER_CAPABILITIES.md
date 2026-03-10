@@ -15,81 +15,15 @@
 
 ## Быстрый старт
 
-### Установка и запуск
+MCP доступен в облачной экосистеме **[agentstack.tech](https://agentstack.tech)** — локальный запуск сервера не требуется.
 
-#### 1. Установка зависимостей
+1. **Получите API ключ:** зарегистрируйтесь на [agentstack.tech](https://agentstack.tech) и создайте проект в дашборде, либо создайте анонимный проект одним запросом (см. ниже).
+2. **Настройте плагин** (Cursor, Claude, VS Code или GPT): укажите MCP URL `https://agentstack.tech/mcp` и ваш API ключ. Готово — 60+ tools доступны в чате.
 
+**Проверка доступности:**
 ```bash
-cd mcp
-pip install -r requirements.txt
-```
-
-#### 2. Настройка переменных окружения
-
-Создайте файл `.env` в корне проекта или используйте существующий:
-
-```bash
-# Порт MCP сервера (по умолчанию 8000, через API Gateway)
-PORT=8000
-
-# Хост (по умолчанию 127.0.0.1)
-HOST=127.0.0.1
-
-# URL базы данных
-DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/agentstack
-
-# JWT секрет
-JWT_SECRET=your-secret-key
-
-# URL внутренних сервисов (опционально)
-PROJECTS_INTERNAL_URL=http://127.0.0.1:8000
-```
-
-#### 3. Запуск сервера
-
-**Вариант 1: Прямой запуск через Python**
-
-```bash
-cd mcp
-python main.py
-```
-
-**Вариант 2: Через uvicorn**
-
-```bash
-cd mcp
-uvicorn main:app --host 127.0.0.1 --port 8000 --reload
-```
-
-**Вариант 3: Через gunicorn (production)**
-
-```bash
-cd mcp
-gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 127.0.0.1:8000
-```
-
-#### 4. Проверка работы
-
-Откройте в браузере или через curl:
-
-```bash
-# Health check
-curl http://localhost:8000/health
-
-# Список доступных tools
-curl http://localhost:8000/mcp/tools
-
-# Discovery endpoint
-curl http://localhost:8000/mcp/discovery
-```
-
-**Ожидаемый ответ:**
-```json
-{
-  "status": "ok",
-  "uptime_s": 123,
-  "version": "0.1.0"
-}
+# Список доступных tools (без ключа)
+curl https://agentstack.tech/mcp/tools
 ```
 
 ---
@@ -126,7 +60,7 @@ Cursor поддерживает MCP серверы через HTTP. Настро
   "mcpServers": {
     "agentstack": {
       "type": "http",
-      "baseUrl": "http://localhost:8000/mcp",
+      "baseUrl": "https://agentstack.tech/mcp",
       "headers": {
         "X-API-Key": "your-api-key-here"
       },
@@ -151,7 +85,7 @@ Cursor поддерживает MCP серверы через HTTP. Настро
 4. Заполните форму:
    - **Name**: `agentstack`
    - **Type**: `HTTP`
-   - **Base URL**: `http://localhost:8000/mcp`
+   - **Base URL**: `https://agentstack.tech/mcp`
    - **API Key**: ваш API ключ (если требуется)
 5. Сохраните настройки
 
@@ -161,7 +95,7 @@ Cursor поддерживает MCP серверы через HTTP. Настро
 
 ```
 Создай проект через MCP:
-POST http://localhost:8100/mcp/tools/projects.create_project_anonymous
+POST https://agentstack.tech/mcp/tools/projects.create_project_anonymous
 Body: {"tool": "projects.create_project_anonymous", "params": {"name": "Test Project"}}
 ```
 
@@ -171,7 +105,7 @@ Body: {"tool": "projects.create_project_anonymous", "params": {"name": "Test Pro
 
 1. **Создайте анонимный проект** (получите API ключ):
 ```bash
-curl -X POST http://localhost:8000/mcp/tools/projects.create_project_anonymous \
+curl -X POST https://agentstack.tech/mcp/tools/projects.create_project_anonymous \
   -H "Content-Type: application/json" \
   -d '{
     "tool": "projects.create_project_anonymous",
@@ -213,25 +147,19 @@ Cursor автоматически вызовет `projects.create_project_anonym
 
 Если MCP сервер не работает в Cursor:
 
-1. **Проверьте, что сервер запущен:**
+1. **Проверьте доступность MCP:**
 ```bash
-curl http://localhost:8000/health
+curl https://agentstack.tech/mcp/tools
 ```
 
-2. **Проверьте доступность tools:**
-```bash
-curl http://localhost:8000/mcp/tools
-```
-
-3. **Проверьте логи Cursor:**
+2. **Проверьте логи Cursor:**
    - Откройте Developer Tools (Ctrl+Shift+I / Cmd+Option+I)
    - Перейдите в Console
    - Ищите ошибки подключения к MCP
 
-4. **Проверьте конфигурацию:**
-   - Убедитесь, что `baseUrl` правильный
-   - Проверьте, что порт 8000 не занят другим процессом
-   - Убедитесь, что API ключ (если требуется) правильный
+3. **Проверьте конфигурацию:**
+   - Убедитесь, что `baseUrl` = `https://agentstack.tech/mcp`
+   - Убедитесь, что API ключ указан верно (без лишних пробелов)
 
 ### Примеры команд для Cursor
 
@@ -275,7 +203,7 @@ import httpx
 async def create_project_via_mcp(name: str):
     async with httpx.AsyncClient() as client:
         response = await client.post(
-            "http://localhost:8000/mcp/tools/projects.create_project_anonymous",
+            "https://agentstack.tech/mcp/tools/projects.create_project_anonymous",
             json={
                 "tool": "projects.create_project_anonymous",
                 "params": {"name": name}
@@ -284,25 +212,7 @@ async def create_project_via_mcp(name: str):
         return response.json()
 ```
 
-### Переменные окружения для разработки
-
-Создайте файл `.env` в корне проекта:
-
-```bash
-# MCP Server
-PORT=8000
-HOST=127.0.0.1
-
-# Database
-DATABASE_URL=postgresql+asyncpg://user:pass@localhost:5432/agentstack
-
-# JWT
-JWT_SECRET=your-secret-key-here
-
-# Internal Services
-PROJECTS_INTERNAL_URL=http://127.0.0.1:8000
-ANALYTICS_INTERNAL_URL=http://127.0.0.1:8000
-```
+MCP доступен по адресу **https://agentstack.tech/mcp**. Дополнительные переменные окружения не требуются.
 
 ### Практические примеры работы в Cursor
 
@@ -1636,7 +1546,7 @@ class CreateProjectRequest(BaseModel):
 ### Пример 1: Анонимное создание проекта
 
 ```bash
-curl -X POST http://localhost:8000/mcp/tools/projects.create_project_anonymous \
+curl -X POST https://agentstack.tech/mcp/tools/projects.create_project_anonymous \
   -H "Content-Type: application/json" \
   -d '{
     "tool": "projects.create_project_anonymous",
@@ -1668,7 +1578,7 @@ curl -X POST http://localhost:8000/mcp/tools/projects.create_project_anonymous \
 ### Пример 2: Прикрепление проекта к пользователю
 
 ```bash
-curl -X POST http://localhost:8000/mcp/tools/projects.attach_to_user \
+curl -X POST https://agentstack.tech/mcp/tools/projects.attach_to_user \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <token>" \
   -d '{
@@ -1698,7 +1608,7 @@ curl -X POST http://localhost:8000/mcp/tools/projects.attach_to_user \
 ### Пример 3: Получение списка проектов
 
 ```bash
-curl -X POST http://localhost:8000/mcp/tools/projects.get_projects \
+curl -X POST https://agentstack.tech/mcp/tools/projects.get_projects \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <token>" \
   -d '{
@@ -1713,7 +1623,7 @@ curl -X POST http://localhost:8000/mcp/tools/projects.get_projects \
 ### Пример 4: Добавление пользователя (требует Professional)
 
 ```bash
-curl -X POST http://localhost:8000/mcp/tools/projects.add_user \
+curl -X POST https://agentstack.tech/mcp/tools/projects.add_user \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <token>" \
   -d '{
@@ -1738,7 +1648,7 @@ curl -X POST http://localhost:8000/mcp/tools/projects.add_user \
 ### Пример 5: Streaming выполнение
 
 ```bash
-curl -X POST http://localhost:8000/mcp/tools/projects.create_project/stream \
+curl -X POST https://agentstack.tech/mcp/tools/projects.create_project/stream \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <token>" \
   -d '{

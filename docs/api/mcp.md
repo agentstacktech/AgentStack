@@ -6,15 +6,17 @@ AgentStack предоставляет полнофункциональный MCP
 
 ## 🔧 Конфигурация
 
+MCP доступен в облачной экосистеме **[agentstack.tech](https://agentstack.tech)**. Локальный запуск сервера не требуется.
+
 ### Базовый URL
 ```
-http://localhost:8100
+https://agentstack.tech/mcp
 ```
 
 ### Аутентификация
 ```bash
 # API Key в заголовке
-curl -H "X-API-Key: your_mcp_api_key" http://localhost:8100/tools
+curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 ```
 
 ### Публичные эндпоинты (без X-API-Key)
@@ -28,17 +30,6 @@ curl -H "X-API-Key: your_mcp_api_key" http://localhost:8100/tools
 | POST | `/mcp/tools/projects.create_project_anonymous` | (Standalone MCP) Прямой вызов инструмента; тело `{"params": {"name": "..."}}`. Возвращает `api_key` / `user_api_key`, `project_id`. |
 
 После получения ключа из `projects.create_project_anonymous` все остальные запросы должны отправляться с заголовком `X-API-Key: <user_api_key>`.
-
-### Переменные окружения
-```bash
-# Список разрешенных API ключей (через запятую)
-MCP_API_KEYS="key1,key2,key3"
-
-# Настройки MCP сервера
-MCP_HOST=127.0.0.1
-MCP_PORT=8100
-MCP_DEBUG=false
-```
 
 ## 🛠️ Доступные инструменты
 
@@ -630,7 +621,7 @@ MCP_DEBUG=false
 
 ### Получение списка инструментов
 ```bash
-curl -H "X-API-Key: your_api_key" http://localhost:8100/tools
+curl -H "X-API-Key: your_api_key" https://agentstack.tech/mcp/tools
 ```
 
 **Ответ**:
@@ -656,7 +647,7 @@ curl -H "X-API-Key: your_api_key" http://localhost:8100/tools
 
 ### Информация об инструменте
 ```bash
-curl -H "X-API-Key: your_api_key" http://localhost:8100/tools/create_payment
+curl -H "X-API-Key: your_api_key" https://agentstack.tech/mcp/tools/create_payment
 ```
 
 ## 🌊 Streaming API
@@ -666,7 +657,7 @@ curl -H "X-API-Key: your_api_key" http://localhost:8100/tools/create_payment
 curl -N -H "X-API-Key: your_api_key" \
      -H "Content-Type: application/json" \
      -d '{"merchant_id": 123, "amount_minor": 10000, "currency": "RUB"}' \
-     http://localhost:8100/tools/create_payment/stream
+     https://agentstack.tech/mcp/tools/create_payment/stream
 ```
 
 **Ответ** (Server-Sent Events):
@@ -820,7 +811,7 @@ AI агенты могут использовать MCP инструменты A
       "command": "npx",
       "args": ["@agentstack/mcp-client"],
       "env": {
-        "MCP_SERVER_URL": "http://localhost:8100",
+        "MCP_SERVER_URL": "https://agentstack.tech/mcp",
         "MCP_API_KEY": "your_api_key"
       }
     }
@@ -835,7 +826,7 @@ import asyncio
 import aiohttp
 
 class AgentStackMCP:
-    def __init__(self, api_key, base_url="http://localhost:8100"):
+    def __init__(self, api_key, base_url="https://agentstack.tech/mcp"):
         self.api_key = api_key
         self.base_url = base_url
         self.headers = {"X-API-Key": api_key}
@@ -872,7 +863,7 @@ payment = await mcp.execute_tool("create_payment", {
 
 ```javascript
 class AgentStackMCP {
-  constructor(apiKey, baseUrl = 'http://localhost:8100') {
+  constructor(apiKey, baseUrl = 'https://agentstack.tech/mcp') {
     this.apiKey = apiKey;
     this.baseUrl = baseUrl;
     this.headers = { 'X-API-Key': apiKey };
@@ -966,7 +957,7 @@ TEST_PROJECT_ID=1
 ### Примеры тестов
 ```bash
 # Тест создания платежа
-curl -X POST http://localhost:8100/tools/create_payment \
+curl -X POST https://agentstack.tech/mcp/tools/create_payment \
   -H "X-API-Key: test_key_123" \
   -H "Content-Type: application/json" \
   -d '{
@@ -978,7 +969,7 @@ curl -X POST http://localhost:8100/tools/create_payment \
 
 # Тест получения статуса
 curl -H "X-API-Key: test_key_123" \
-     http://localhost:8100/tools/get_payment_status \
+     https://agentstack.tech/mcp/tools/get_payment_status \
      -d '{"payment_id": "pay_test_123"}'
 ```
 
