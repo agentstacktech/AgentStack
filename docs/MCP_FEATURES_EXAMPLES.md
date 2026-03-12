@@ -1,41 +1,41 @@
-# MCP — особенности реализации и примеры
+# MCP — Implementation details and examples
 
-- [Особенности реализации](#особенности-реализации)
-- [Примеры использования](#примеры-использования)
-- [Итоговая статистика](#итоговая-статистика)
+- [Implementation details](#implementation-details)
+- [Usage examples](#usage-examples)
+- [Summary statistics](#summary-statistics)
 
-**Другие разделы:** [Быстрый старт](MCP_QUICKSTART.md) · [Обзор](MCP_OVERVIEW.md) · [Справочник tools](MCP_TOOLS.md)
+**Other sections:** [Quick start](MCP_QUICKSTART.md) · [Overview](MCP_OVERVIEW.md) · [Tools reference](MCP_TOOLS.md)
 
 ---
 
-## Особенности реализации
+## Implementation details
 
-### 1. Анонимное создание проектов
+### 1. Anonymous project creation
 
-**Проблема:** AI агенты (Google Studio, Cursor) не могут создавать проекты без предварительной регистрации пользователя.
+**Problem:** AI agents (Google Studio, Cursor) cannot create projects without prior user registration.
 
-**Решение:** `projects.create_project_anonymous`
+**Solution:** `projects.create_project_anonymous`
 
-- ✅ Не требует авторизации
-- ✅ **Автоматически создает анонимного пользователя** с `is_anonymous: true`
-- ✅ Генерирует API ключ с префиксом `anon_ask_` (ANONYMOUS tier)
-- ✅ Возвращает `user_api_key`, `project_api_key`, `session_token`, `user_id`
-- ✅ Пользователь сразу аутентифицирован и готов к использованию
-- ✅ Позволяет сразу начать работу с проектом
+- ✅ No authentication required
+- ✅ **Automatically creates an anonymous user** with `is_anonymous: true`
+- ✅ Generates API key with prefix `anon_ask_` (ANONYMOUS tier)
+- ✅ Returns `user_api_key`, `project_api_key`, `session_token`, `user_id`
+- ✅ User is immediately authenticated and ready to use
+- ✅ Lets you start working with the project right away
 
-**⚠️ Ограничения ANONYMOUS тарифа:**
-- 1 проект максимум (нельзя создавать дополнительные)
-- 1 API ключ (нельзя создавать дополнительные)
-- 1,000 вызовов Logic Engine/месяц (вместо 10,000 у FREE)
-- 20 MB JSON хранилища (вместо 100 MB у FREE)
-- 20 триггеров (вместо 50 у FREE)
-- Платежи отключены
+**⚠️ ANONYMOUS tier limits:**
+- 1 project max (cannot create more)
+- 1 API key (cannot create more)
+- 1,000 Logic Engine calls/month (vs 10,000 on FREE)
+- 20 MB JSON storage (vs 100 MB on FREE)
+- 20 triggers (vs 50 on FREE)
+- Payments disabled
 
-**Конвертация:**
-- Используйте `auth.convert_anonymous_user` для конвертации в FREE тариф
-- После конвертации все лимиты увеличиваются до FREE tier
+**Conversion:**
+- Use `auth.convert_anonymous_user` to convert to FREE tier
+- After conversion all limits increase to FREE tier
 
-**Использование:**
+**Usage:**
 ```json
 {
   "tool": "projects.create_project_anonymous",
@@ -46,21 +46,21 @@
 }
 ```
 
-### 2. Прикрепление проектов к пользователям
+### 2. Attaching projects to users
 
-**Проблема:** Анонимные проекты нужно привязать к реальному пользователю.
+**Problem:** Anonymous projects need to be linked to a real user.
 
-**Решение:** `projects.attach_to_user`
+**Solution:** `projects.attach_to_user`
 
-- ✅ Требует авторизацию (user_id нового владельца)
-- ✅ Проверяет `auth_key` из анонимного создания
+- ✅ Requires authorization (new owner's user_id)
+- ✅ Validates `auth_key` from anonymous creation
 - ✅ Transfer ownership:
-  - Обновляет `project.user_id`
-  - Создает записи в `data_projects_user`
-  - Удаляет старый анонимный ключ
-  - Создает новый ключ для владельца
+  - Updates `project.user_id`
+  - Creates records in `data_projects_user`
+  - Removes old anonymous key
+  - Creates new key for the owner
 
-**Использование:**
+**Usage:**
 ```json
 {
   "tool": "projects.attach_to_user",
@@ -72,18 +72,18 @@
 }
 ```
 
-### 3. Ограничения по подпискам
+### 3. Subscription limits
 
-**Управление пользователями проектов** (`add_user`, `remove_user`) требует **Professional подписку**.
+**Project user management** (`add_user`, `remove_user`) requires a **Professional subscription**.
 
-**Реализация:**
-- Проверка на уровне API endpoint (`agentstack-core/endpoints/projects_endpoints.py`)
-- Использует `SubscriptionService.get_user_subscription()`
-- Проверяет `plan_type` в ['pro', 'professional', 'enterprise']
-- Возвращает 403 Forbidden при отсутствии подписки
-- Ошибка пробрасывается через MCP без изменений
+**Implementation:**
+- Check at API endpoint level (`agentstack-core/endpoints/projects_endpoints.py`)
+- Uses `SubscriptionService.get_user_subscription()`
+- Checks `plan_type` in ['pro', 'professional', 'enterprise']
+- Returns 403 Forbidden when subscription is missing
+- Error is passed through MCP unchanged
 
-**Ошибка:**
+**Error:**
 ```json
 {
   "success": false,
@@ -93,27 +93,27 @@
 
 ### 4. SDK Wrapper
 
-**Архитектура:**
-- `ProjectsSDKWrapper` - обертка над HTTP API
-- Использует `shared.clients.http.request` для запросов
-- Единообразный интерфейс для всех операций
-- Автоматическое построение заголовков (Authorization, X-Project-ID)
-- Использует существующие endpoints (не дублирует функциональность)
+**Architecture:**
+- `ProjectsSDKWrapper` — wrapper over HTTP API
+- Uses `shared.clients.http.request` for requests
+- Unified interface for all operations
+- Automatic header building (Authorization, X-Project-ID)
+- Uses existing endpoints (no duplicated logic)
 
-**Особенности:**
-- API ключи управляются через `/api/apikeys/keys` (не дубликаты)
-- Настройки извлекаются из `config` проекта
-- Активность получается из `/api/projects/{id}/logs`
+**Details:**
+- API keys managed via `/api/apikeys/keys` (no duplicates)
+- Settings read from project `config`
+- Activity from `/api/projects/{id}/logs`
 
-### 5. Обработка ошибок
+### 5. Error handling
 
-**Стратегия:**
-- Ошибки от SDK/API пробрасываются напрямую
-- HTTP статусы не конвертируются
-- Сохранение `trace_id` для отладки
-- Использование `httpx.HTTPStatusError` для HTTP ошибок
+**Strategy:**
+- SDK/API errors are passed through as-is
+- HTTP status codes are not converted
+- `trace_id` kept for debugging
+- Uses `httpx.HTTPStatusError` for HTTP errors
 
-**Формат ошибки:**
+**Error format:**
 ```json
 {
   "success": false,
@@ -122,14 +122,14 @@
 }
 ```
 
-### 6. Валидация запросов
+### 6. Request validation
 
-**Pydantic модели:**
-- Все новые методы проектов используют Pydantic модели
-- Автоматическая валидация параметров
-- Type-safe интерфейс
+**Pydantic models:**
+- All new project methods use Pydantic models
+- Automatic parameter validation
+- Type-safe interface
 
-**Пример:**
+**Example:**
 ```python
 class CreateProjectRequest(BaseModel):
     name: str
@@ -138,18 +138,18 @@ class CreateProjectRequest(BaseModel):
     ...
 ```
 
-### 7. Демо режим
+### 7. Demo mode
 
-**Поддержка:**
-- Проверка `demo_context.is_readonly()`
-- Блокировка write операций в read-only режиме
-- Проверка capabilities через `DemoCapabilities`
+**Support:**
+- Check `demo_context.is_readonly()`
+- Block write operations in read-only mode
+- Check capabilities via `DemoCapabilities`
 
 ---
 
-## Примеры использования
+## Usage examples
 
-### Пример 1: Анонимное создание проекта
+### Example 1: Anonymous project creation
 
 ```bash
 curl -X POST https://agentstack.tech/mcp/tools/projects.create_project_anonymous \
@@ -163,7 +163,7 @@ curl -X POST https://agentstack.tech/mcp/tools/projects.create_project_anonymous
   }'
 ```
 
-**Ответ:**
+**Response:**
 ```json
 {
   "success": true,
@@ -181,7 +181,7 @@ curl -X POST https://agentstack.tech/mcp/tools/projects.create_project_anonymous
 }
 ```
 
-### Пример 2: Прикрепление проекта к пользователю
+### Example 2: Attach project to user
 
 ```bash
 curl -X POST https://agentstack.tech/mcp/tools/projects.attach_to_user \
@@ -197,7 +197,7 @@ curl -X POST https://agentstack.tech/mcp/tools/projects.attach_to_user \
   }'
 ```
 
-**Ответ:**
+**Response:**
 ```json
 {
   "success": true,
@@ -211,7 +211,7 @@ curl -X POST https://agentstack.tech/mcp/tools/projects.attach_to_user \
 }
 ```
 
-### Пример 3: Получение списка проектов
+### Example 3: Get project list
 
 ```bash
 curl -X POST https://agentstack.tech/mcp/tools/projects.get_projects \
@@ -226,7 +226,7 @@ curl -X POST https://agentstack.tech/mcp/tools/projects.get_projects \
   }'
 ```
 
-### Пример 4: Добавление пользователя (требует Professional)
+### Example 4: Add user (requires Professional)
 
 ```bash
 curl -X POST https://agentstack.tech/mcp/tools/projects.add_user \
@@ -242,7 +242,7 @@ curl -X POST https://agentstack.tech/mcp/tools/projects.add_user \
   }'
 ```
 
-**При отсутствии подписки:**
+**When subscription is missing:**
 ```json
 {
   "success": false,
@@ -251,7 +251,7 @@ curl -X POST https://agentstack.tech/mcp/tools/projects.add_user \
 }
 ```
 
-### Пример 5: Streaming выполнение
+### Example 5: Streaming execution
 
 ```bash
 curl -X POST https://agentstack.tech/mcp/tools/projects.create_project/stream \
@@ -265,7 +265,7 @@ curl -X POST https://agentstack.tech/mcp/tools/projects.create_project/stream \
   }'
 ```
 
-**Ответ (SSE):**
+**Response (SSE):**
 ```
 data: {"status": "started", "trace_id": "uuid"}
 
@@ -276,9 +276,9 @@ data: {"status": "completed", "result": {...}}
 
 ---
 
-## Итоговая статистика
+## Summary statistics
 
-### По категориям
+### By category
 
 - **Auth**: 4 tools
 - **Projects**: 8 tools
@@ -286,38 +286,38 @@ data: {"status": "completed", "result": {...}}
 - **Processors**: 3 tools
 - **Commands**: 2 tools
 - **Payments**: 4 tools
-- **Scheduler**: 11 tools ⭐ (самая большая категория)
+- **Scheduler**: 11 tools ⭐ (largest category)
 - **Analytics**: 2 tools
 - **API Keys**: 3 tools
 - **Buffs**: 10 tools
 - **Assets**: 4 tools
 
-**Всего: 60+ tools**
+**Total: 60+ tools**
 
-### Новые возможности (последнее обновление)
+### Recent updates
 
-1. ✅ Анонимное создание проектов
-2. ✅ Прикрепление проектов к пользователям
-3. ✅ Полный набор методов управления проектами
-4. ✅ Интеграция с существующими endpoints
-5. ✅ Проверка подписки для управления пользователями
-
----
-
-## Заключение
-
-MCP сервер предоставляет **полный доступ** ко всей функциональности AgentStack через единый интерфейс. Особое внимание уделено:
-
-- **Удобству для AI агентов** (анонимное создание)
-- **Гибкости** (прикрепление проектов)
-- **Безопасности** (проверка подписок, валидация)
-- **Надежности** (обработка ошибок, trace_id)
-- **Производительности** (streaming, кэширование)
-
-Все tools используют существующие endpoints, что обеспечивает консистентность и отсутствие дублирования кода.
+1. ✅ Anonymous project creation
+2. ✅ Attach projects to users
+3. ✅ Full project management methods
+4. ✅ Integration with existing endpoints
+5. ✅ Subscription check for user management
 
 ---
 
-**Версия документа:** 1.0  
-**Дата обновления:** 2025-01-29  
-**Автор:** AgentStack Development Team
+## Conclusion
+
+The MCP server provides **full access** to all AgentStack functionality through a single interface. Focus areas:
+
+- **AI agent convenience** (anonymous creation)
+- **Flexibility** (project attachment)
+- **Security** (subscription checks, validation)
+- **Reliability** (error handling, trace_id)
+- **Performance** (streaming, caching)
+
+All tools use existing endpoints, ensuring consistency and no code duplication.
+
+---
+
+**Document version:** 1.0  
+**Last updated:** 2025-01-29  
+**Author:** AgentStack Development Team

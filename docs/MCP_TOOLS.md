@@ -1,136 +1,136 @@
-# MCP — справочник инструментов (Tools)
+# MCP — Tools reference
 
-Полный список MCP tools по категориям. Быстрый старт: [MCP_QUICKSTART.md](MCP_QUICKSTART.md). Обзор и API: [MCP_OVERVIEW.md](MCP_OVERVIEW.md).
+Full list of MCP tools by category. Quick start: [MCP_QUICKSTART.md](MCP_QUICKSTART.md). Overview and API: [MCP_OVERVIEW.md](MCP_OVERVIEW.md).
 
 ---
 
-## Доступные Tools
+## Available tools
 
 ### 🔐 Auth Tools (4 tools)
 
 #### `auth.quick_auth`
-Быстрая аутентификация пользователя.
+Quick user authentication.
 
-**Параметры:**
-- `email` (string) - Email пользователя
-- `password` (string) - Пароль
+**Parameters:**
+- `email` (string) - User email
+- `password` (string) - Password
 
-**Возвращает:** Токен доступа и информацию о пользователе
+**Returns:** Access token and user info
 
 #### `auth.create_user`
-Создание нового пользователя.
+Create a new user.
 
-**Параметры:**
+**Parameters:**
 - `email` (string)
 - `password` (string)
 - `display_name` (string, optional)
 
 #### `auth.assign_role`
-Назначение роли пользователю.
+Assign a role to a user.
 
-**Параметры:**
+**Parameters:**
 - `user_id` (int)
 - `role` (string)
 - `project_id` (int, optional)
 
 #### `auth.get_profile`
-Получение профиля пользователя.
+Get user profile.
 
 #### `auth.update_profile`
-Обновление профиля пользователя.
+Update user profile.
 
 ---
 
 ### ⚙️ Logic Engine Tools (9 tools)
 
 #### `logic.create`
-Создание правила логики.
+Create a logic rule.
 
 #### `logic.update`
-Обновление правила логики.
+Update a logic rule.
 
 #### `logic.delete`
-Удаление правила логики.
+Delete a logic rule.
 
 #### `logic.get`
-Получение информации о правиле.
+Get rule info.
 
 #### `logic.list`
-Список всех правил проекта.
+List all project rules.
 
 #### `logic.execute`
-Выполнение правила логики.
+Execute a logic rule.
 
 #### `logic.get_processors`
-Получение списка доступных процессоров.
+Get list of available processors.
 
 #### `logic.get_commands`
-Получение списка доступных команд.
+Get list of available commands.
 
 #### `logic.flush_batch`
-Очистка батч-очереди правил.
+Flush the rules batch queue.
 
 ---
 
 ### 💳 Payments Tools (4 tools)
 
 #### `payments.create_payment`
-Создание платежа.
+Create a payment.
 
-**Параметры:**
+**Parameters:**
 - `amount` (float)
 - `currency` (string)
 - `payment_method` (string)
 - `description` (string, optional)
 
 #### `payments.get_status`
-Получение статуса платежа.
+Get payment status.
 
-**Параметры:**
+**Parameters:**
 - `payment_id` (string)
 
 #### `payments.refund`
-Возврат платежа.
+Refund a payment.
 
-**Параметры:**
+**Parameters:**
 - `payment_id` (string)
-- `amount` (float, optional) - частичный возврат
+- `amount` (float, optional) - partial refund
 
 #### `payments.list_transactions`
-Список транзакций.
+List transactions.
 
-**Параметры:**
+**Parameters:**
 - `limit` (int, optional)
 - `offset` (int, optional)
 
 #### `payments.get_balance`
-Получение баланса.
+Get balance.
 
 ---
 
 ### 📁 Projects Tools (8 tools)
 
-#### Основные CRUD операции
+#### Core CRUD
 
 ##### `projects.get_projects`
-Получение списка проектов.
+Get list of projects.
 
-**Параметры:**
+**Parameters:**
 - `is_active` (bool, optional)
 - `limit` (int, optional)
 - `offset` (int, optional)
 
 ##### `projects.get_project`
-Получение проекта по ID.
+Get project by ID.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 
 ##### `projects.create_project`
-Создание проекта (требует авторизацию).
+Create a project (requires auth).
 
-**Параметры:**
-- `name` (string) - Обязательно
+**Parameters:**
+- `name` (string) - Required
 - `description` (string, optional)
 - `config` (dict, optional)
 - `data` (dict, optional)
@@ -138,17 +138,17 @@
 - `settings` (dict, optional)
 
 ##### `projects.create_project_anonymous`
-**⭐ НОВОЕ:** Создание проекта без авторизации (для AI агентов).
+**⭐ NEW:** Create a project without auth (for AI agents).
 
-**Параметры:**
-- `name` (string) - Обязательно
+**Parameters:**
+- `name` (string) - Required
 - `description` (string, optional)
 - `config` (dict, optional)
 - `data` (dict, optional)
 - `preset_id` (string, optional)
 - `settings` (dict, optional)
 
-**Возвращает:**
+**Returns:**
 ```json
 {
   "project_id": 1025,
@@ -161,31 +161,31 @@
 }
 ```
 
-**Особенности:**
-- Не требует авторизации
-- **Автоматически создает анонимного пользователя** с `is_anonymous: true`
-- Генерирует API ключ с префиксом `anon_ask_` (ANONYMOUS tier)
-- Возвращает `user_api_key`, `project_api_key`, `session_token`, `user_id`
-- Пользователь сразу аутентифицирован и готов к использованию
+**Details:**
+- No auth required
+- **Creates an anonymous user** with `is_anonymous: true`
+- Generates API key with prefix `anon_ask_` (ANONYMOUS tier)
+- Returns `user_api_key`, `project_api_key`, `session_token`, `user_id`
+- User is immediately authenticated and ready to use
 
-**⚠️ ОГРАНИЧЕНИЯ ANONYMOUS ТАРИФА:**
-- **1 проект максимум** - Нельзя создавать дополнительные проекты
-- **1 API ключ** - Нельзя создавать дополнительные ключи
-- **1,000 вызовов Logic Engine/месяц** (вместо 10,000 у FREE)
-- **20 MB JSON хранилища** (вместо 100 MB у FREE)
-- **20 триггеров** (вместо 50 у FREE)
-- **Платежи отключены** - Нельзя обрабатывать платежи
+**⚠️ ANONYMOUS tier limits:**
+- **1 project max** - Cannot create more projects
+- **1 API key** - Cannot create more keys
+- **1,000 Logic Engine calls/month** (vs 10,000 on FREE)
+- **20 MB JSON storage** (vs 100 MB on FREE)
+- **20 triggers** (vs 50 on FREE)
+- **Payments disabled** - Cannot process payments
 
-**Конвертация в полный аккаунт:**
-- Используйте `auth.convert_anonymous_user` для конвертации в FREE тариф
-- После конвертации все лимиты увеличиваются до FREE tier
-- Пользователь может войти с email/password
-- Можно создавать дополнительные проекты и API ключи
+**Convert to full account:**
+- Use `auth.convert_anonymous_user` to convert to FREE tier
+- After conversion all limits increase to FREE tier
+- User can sign in with email/password
+- Can create additional projects and API keys
 
 ##### `projects.update_project`
-Обновление проекта.
+Update a project.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 - `name` (string, optional)
 - `description` (string, optional)
@@ -194,27 +194,27 @@
 - `is_active` (bool, optional)
 
 ##### `projects.delete_project`
-Удаление проекта.
+Delete a project.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 
-#### Статистика и аналитика
+#### Stats and analytics
 
 ##### `projects.get_stats`
-Получение статистики проекта.
+Get project stats.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 
-**Возвращает:** Статистику по проекту (пользователи, активность, использование)
+**Returns:** Project stats (users, activity, usage)
 
-#### Управление пользователями
+#### User management
 
 ##### `projects.get_users`
-Получение списка пользователей проекта.
+Get list of project users.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 - `is_active` (bool, optional)
 - `role` (string, optional)
@@ -222,55 +222,55 @@
 - `offset` (int, optional)
 
 ##### `projects.add_user`
-**⭐ ТРЕБУЕТ Professional подписку**
+**⭐ REQUIRES Professional subscription**
 
-Добавление пользователя в проект.
+Add a user to the project.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 - `user_id` (int, optional)
 - `email` (string, optional)
-- `role` (string) - По умолчанию "member"
+- `role` (string) - Default "member"
 
-**Ограничения:**
-- Требуется Professional подписка (pro, professional, enterprise)
-- Проверка на уровне API endpoint
-- Ошибка 403 при отсутствии подписки
+**Limits:**
+- Professional subscription required (pro, professional, enterprise)
+- Check at API endpoint level
+- 403 when subscription is missing
 
 ##### `projects.remove_user`
-**⭐ ТРЕБУЕТ Professional подписку**
+**⭐ REQUIRES Professional subscription**
 
-Удаление пользователя из проекта.
+Remove a user from the project.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 - `user_id` (int)
 
 ##### `projects.update_user_role`
-Обновление роли пользователя в проекте.
+Update a user's role in the project.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 - `user_id` (int)
 - `role` (string)
 
 ##### `projects.attach_to_user`
-**⭐ НОВОЕ:** Прикрепление анонимного проекта к пользователю.
+**⭐ NEW:** Attach an anonymous project to a user.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
-- `auth_key` (string) - Ключ из анонимного создания
+- `auth_key` (string) - Key from anonymous creation
 - `user_id` (int, optional)
 - `email` (string, optional)
 
-**Процесс:**
-1. Проверяет соответствие `auth_key` API ключам проекта
-2. Обновляет `project.user_id` на нового владельца
-3. Создает записи в `data_projects_user`
-4. Удаляет старый анонимный ключ
-5. Создает новый API ключ для владельца
+**Process:**
+1. Validates `auth_key` against project API keys
+2. Updates `project.user_id` to the new owner
+3. Creates records in `data_projects_user`
+4. Removes old anonymous key
+5. Creates new API key for the owner
 
-**Возвращает:**
+**Returns:**
 ```json
 {
   "success": true,
@@ -280,98 +280,98 @@
 }
 ```
 
-#### Управление API ключами
+#### API key management
 
 ##### `projects.get_api_keys`
-Получение списка API ключей проекта.
+Get list of project API keys.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 
-**Использует:** `GET /api/apikeys/keys?project_id={project_id}`
+**Uses:** `GET /api/apikeys/keys?project_id={project_id}`
 
 ##### `projects.create_api_key`
-Создание API ключа для проекта.
+Create an API key for the project.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 - `name` (string)
 - `scopes` (array, optional)
 - `expires_at` (string, optional)
 
-**Использует:** `POST /api/apikeys/keys` с `project_id` в body
+**Uses:** `POST /api/apikeys/keys` with `project_id` in body
 
 ##### `projects.delete_api_key`
-Удаление API ключа проекта.
+Delete a project API key.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 - `key_id` (string)
 
-**Использует:** `DELETE /api/apikeys/keys/{key_id}?project_id={project_id}`
+**Uses:** `DELETE /api/apikeys/keys/{key_id}?project_id={project_id}`
 
-#### Настройки проекта
+#### Project settings
 
 ##### `projects.get_settings`
-Получение настроек проекта (извлекает `config`).
+Get project settings (reads `config`).
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 
 ##### `projects.update_settings`
-Обновление настроек проекта (обновляет `config`).
+Update project settings (updates `config`).
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 - `settings` (dict)
 
-#### Активность проекта
+#### Project activity
 
 ##### `projects.get_activity`
-Получение активности проекта (логи).
+Get project activity (logs).
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 - `limit` (int, optional)
 - `offset` (int, optional)
 
-**Использует:** `GET /api/projects/{project_id}/logs`
+**Uses:** `GET /api/projects/{project_id}/logs`
 
 ---
 
 ### ⏰ Scheduler Tools (11 tools)
 
 #### `scheduler.schedule_task`
-Планирование задачи.
+Schedule a task.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 - `run_at` (string) - ISO datetime
 - `tool` (string)
 - `payload` (dict)
 
 #### `scheduler.cancel_task`
-Отмена задачи.
+Cancel a task.
 
-**Параметры:**
+**Parameters:**
 - `task_id` (string)
 
 #### `scheduler.get_task`
-Получение информации о задаче.
+Get task info.
 
-**Параметры:**
+**Parameters:**
 - `task_id` (string)
 
 #### `scheduler.list_tasks`
-Список задач.
+List tasks.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int, optional)
 
 #### `scheduler.update_task`
-Обновление задачи.
+Update a task.
 
-**Параметры:**
+**Parameters:**
 - `task_id` (string)
 - `task_data` (dict)
 
@@ -380,41 +380,41 @@
 ### 📊 Analytics Tools (2 tools)
 
 #### `analytics.get_usage`
-Получение статистики использования.
+Get usage stats.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int, optional)
 - `start_date` (string, optional)
 - `end_date` (string, optional)
 
 #### `analytics.set_budget`
-Установка бюджета.
+Set budget.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 - `budget` (float)
 - `period` (string) - "monthly", "yearly"
 
 #### `analytics.get_metrics`
-Получение метрик.
+Get metrics.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int, optional)
 - `metric_type` (string, optional)
 
 #### `analytics.export_data`
-Экспорт данных аналитики.
+Export analytics data.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 - `format` (string) - "json", "csv"
 - `start_date` (string, optional)
 - `end_date` (string, optional)
 
 #### `analytics.get_dashboard`
-Получение данных для дашборда.
+Get dashboard data.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int, optional)
 
 ---
@@ -422,36 +422,36 @@
 ### 🔑 API Keys Tools (3 tools)
 
 #### `api_keys.create_key`
-Создание API ключа.
+Create an API key.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 - `name` (string)
 - `scopes` (array, optional)
 
 #### `api_keys.revoke_key`
-Отзыв API ключа.
+Revoke an API key.
 
-**Параметры:**
+**Parameters:**
 - `key_id` (string)
 
 #### `api_keys.list_keys`
-Список API ключей.
+List API keys.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int, optional)
 
 #### `api_keys.update_key`
-Обновление API ключа.
+Update an API key.
 
-**Параметры:**
+**Parameters:**
 - `key_id` (string)
 - `key_data` (dict)
 
 #### `api_keys.get_usage`
-Использование API ключа.
+Get API key usage.
 
-**Параметры:**
+**Parameters:**
 - `key_id` (string)
 
 ---
@@ -459,44 +459,44 @@
 ### ⚙️ Rules Tools (6 tools)
 
 #### `rules.create_rules`
-Создание правил.
+Create rules.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 - `json_rules` (dict)
 - `name` (string, optional)
 - `description` (string, optional)
 
 #### `rules.test_rules`
-Тестирование правил.
+Test rules.
 
-**Параметры:**
+**Parameters:**
 - `rule_id` (string)
 - `test_data` (dict)
 
 #### `rules.activate_rules`
-Активация правил.
+Activate rules.
 
-**Параметры:**
+**Parameters:**
 - `rule_id` (string)
 
 #### `rules.list_rules`
-Список правил.
+List rules.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int, optional)
 
 #### `rules.update_rules`
-Обновление правил.
+Update rules.
 
-**Параметры:**
+**Parameters:**
 - `rule_id` (string)
 - `rule_data` (dict)
 
 #### `rules.delete_rules`
-Удаление правил.
+Delete rules.
 
-**Параметры:**
+**Parameters:**
 - `rule_id` (string)
 
 ---
@@ -504,37 +504,37 @@
 ### 🔔 Webhooks Tools (5 tools)
 
 #### `webhooks.create_endpoint`
-Создание webhook endpoint.
+Create a webhook endpoint.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 - `url` (string)
 - `events` (array)
 - `secret` (string, optional)
 
 #### `webhooks.list_endpoints`
-Список webhook endpoints.
+List webhook endpoints.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int, optional)
 
 #### `webhooks.update_endpoint`
-Обновление webhook endpoint.
+Update a webhook endpoint.
 
-**Параметры:**
+**Parameters:**
 - `endpoint_id` (string)
 - `endpoint_data` (dict)
 
 #### `webhooks.delete_endpoint`
-Удаление webhook endpoint.
+Delete a webhook endpoint.
 
-**Параметры:**
+**Parameters:**
 - `endpoint_id` (string)
 
 #### `webhooks.test_endpoint`
-Тестирование webhook endpoint.
+Test a webhook endpoint.
 
-**Параметры:**
+**Parameters:**
 - `endpoint_id` (string)
 - `test_data` (dict, optional)
 
@@ -543,9 +543,9 @@
 ### 📬 Notifications Tools (4 tools)
 
 #### `notifications.send_notification`
-Отправка уведомления.
+Send a notification.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 - `user_id` (int, optional)
 - `type` (string)
@@ -553,26 +553,26 @@
 - `data` (dict, optional)
 
 #### `notifications.list_notifications`
-Список уведомлений.
+List notifications.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 - `user_id` (int, optional)
 - `limit` (int, optional)
 
 #### `notifications.create_template`
-Создание шаблона уведомления.
+Create a notification template.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 - `name` (string)
 - `template` (string)
 - `variables` (array, optional)
 
 #### `notifications.update_template`
-Обновление шаблона уведомления.
+Update a notification template.
 
-**Параметры:**
+**Parameters:**
 - `template_id` (string)
 - `template_data` (dict)
 
@@ -581,33 +581,33 @@
 ### 💰 Wallets Tools (4 tools)
 
 #### `wallets.get_balance`
-Получение баланса кошелька.
+Get wallet balance.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 - `wallet_id` (int, optional)
 
 #### `wallets.list_transactions`
-Список транзакций кошелька.
+List wallet transactions.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 - `wallet_id` (int, optional)
 - `limit` (int, optional)
 
 #### `wallets.create_wallet`
-Создание кошелька.
+Create a wallet.
 
-**Параметры:**
+**Parameters:**
 - `project_id` (int)
 - `name` (string)
 - `type` (string) - "business", "personal"
 - `currency` (string)
 
 #### `wallets.update_wallet`
-Обновление кошелька.
+Update a wallet.
 
-**Параметры:**
+**Parameters:**
 - `wallet_id` (int)
 - `wallet_data` (dict)
 
@@ -615,36 +615,36 @@
 
 ### 🎁 Buff Management Tools (10 tools)
 
-**Что такое бафы?** Бафы (Buffs) - это система временных и постоянных эффектов, которые изменяют лимиты, функции и ресурсы пользователей и проектов. 
+**What are buffs?** Buffs are a system of temporary and persistent effects that change limits, features, and resources for users and projects.
 
-**Временные эффекты (автоматически истекают и откатываются):**
-- Триальные периоды (7-30 дней) - бесплатные пробные версии функций
-- Промо-акции и события - ограниченные по времени предложения
-- Временные бонусы - дополнительные ресурсы на короткий срок
+**Temporary effects (expire and revert automatically):**
+- Trial periods (7-30 days) — free trials of features
+- Promos and events — time-limited offers
+- Temporary bonuses — extra resources for a short time
 
-**Постоянные эффекты (не истекают, требуют ручного управления):**
-- Подписки - ежемесячные/годовые планы с возможностью продления
-- Разовые покупки - одноразовые улучшения (например, увеличение лимитов)
-- Пакеты улучшений - накопительные постоянные бонусы
+**Persistent effects (do not expire, require manual management):**
+- Subscriptions — monthly/yearly plans with renewal
+- One-time purchases — single upgrades (e.g. higher limits)
+- Upgrade packs — cumulative persistent bonuses
 
-Система баффов идеально подходит для управления триальными периодами, промо-акциями, подписками и разовыми покупками в вашем SaaS, игре или приложении.
+The buff system is ideal for managing trials, promos, subscriptions, and one-time purchases in your SaaS, game, or app.
 
 #### `buffs.create_buff`
-Создание шаблона баффа в состоянии PENDING.
+Create a buff template in PENDING state.
 
-**Параметры:**
-- `entity_id` (int, required) - ID сущности (user или project)
-- `entity_kind` (string, required) - Тип сущности: "user" или "project"
-- `name` (string, required) - Название баффа
-- `type` (string, required) - Тип баффа (trial, promo, subscription, purchase)
-- `category` (string, required) - Категория для фильтрации
-- `duration_days` (int, optional, default: 30) - Длительность в днях
-- `priority` (int, optional, default: 100) - Приоритет (0-3000)
-- `effects` (object, optional) - Эффекты в формате {"data.limits.api_calls": 10000}
-- `config` (object, optional) - Конфигурация (persistent, revert_on_expire, etc.)
-- `project_id` (int, optional) - ID проекта (для user buffs)
+**Parameters:**
+- `entity_id` (int, required) - Entity ID (user or project)
+- `entity_kind` (string, required) - Entity kind: "user" or "project"
+- `name` (string, required) - Buff name
+- `type` (string, required) - Buff type (trial, promo, subscription, purchase)
+- `category` (string, required) - Category for filtering
+- `duration_days` (int, optional, default: 30) - Duration in days
+- `priority` (int, optional, default: 100) - Priority (0-3000)
+- `effects` (object, optional) - Effects as {"data.limits.api_calls": 10000}
+- `config` (object, optional) - Config (persistent, revert_on_expire, etc.)
+- `project_id` (int, optional) - Project ID (for user buffs)
 
-**Пример:**
+**Example:**
 ```json
 {
   "tool": "buffs.create_buff",
@@ -663,15 +663,15 @@
 ```
 
 #### `buffs.apply_buff`
-Применение баффа к сущности (активация PENDING баффа).
+Apply a buff to an entity (activate a PENDING buff).
 
-**Параметры:**
-- `buff_id` (string, required) - UUID баффа
-- `entity_id` (int, required) - ID сущности
-- `entity_kind` (string, required) - Тип сущности
-- `project_id` (int, optional) - ID проекта
+**Parameters:**
+- `buff_id` (string, required) - Buff UUID
+- `entity_id` (int, required) - Entity ID
+- `entity_kind` (string, required) - Entity kind
+- `project_id` (int, optional) - Project ID
 
-**Пример:**
+**Example:**
 ```json
 {
   "tool": "buffs.apply_buff",
@@ -685,16 +685,16 @@
 ```
 
 #### `buffs.extend_buff`
-Продление активного баффа.
+Extend an active buff.
 
-**Параметры:**
-- `buff_id` (string, required) - UUID баффа
-- `entity_id` (int, required) - ID сущности
-- `entity_kind` (string, required) - Тип сущности
-- `additional_days` (int, optional) - Дополнительные дни (если не указано, продлевает на исходную длительность)
-- `project_id` (int, optional) - ID проекта
+**Parameters:**
+- `buff_id` (string, required) - Buff UUID
+- `entity_id` (int, required) - Entity ID
+- `entity_kind` (string, required) - Entity kind
+- `additional_days` (int, optional) - Extra days (if omitted, extends by original duration)
+- `project_id` (int, optional) - Project ID
 
-**Пример:**
+**Example:**
 ```json
 {
   "tool": "buffs.extend_buff",
@@ -708,17 +708,17 @@
 ```
 
 #### `buffs.revert_buff`
-Откат активного баффа с валидацией успешности.
+Revert an active buff with success validation.
 
-**Параметры:**
-- `buff_id` (string, required) - UUID баффа
-- `entity_id` (int, required) - ID сущности
-- `entity_kind` (string, required) - Тип сущности
-- `project_id` (int, optional) - ID проекта
+**Parameters:**
+- `buff_id` (string, required) - Buff UUID
+- `entity_id` (int, required) - Entity ID
+- `entity_kind` (string, required) - Entity kind
+- `project_id` (int, optional) - Project ID
 
-**Важно:** Откат проверяет что ресурсы могут быть восстановлены. Если бафф добавил 100 золота, при откате должно быть отнято 100 золота. Если откат невозможен (недостаточно ресурсов), выбрасывается ошибка.
+**Important:** Revert checks that resources can be restored. If the buff added 100 gold, revert must subtract 100 gold. If revert is impossible (insufficient resources), an error is thrown.
 
-**Пример:**
+**Example:**
 ```json
 {
   "tool": "buffs.revert_buff",
@@ -732,20 +732,20 @@
 ```
 
 #### `buffs.cancel_buff`
-Принудительная отмена баффа в любом состоянии.
+Force-cancel a buff in any state.
 
-**Параметры:**
-- `buff_id` (string, required) - UUID баффа
-- `entity_id` (int, required) - ID сущности
-- `entity_kind` (string, required) - Тип сущности
-- `project_id` (int, optional) - ID проекта
+**Parameters:**
+- `buff_id` (string, required) - Buff UUID
+- `entity_id` (int, required) - Entity ID
+- `entity_kind` (string, required) - Entity kind
+- `project_id` (int, optional) - Project ID
 
-**Важно:** 
-- Для PENDING баффов - обычные права
-- Для ACTIVE баффов - требуются admin/owner права
-- Для ACTIVE баффов сначала выполняется revert, затем удаление
+**Important:**
+- For PENDING buffs — normal permissions
+- For ACTIVE buffs — admin/owner required
+- For ACTIVE buffs revert runs first, then deletion
 
-**Пример:**
+**Example:**
 ```json
 {
   "tool": "buffs.cancel_buff",
@@ -758,27 +758,27 @@
 ```
 
 #### `buffs.get_buff`
-Получение информации о конкретном баффе.
+Get info for a specific buff.
 
-**Параметры:**
-- `buff_id` (string, required) - UUID баффа
-- `entity_id` (int, required) - ID сущности
-- `entity_kind` (string, required) - Тип сущности
-- `project_id` (int, optional) - ID проекта
+**Parameters:**
+- `buff_id` (string, required) - Buff UUID
+- `entity_id` (int, required) - Entity ID
+- `entity_kind` (string, required) - Entity kind
+- `project_id` (int, optional) - Project ID
 
-**Возвращает:** Полную информацию о баффе включая состояние, эффекты, конфигурацию, сроки действия.
+**Returns:** Full buff info including state, effects, config, expiry.
 
 #### `buffs.list_active_buffs`
-Список активных баффов для сущности.
+List active buffs for an entity.
 
-**Параметры:**
-- `entity_id` (int, required) - ID сущности
-- `entity_kind` (string, required) - Тип сущности
-- `category` (string, optional) - Фильтр по категории
-- `project_id` (int, optional) - ID проекта
-- `include_ecosystem` (bool, optional) - Включать экосистемные баффы (для проектов)
+**Parameters:**
+- `entity_id` (int, required) - Entity ID
+- `entity_kind` (string, required) - Entity kind
+- `category` (string, optional) - Filter by category
+- `project_id` (int, optional) - Project ID
+- `include_ecosystem` (bool, optional) - Include ecosystem buffs (for projects)
 
-**Пример:**
+**Example:**
 ```json
 {
   "tool": "buffs.list_active_buffs",
@@ -792,16 +792,16 @@
 ```
 
 #### `buffs.get_effective_limits`
-Получение эффективных лимитов с учетом всех активных баффов.
+Get effective limits taking all active buffs into account.
 
-**Параметры:**
-- `entity_id` (int, required) - ID сущности
-- `entity_kind` (string, required) - Тип сущности
-- `project_id` (int, optional) - ID проекта
+**Parameters:**
+- `entity_id` (int, required) - Entity ID
+- `entity_kind` (string, required) - Entity kind
+- `project_id` (int, optional) - Project ID
 
-**Возвращает:** Эффективные лимиты после применения всех активных баффов.
+**Returns:** Effective limits after applying all active buffs.
 
-**Пример:**
+**Example:**
 ```json
 {
   "tool": "buffs.get_effective_limits",
@@ -814,18 +814,18 @@
 ```
 
 #### `buffs.apply_temporary_effect`
-Быстрое применение временного эффекта (создает и применяет в одном шаге).
+Quick-apply a temporary effect (create and apply in one step).
 
-**Параметры:**
-- `entity_id` (int, required) - ID сущности
-- `entity_kind` (string, required) - Тип сущности
-- `name` (string, required) - Название эффекта
-- `duration_days` (int, required) - Длительность в днях
-- `effects` (object, required) - Эффекты
-- `priority` (int, optional, default: 100) - Приоритет
-- `project_id` (int, optional) - ID проекта
+**Parameters:**
+- `entity_id` (int, required) - Entity ID
+- `entity_kind` (string, required) - Entity kind
+- `name` (string, required) - Effect name
+- `duration_days` (int, required) - Duration in days
+- `effects` (object, required) - Effects
+- `priority` (int, optional, default: 100) - Priority
+- `project_id` (int, optional) - Project ID
 
-**Пример:**
+**Example:**
 ```json
 {
   "tool": "buffs.apply_temporary_effect",
@@ -842,17 +842,17 @@
 ```
 
 #### `buffs.apply_persistent_effect`
-Быстрое применение постоянного эффекта (создает и применяет в одном шаге).
+Quick-apply a persistent effect (create and apply in one step).
 
-**Параметры:**
-- `entity_id` (int, required) - ID сущности
-- `entity_kind` (string, required) - Тип сущности
-- `name` (string, required) - Название эффекта
-- `effects` (object, required) - Эффекты
-- `priority` (int, optional, default: 300) - Приоритет
-- `project_id` (int, optional) - ID проекта
+**Parameters:**
+- `entity_id` (int, required) - Entity ID
+- `entity_kind` (string, required) - Entity kind
+- `name` (string, required) - Effect name
+- `effects` (object, required) - Effects
+- `priority` (int, optional, default: 300) - Priority
+- `project_id` (int, optional) - Project ID
 
-**Пример:**
+**Example:**
 ```json
 {
   "tool": "buffs.apply_persistent_effect",
@@ -868,9 +868,9 @@
 }
 ```
 
-### Workflows и комбинации инструментов
+### Workflows and tool combinations
 
-**Workflow 1: Полный цикл триального периода**
+**Workflow 1: Full trial cycle**
 ```json
 [
   {"tool": "buffs.create_buff", "params": {...}},
@@ -879,7 +879,7 @@
 ]
 ```
 
-**Workflow 2: Продление подписки**
+**Workflow 2: Subscription renewal**
 ```json
 [
   {"tool": "buffs.list_active_buffs", "params": {"category": "subscription"}},
@@ -888,7 +888,7 @@
 ]
 ```
 
-**Workflow 3: Отмена ошибочного баффа**
+**Workflow 3: Cancel a wrong buff**
 ```json
 [
   {"tool": "buffs.get_buff", "params": {...}},
@@ -897,29 +897,29 @@
 ]
 ```
 
-### Сценарии использования
+### Usage scenarios
 
-**Что такое бафы?** Бафы (Buffs) - это система временных и постоянных эффектов, которые изменяют лимиты, функции и ресурсы пользователей и проектов. Идеально подходят для управления триалами, промо-акциями, подписками и разовыми покупками.
+**What are buffs?** Buffs are a system of temporary and persistent effects that change limits, features, and resources for users and projects. Ideal for managing trials, promos, subscriptions, and one-time purchases.
 
-**Временные эффекты (автоматически истекают и откатываются):**
-- **Триальные периоды (7-30 дней)** - бесплатные пробные версии функций для новых пользователей
-- **Промо-акции и события** - ограниченные по времени предложения (например, "Черная пятница")
-- **Временные бонусы** - дополнительные ресурсы на короткий срок (например, удвоение опыта на выходных)
-- **Сезонные предложения** - праздничные акции и специальные события
+**Temporary effects (expire and revert automatically):**
+- **Trial periods (7-30 days)** — free trials of features for new users
+- **Promos and events** — time-limited offers (e.g. Black Friday)
+- **Temporary bonuses** — extra resources for a short time (e.g. double XP on weekends)
+- **Seasonal offers** — holiday and special events
 
-**Постоянные эффекты (не истекают, требуют ручного управления):**
-- **Подписки (с продлением)** - ежемесячные/годовые планы с возможностью автоматического продления
-- **Разовые покупки** - одноразовые улучшения (например, увеличение лимитов API calls)
-- **Пакеты улучшений** - накопительные постоянные бонусы (можно купить несколько раз)
-- **Lifetime upgrades** - пожизненные улучшения без срока действия
+**Persistent effects (do not expire, require manual management):**
+- **Subscriptions (with renewal)** — monthly/yearly plans with optional auto-renewal
+- **One-time purchases** — single upgrades (e.g. higher API call limits)
+- **Upgrade packs** — cumulative persistent bonuses (can buy multiple times)
+- **Lifetime upgrades** — permanent upgrades with no expiry
 
-**Примеры синергии с другими системами:**
-- **Buffs + Logic Engine** - автоматическое применение триалов при регистрации пользователя
-- **Buffs + Payments** - продажа подписок и разовых покупок через платежную систему
-- **Buffs + Scheduler** - автоматическое продление подписок по расписанию
-- **Buffs + Analytics** - отслеживание эффективности промо-кампаний и конверсии триалов
-- **Buffs + Notifications** - уведомления о новых бафах, истечении триалов и промо-акциях
+**Synergy with other systems:**
+- **Buffs + Logic Engine** — auto-apply trials on user registration
+- **Buffs + Payments** — sell subscriptions and one-time purchases via payments
+- **Buffs + Scheduler** — auto-renew subscriptions on a schedule
+- **Buffs + Analytics** — track promo effectiveness and trial conversion
+- **Buffs + Notifications** — notify about new buffs, trial expiry, and promos
 
-**Подробные примеры комплексных проектов:** См. [examples/mcp_complex_projects.md](examples/mcp_complex_projects.md), [examples/mcp_buffs_workflows.md](examples/mcp_buffs_workflows.md), [examples/mcp_buffs_temporary.md](examples/mcp_buffs_temporary.md), [examples/mcp_buffs_persistent.md](examples/mcp_buffs_persistent.md).
+**Detailed complex project examples:** See [examples/mcp_complex_projects.md](examples/mcp_complex_projects.md), [examples/mcp_buffs_workflows.md](examples/mcp_buffs_workflows.md), [examples/mcp_buffs_temporary.md](examples/mcp_buffs_temporary.md), [examples/mcp_buffs_persistent.md](examples/mcp_buffs_persistent.md).
 
 ---

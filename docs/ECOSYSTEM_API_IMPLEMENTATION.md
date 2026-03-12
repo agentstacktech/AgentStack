@@ -1,54 +1,54 @@
-# Работа с данными экосистемы AgentStack
+# Working with AgentStack Ecosystem Data
 
-**См. также:** [MCP и экосистема — индекс](MCP_AND_ECOSYSTEM.md), [DNA Key-Value API](architecture/DNA_KEY_VALUE_API.md), [примеры комплексных проектов](examples/mcp_complex_projects.md).
+**See also:** [MCP and ecosystem — index](MCP_AND_ECOSYSTEM.md), [DNA Key-Value API](architecture/DNA_KEY_VALUE_API.md), [complex project examples](examples/mcp_complex_projects.md).
 
-В экосистеме AgentStack **нет версий в путях API** (используются пути вида `/api/...`). Хранение и чтение данных проектов и пользователей реализовано через существующие эндпоинты и MCP tools — отдельный «Ecosystem API» не используется.
-
----
-
-## Где реализована работа с данными
-
-| Задача | Эндпоинт или инструмент | Описание |
-|--------|-------------------------|----------|
-| Данные проекта (чтение/запись по пути) | `GET /api/projects/{project_id}/data`<br>`PATCH /api/projects/{project_id}/data` | Опционально `?path=...` для GET; body `{ "path": "...", "value": ... }` для PATCH. Требуется аутентификация и доступ к проекту. |
-| Данные текущего пользователя в проекте | `GET /api/projects/{project_id}/users/me/data`<br>`PATCH /api/projects/{project_id}/users/me/data` | То же формат path/value. Данные хранятся в `data_projects_user` для пары project_id + user_id. |
-| Key-value (project.data.* / user.data.*) | `GET /api/dna/data`<br>`POST /api/dna/data` | Query: `key` (обязательно), `project_id` (для `project.data.*`). Body: `{ "key", "value", "project_id" }`. См. [DNA_KEY_VALUE_API.md](architecture/DNA_KEY_VALUE_API.md). |
-| Проект целиком (включая data) через MCP | `projects.get_project`, `projects.update_project` | Поле `data` в запросе/ответе. Удобно для агентов и плагинов. См. [MCP_SERVER_CAPABILITIES.md](MCP_SERVER_CAPABILITIES.md). |
-
-Базовый URL для облака: **https://agentstack.tech**. Аутентификация: сессия (REST) или заголовок `X-API-Key` (REST/MCP).
+In the AgentStack ecosystem **there are no versions in API paths** (paths like `/api/...` are used). Storing and reading project and user data is implemented via existing endpoints and MCP tools — a separate "Ecosystem API" is not used.
 
 ---
 
-## Быстрый старт
+## Where data handling is implemented
 
-1. **Получить API ключ**
-   - Через дашборд [agentstack.tech](https://agentstack.tech): создать проект и взять API ключ.
-   - Либо без регистрации: один запрос к MCP — `projects.create_project_anonymous` с именем проекта; в ответе будут `user_api_key`, `project_id`. См. [MCP_TOOLS.md](MCP_TOOLS.md) (раздел Projects Tools, `projects.create_project_anonymous`) или [MCP_QUICKSTART.md](MCP_QUICKSTART.md).
+| Task | Endpoint or tool | Description |
+|------|------------------|-------------|
+| Project data (read/write by path) | `GET /api/projects/{project_id}/data`<br>`PATCH /api/projects/{project_id}/data` | Optional `?path=...` for GET; body `{ "path": "...", "value": ... }` for PATCH. Authentication and project access required. |
+| Current user data in project | `GET /api/projects/{project_id}/users/me/data`<br>`PATCH /api/projects/{project_id}/users/me/data` | Same path/value format. Data is stored in `data_projects_user` for the project_id + user_id pair. |
+| Key-value (project.data.* / user.data.*) | `GET /api/dna/data`<br>`POST /api/dna/data` | Query: `key` (required), `project_id` (for `project.data.*`). Body: `{ "key", "value", "project_id" }`. See [DNA_KEY_VALUE_API.md](architecture/DNA_KEY_VALUE_API.md). |
+| Full project (including data) via MCP | `projects.get_project`, `projects.update_project` | `data` field in request/response. Convenient for agents and plugins. See [MCP_SERVER_CAPABILITIES.md](MCP_SERVER_CAPABILITIES.md). |
 
-2. **Читать и писать данные проекта**
+Base URL for cloud: **https://agentstack.tech**. Authentication: session (REST) or `X-API-Key` header (REST/MCP).
+
+---
+
+## Quick start
+
+1. **Get an API key**
+   - Via the [agentstack.tech](https://agentstack.tech) dashboard: create a project and obtain an API key.
+   - Or without registration: a single MCP request — `projects.create_project_anonymous` with the project name; the response will include `user_api_key`, `project_id`. See [MCP_TOOLS.md](MCP_TOOLS.md) (Projects Tools section, `projects.create_project_anonymous`) or [MCP_QUICKSTART.md](MCP_QUICKSTART.md).
+
+2. **Read and write project data**
    - REST:  
-     `GET https://agentstack.tech/api/projects/{project_id}/data` — всё `project.data` или по `?path=ключ`.  
-     `PATCH https://agentstack.tech/api/projects/{project_id}/data` с телом `{ "path": "ключ", "value": <значение> }`.
-   - Либо key-value:  
-     `GET https://agentstack.tech/api/dna/data?key=project.data.ключ&project_id={project_id}`  
-     `POST https://agentstack.tech/api/dna/data` с телом `{ "key": "project.data.ключ", "value": <значение>, "project_id": <id> }`.
-   - MCP: `projects.get_project`, `projects.update_project` (поле `data`).
+     `GET https://agentstack.tech/api/projects/{project_id}/data` — all `project.data` or by `?path=key`.  
+     `PATCH https://agentstack.tech/api/projects/{project_id}/data` with body `{ "path": "key", "value": <value> }`.
+   - Or key-value:  
+     `GET https://agentstack.tech/api/dna/data?key=project.data.key&project_id={project_id}`  
+     `POST https://agentstack.tech/api/dna/data` with body `{ "key": "project.data.key", "value": <value>, "project_id": <id> }`.
+   - MCP: `projects.get_project`, `projects.update_project` (field `data`).
 
-3. **Данные пользователя в проекте**
+3. **User data in project**
    - REST:  
-     `GET /api/projects/{project_id}/users/me/data` (опционально `?path=...`),  
-     `PATCH /api/projects/{project_id}/users/me/data` с `{ "path": "...", "value": ... }`.
-   - Key-value: ключ `user.data.<path>`, `GET/POST /api/dna/data` (см. [DNA_KEY_VALUE_API.md](architecture/DNA_KEY_VALUE_API.md)).
+     `GET /api/projects/{project_id}/users/me/data` (optional `?path=...`),  
+     `PATCH /api/projects/{project_id}/users/me/data` with `{ "path": "...", "value": ... }`.
+   - Key-value: key `user.data.<path>`, `GET/POST /api/dna/data` (see [DNA_KEY_VALUE_API.md](architecture/DNA_KEY_VALUE_API.md)).
 
 ---
 
-## Пример: хранение данных мобильной игры
+## Example: mobile game data storage
 
-Сохраняем прогресс игрока (уровень, монеты, инвентарь) в данных текущего пользователя в проекте — в `user.data.game.progress`.
+Store player progress (level, coins, inventory) in the current user's project data — in `user.data.game.progress`.
 
-### Вариант 1: REST (path/value)
+### Option 1: REST (path/value)
 
-**Запись прогресса:**
+**Write progress:**
 ```http
 PATCH https://agentstack.tech/api/projects/{project_id}/users/me/data
 Authorization: Bearer <token>
@@ -64,15 +64,15 @@ Content-Type: application/json
 }
 ```
 
-**Чтение прогресса:**
+**Read progress:**
 ```http
 GET https://agentstack.tech/api/projects/{project_id}/users/me/data?path=game.progress
 Authorization: Bearer <token>
 ```
 
-### Вариант 2: DNA Key-Value API
+### Option 2: DNA Key-Value API
 
-**Запись:**
+**Write:**
 ```http
 POST https://agentstack.tech/api/dna/data
 Authorization: Bearer <token>
@@ -85,23 +85,23 @@ Content-Type: application/json
 }
 ```
 
-**Чтение:**
+**Read:**
 ```http
 GET https://agentstack.tech/api/dna/data?key=user.data.game.progress&project_id=1025
 Authorization: Bearer <token>
 ```
 
-### Вариант 3: MCP (для агентов и плагинов)
+### Option 3: MCP (for agents and plugins)
 
-Использовать tools для работы с проектом и данными пользователя по [MCP_SERVER_CAPABILITIES.md](MCP_SERVER_CAPABILITIES.md) (например, получение/обновление проекта с полем `data` или вызовы, которые записывают в user.data).
+Use tools for working with project and user data per [MCP_SERVER_CAPABILITIES.md](MCP_SERVER_CAPABILITIES.md) (e.g., get/update project with the `data` field or calls that write to user.data).
 
 ---
 
 ## Rules / Logic
 
-Правила и логика (when/then, триггеры) доступны через API Logic Engine: префикс **`/api/logic`**. Список и создание правил, выполнение — см. документацию по Logic Engine и [CONTEXT_FOR_AI.md](plugins/CONTEXT_FOR_AI.md) (домен Rules Engine → `logic.*`).
+Rules and logic (when/then, triggers) are available via the Logic Engine API: prefix **`/api/logic`**. For listing and creating rules, execution — see the Logic Engine documentation and [CONTEXT_FOR_AI.md](plugins/CONTEXT_FOR_AI.md) (Rules Engine domain → `logic.*`).
 
 ---
 
-**Версия:** 0.2 — гайд по реальным эндпоинтам, без версионирования в путях.  
-**Источник правды по путям:** код `agentstack-core` (projects_endpoints, dna_api_endpoints, core_app).
+**Version:** 0.2 — guide to actual endpoints, no versioning in paths.  
+**Source of truth for paths:** `agentstack-core` code (projects_endpoints, dna_api_endpoints, core_app).

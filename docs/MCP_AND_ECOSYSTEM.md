@@ -1,38 +1,37 @@
-# MCP и экосистема AgentStack — индекс
+# MCP and AgentStack Ecosystem — Index
 
-Единая точка входа в документацию по MCP (Model Context Protocol), плагинам, экосистеме API и примерам использования. Официальный репозиторий: [https://github.com/agentstacktech/AgentStack](https://github.com/agentstacktech/AgentStack).
+Single entry point for MCP (Model Context Protocol) documentation, plugins, ecosystem API, and usage examples. Official repo: [https://github.com/agentstacktech/AgentStack](https://github.com/agentstacktech/AgentStack).
 
 ---
 
 ## MCP (Model Context Protocol)
 
-- **[MCP_SERVER_CAPABILITIES.md](MCP_SERVER_CAPABILITIES.md)** — индекс MCP-документации: быстрый старт ([MCP_QUICKSTART](MCP_QUICKSTART.md)), обзор и API ([MCP_OVERVIEW](MCP_OVERVIEW.md)), справочник tools ([MCP_TOOLS](MCP_TOOLS.md)), особенности и примеры ([MCP_FEATURES_EXAMPLES](MCP_FEATURES_EXAMPLES.md)). 60+ tools для плагинов Cursor, Claude, GPT, VS Code.
-- **[api/mcp.md](api/mcp.md)** — конфигурация MCP, аутентификация, публичные эндпоинты, примеры для AI агентов.
+- **[MCP_SERVER_CAPABILITIES.md](MCP_SERVER_CAPABILITIES.md)** — MCP doc index: quick start ([MCP_QUICKSTART](MCP_QUICKSTART.md)), overview and API ([MCP_OVERVIEW](MCP_OVERVIEW.md)), tools reference ([MCP_TOOLS](MCP_TOOLS.md)), features and examples ([MCP_FEATURES_EXAMPLES](MCP_FEATURES_EXAMPLES.md)). 60+ tools for Cursor, Claude, GPT, VS Code plugins.
+- **[api/mcp.md](api/mcp.md)** — MCP configuration, authentication, public endpoints, examples for AI agents.
 
 ---
 
-## Plugins (плагины)
+## Plugins
 
-- **[plugins/README.md](plugins/README.md)** — индекс плагинов: Cursor, Claude Code, GPT (OpenAI), VS Code. Начало работы, получение API key, Quick Start по платформам. Код плагинов на GitHub: [cursor-plugin](https://github.com/agentstacktech/cursor-plugin), [claude-plugin](https://github.com/agentstacktech/claude-plugin), [gpt-plugin](https://github.com/agentstacktech/gpt-plugin), [vscode-plugin](https://github.com/agentstacktech/vscode-plugin).
-- **[plugins/CONTEXT_FOR_AI.md](plugins/CONTEXT_FOR_AI.md)** — карта возможностей для AI: какой домен и какие tools использовать под запрос пользователя (Projects, 8DNA, Rules, Buffs, Payments, Auth и др.).
-
----
-
-## Работа с данными экосистемы
-
-- **[ECOSYSTEM_API_IMPLEMENTATION.md](ECOSYSTEM_API_IMPLEMENTATION.md)** — работа с данными: существующие эндпоинты (без версий в путях), быстрый старт, пример хранения данных мобильной игры (user.data.game.progress). Данные проекта и пользователя: `/api/projects/.../data`, `/api/dna/data`, MCP.
-- **[architecture/DNA_KEY_VALUE_API.md](architecture/DNA_KEY_VALUE_API.md)** — хранилище данных (project.data, user.data), key-value API **GET/POST /api/dna/data**, работа с 8DNA.
+- **[plugins/README.md](plugins/README.md)** — Plugins index: Cursor, Claude Code, GPT (OpenAI), VS Code. Getting started, API key, Quick Start per platform. Plugin code on GitHub: [cursor-plugin](https://github.com/agentstacktech/cursor-plugin), [claude-plugin](https://github.com/agentstacktech/claude-plugin), [gpt-plugin](https://github.com/agentstacktech/gpt-plugin), [vscode-plugin](https://github.com/agentstacktech/vscode-plugin).
+- **[plugins/CONTEXT_FOR_AI.md](plugins/CONTEXT_FOR_AI.md)** — Capability map for AI: which domain and which tools to use for a user request (Projects, 8DNA, Rules, Buffs, Payments, Auth, etc.).
 
 ---
 
-## Примеры использования
+## Ecosystem data
 
-- **[examples/mcp_complex_projects.md](examples/mcp_complex_projects.md)** — комплексные сценарии: SaaS с подписками, игра с монетизацией, маркетплейс с промо, образовательная платформа с триалами, enterprise с аналитикой. Синергия Buffs, Projects, Payments, Scheduler, Logic Engine.
-- **[examples/mcp_buffs_workflows.md](examples/mcp_buffs_workflows.md)** — сценарии работы с баффами (триалы, продление, отмена).
-- **[examples/mcp_buffs_temporary.md](examples/mcp_buffs_temporary.md)** — временные эффекты (триалы, промо).
-- **[examples/mcp_buffs_persistent.md](examples/mcp_buffs_persistent.md)** — постоянные эффекты (подписки, разовые покупки).
+- **[ECOSYSTEM_API_IMPLEMENTATION.md](ECOSYSTEM_API_IMPLEMENTATION.md)** — Working with data: existing endpoints (no versioned paths), quick start, example of mobile game data storage (user.data.game.progress). Project and user data: `/api/projects/.../data`, `/api/dna/data`, MCP.
+- **[architecture/DNA_KEY_VALUE_API.md](architecture/DNA_KEY_VALUE_API.md)** — Data store (project.data, user.data), key-value API **GET/POST /api/dna/data**, 8DNA usage.
 
 ---
 
-**Быстрые ссылки для плагинов:** [MCP_SERVER_CAPABILITIES](MCP_SERVER_CAPABILITIES.md) · [Plugins index](plugins/README.md) · [CONTEXT_FOR_AI](plugins/CONTEXT_FOR_AI.md).
+## Usage examples
 
+- **[examples/mcp_complex_projects.md](examples/mcp_complex_projects.md)** — Complex scenarios: SaaS with subscriptions, game with monetization, marketplace with promos, education platform with trials, enterprise with analytics. Synergy of Buffs, Projects, Payments, Scheduler, Logic Engine.
+- **[examples/mcp_buffs_workflows.md](examples/mcp_buffs_workflows.md)** — Buff workflows (trials, renewal, cancellation).
+- **[examples/mcp_buffs_temporary.md](examples/mcp_buffs_temporary.md)** — Temporary effects (trials, promos).
+- **[examples/mcp_buffs_persistent.md](examples/mcp_buffs_persistent.md)** — Persistent effects (subscriptions, one-time purchases).
+
+---
+
+**Quick links for plugins:** [MCP_SERVER_CAPABILITIES](MCP_SERVER_CAPABILITIES.md) · [Plugins index](plugins/README.md) · [CONTEXT_FOR_AI](plugins/CONTEXT_FOR_AI.md).

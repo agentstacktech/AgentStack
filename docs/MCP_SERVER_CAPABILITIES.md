@@ -1,23 +1,23 @@
-# MCP Server — описание возможностей
+# MCP Server — Capabilities Overview
 
-Единый индекс документации по MCP (Model Context Protocol) AgentStack. MCP доступен в облаке **[agentstack.tech](https://agentstack.tech)** — 60+ tools для проектов, платежей, баффов, логики, планировщика и др.
-
----
-
-## Документы (разбиты для удобства)
-
-| Документ | Содержание |
-|----------|------------|
-| **[MCP_QUICKSTART.md](MCP_QUICKSTART.md)** | Быстрый старт, настройка в Cursor, получение API ключа, отладка, примеры команд. |
-| **[MCP_OVERVIEW.md](MCP_OVERVIEW.md)** | Обзор MCP, архитектура, API Endpoints (GET /mcp/tools, POST выполнение, discovery). |
-| **[MCP_TOOLS.md](MCP_TOOLS.md)** | Полный справочник инструментов по категориям: Auth, Logic, Payments, Projects, Scheduler, Analytics, API Keys, Rules, Webhooks, Notifications, Wallets, Buffs, Workflows. |
-| **[MCP_FEATURES_EXAMPLES.md](MCP_FEATURES_EXAMPLES.md)** | Особенности реализации (анонимные проекты, прикрепление к пользователю, подписки), примеры curl, итоговая статистика. |
+Single index for MCP (Model Context Protocol) documentation for AgentStack. MCP is available in the cloud at **[agentstack.tech](https://agentstack.tech)** — 60+ tools for projects, payments, buffs, logic, scheduler, and more.
 
 ---
 
-## Быстрые ссылки
+## Documents (split for convenience)
 
-- **Конфигурация и аутентификация:** [api/mcp.md](api/mcp.md)
-- **Индекс экосистемы:** [MCP_AND_ECOSYSTEM.md](MCP_AND_ECOSYSTEM.md)
-- **Карта возможностей для AI:** [plugins/CONTEXT_FOR_AI.md](plugins/CONTEXT_FOR_AI.md)
-- **Примеры сценариев:** [examples/mcp_complex_projects.md](examples/mcp_complex_projects.md), [examples/mcp_buffs_workflows.md](examples/mcp_buffs_workflows.md)
+| Document | Contents |
+|----------|----------|
+| **[MCP_QUICKSTART.md](MCP_QUICKSTART.md)** | Quick start, setup in Cursor, getting an API key, debugging, example commands. |
+| **[MCP_OVERVIEW.md](MCP_OVERVIEW.md)** | MCP overview, architecture, API endpoints (GET /mcp/tools, POST execution, discovery). |
+| **[MCP_TOOLS.md](MCP_TOOLS.md)** | Full tool reference by category: Auth, Logic, Payments, Projects, Scheduler, Analytics, API Keys, Rules, Webhooks, Notifications, Wallets, Buffs, Workflows. |
+| **[MCP_FEATURES_EXAMPLES.md](MCP_FEATURES_EXAMPLES.md)** | Implementation details (anonymous projects, attach to user, subscriptions), curl examples, summary stats. |
+
+---
+
+## Quick links
+
+- **Configuration and authentication:** [api/mcp.md](api/mcp.md)
+- **Ecosystem index:** [MCP_AND_ECOSYSTEM.md](MCP_AND_ECOSYSTEM.md)
+- **Capability map for AI:** [plugins/CONTEXT_FOR_AI.md](plugins/CONTEXT_FOR_AI.md)
+- **Scenario examples:** [examples/mcp_complex_projects.md](examples/mcp_complex_projects.md), [examples/mcp_buffs_workflows.md](examples/mcp_buffs_workflows.md)

@@ -1,56 +1,56 @@
-# MCP — обзор и архитектура
+# MCP — Overview and Architecture
 
-- [Обзор](#обзор)
-- [Архитектура](#архитектура)
+- [Overview](#overview)
+- [Architecture](#architecture)
 - [API Endpoints](#api-endpoints)
 
-**Другие разделы:** [Быстрый старт](MCP_QUICKSTART.md) · [Справочник tools](MCP_TOOLS.md) · [Особенности и примеры](MCP_FEATURES_EXAMPLES.md)
+**Other sections:** [Quick start](MCP_QUICKSTART.md) · [Tools reference](MCP_TOOLS.md) · [Features and examples](MCP_FEATURES_EXAMPLES.md)
 
 ---
 
-## Обзор
+## Overview
 
-**MCP (Microservice Control Plane)** - это универсальный сервер для управления всеми сервисами AgentStack через единый интерфейс. MCP предоставляет AI агентам (Google Studio, Cursor, и другим) полный доступ к функциональности платформы через стандартизированный набор инструментов.
+**MCP (Model Context Protocol)** is a universal server for managing all AgentStack services through a single interface. MCP gives AI agents (Google Studio, Cursor, and others) full access to the platform via a standardized set of tools.
 
-### Основные характеристики
+### Main characteristics
 
-- **Версия протокола**: 2.0
-- **Всего доступных tools**: 62+
-- **Поддержка streaming**: Да
-- **Idempotency**: Да
-- **Job tracking**: Да
-- **Порт**: 8000 (через API Gateway)
+- **Protocol version:** 2.0
+- **Total tools available:** 62+
+- **Streaming support:** Yes
+- **Idempotency:** Yes
+- **Job tracking:** Yes
+- **Port:** 8000 (via API Gateway)
 
-### Ключевые возможности
+### Key capabilities
 
-- ✅ Полное управление проектами (включая анонимное создание)
-- ✅ Аутентификация и авторизация
-- ✅ Управление платежами
-- ✅ Планировщик задач
-- ✅ Аналитика и метрики
-- ✅ Управление API ключами
-- ✅ Rules Engine (серверная логика)
+- ✅ Full project management (including anonymous creation)
+- ✅ Authentication and authorization
+- ✅ Payment management
+- ✅ Task scheduler
+- ✅ Analytics and metrics
+- ✅ API key management
+- ✅ Rules Engine (server-side logic)
 - ✅ Webhooks
-- ✅ Уведомления
-- ✅ Кошельки
-- ✅ Buff System (временные и постоянные эффекты)
+- ✅ Notifications
+- ✅ Wallets
+- ✅ Buff system (temporary and persistent effects)
 
 ---
 
-## Архитектура
+## Architecture
 
-### Структура проекта
+### Project structure
 
 ```
 mcp/
-├── main.py              # FastAPI приложение, middleware, регистрация
-├── routes.py            # API endpoints для tools
-├── tools.py             # Реализация всех MCP tools
-├── sdk_wrapper.py       # SDK обертка для работы с проектами
-└── dependencies.py      # Зависимости
+├── main.py              # FastAPI app, middleware, registration
+├── routes.py            # API endpoints for tools
+├── tools.py             # Implementation of all MCP tools
+├── sdk_wrapper.py       # SDK wrapper for project operations
+└── dependencies.py      # Dependencies
 ```
 
-### Компоненты
+### Components
 
 1. **FastAPI Application** (`main.py`)
    - CORS middleware
@@ -60,34 +60,34 @@ mcp/
    - Prometheus metrics
 
 2. **Routes** (`routes.py`)
-   - `GET /mcp/tools` - список всех доступных tools
-   - `GET /mcp/discovery` - discovery endpoint для клиентов
-   - `POST /mcp/tools/{tool_name}` - выполнение tool
-   - `POST /mcp/tools/{tool_name}/stream` - streaming выполнение
-   - `GET /mcp/jobs/{job_id}` - статус задачи
+   - `GET /mcp/tools` — list all available tools
+   - `GET /mcp/discovery` — discovery endpoint for clients
+   - `POST /mcp/tools/{tool_name}` — execute tool
+   - `POST /mcp/tools/{tool_name}/stream` — streaming execution
+   - `GET /mcp/jobs/{job_id}` — job status
 
 3. **Tools Registry** (`tools.py`)
-   - Все доступные tools зарегистрированы в `MCP_TOOLS`
-   - Pydantic модели для валидации запросов
-   - Обработка ошибок и логирование
+   - All tools registered in `MCP_TOOLS`
+   - Pydantic models for request validation
+   - Error handling and logging
 
 4. **SDK Wrapper** (`sdk_wrapper.py`)
-   - Обертка над HTTP API для работы с проектами
-   - Использует существующие endpoints из `agentstack-core`
-   - Единообразный интерфейс для всех операций
+   - Wrapper over HTTP API for project operations
+   - Uses existing endpoints from `agentstack-core`
+   - Unified interface for all operations
 
 ---
 
 ## API Endpoints
 
-**Публичные эндпоинты (без X-API-Key):** вызовы без заголовка аутентификации допускаются для `GET /mcp/tools` (список tools) и для вызова инструмента `projects.create_project_anonymous` (создание анонимного проекта и получение ключей). Все остальные запросы требуют `X-API-Key`.
+**Public endpoints (no X-API-Key):** Calls without the auth header are allowed for `GET /mcp/tools` (tool list) and for the `projects.create_project_anonymous` tool (create anonymous project and get keys). All other requests require `X-API-Key`.
 
-### Discovery и метаданные
+### Discovery and metadata
 
 #### `GET /mcp/tools`
-Возвращает список всех доступных tools, сгруппированных по категориям. **Может вызываться без X-API-Key.**
+Returns the list of all available tools, grouped by category. **Can be called without X-API-Key.**
 
-**Ответ:**
+**Response:**
 ```json
 {
   "tools": {
@@ -103,9 +103,9 @@ mcp/
 ```
 
 #### `GET /mcp/discovery`
-Discovery endpoint для автоматического обнаружения возможностей.
+Discovery endpoint for automatic capability detection.
 
-**Ответ:**
+**Response:**
 ```json
 {
   "protocol_version": "2.0",
@@ -122,12 +122,12 @@ Discovery endpoint для автоматического обнаружения 
 }
 ```
 
-### Выполнение tools
+### Tool execution
 
 #### `POST /mcp/tools/{tool_name}`
-Выполняет указанный tool.
+Executes the specified tool.
 
-**Запрос:**
+**Request:**
 ```json
 {
   "tool": "projects.create_project",
@@ -139,7 +139,7 @@ Discovery endpoint для автоматического обнаружения 
 }
 ```
 
-**Ответ:**
+**Response:**
 ```json
 {
   "success": true,
@@ -150,15 +150,13 @@ Discovery endpoint для автоматического обнаружения 
 ```
 
 #### `POST /mcp/tools/{tool_name}/stream`
-Выполняет tool с streaming ответом (Server-Sent Events).
+Executes the tool with a streaming response (Server-Sent Events).
 
-**Ответ:** SSE stream с событиями:
+**Response:** SSE stream with events:
 - `status: started`
 - `status: processing`
 - `status: completed`
 - `status: error`
 
 #### `GET /mcp/jobs/{job_id}`
-Получает статус асинхронной задачи.
-
----
+Returns the status of an async job.

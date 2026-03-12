@@ -1,37 +1,37 @@
-# MCP — быстрый старт и настройка
+# MCP — Quick start and setup
 
-- [Быстрый старт](#быстрый-старт)
-- [Настройка в Cursor](#настройка-в-cursor)
-- [Отладка и примеры](#отладка-подключения)
+- [Quick start](#quick-start)
+- [Setup in Cursor](#setup-in-cursor)
+- [Debugging and examples](#connection-debugging)
 
-**Другие разделы:** [Обзор и архитектура](MCP_OVERVIEW.md) · [Справочник tools](MCP_TOOLS.md) · [Особенности и примеры](MCP_FEATURES_EXAMPLES.md)
+**Other sections:** [Overview and architecture](MCP_OVERVIEW.md) · [Tools reference](MCP_TOOLS.md) · [Features and examples](MCP_FEATURES_EXAMPLES.md)
 
 ---
 
-## Быстрый старт
+## Quick start
 
-MCP доступен в облачной экосистеме **[agentstack.tech](https://agentstack.tech)** — локальный запуск сервера не требуется.
+MCP is available in the cloud at **[agentstack.tech](https://agentstack.tech)** — no local server setup required.
 
-1. **Получите API ключ:** зарегистрируйтесь на [agentstack.tech](https://agentstack.tech) и создайте проект в дашборде, либо создайте анонимный проект одним запросом (см. ниже).
-2. **Настройте плагин** (Cursor, Claude, VS Code или GPT): укажите MCP URL `https://agentstack.tech/mcp` и ваш API ключ. Готово — 60+ tools доступны в чате.
+1. **Get an API key:** Sign up at [agentstack.tech](https://agentstack.tech) and create a project in the dashboard, or create an anonymous project with a single request (see below).
+2. **Configure the plugin** (Cursor, Claude, VS Code, or GPT): Set MCP URL to `https://agentstack.tech/mcp` and your API key. Done — 60+ tools are available in chat.
 
-**Проверка доступности:**
+**Check availability:**
 ```bash
-# Список доступных tools (без ключа)
+# List available tools (no key required)
 curl https://agentstack.tech/mcp/tools
 ```
 
 ---
 
-## Настройка в Cursor
+## Setup in Cursor
 
-### Способ 1: HTTP MCP Server (рекомендуется)
+### Method 1: HTTP MCP Server (recommended)
 
-Cursor поддерживает MCP серверы через HTTP. Настройте его следующим образом:
+Cursor supports MCP servers over HTTP. Configure as follows:
 
-#### Шаг 1: Создайте конфигурационный файл
+#### Step 1: Create the config file
 
-Создайте файл `cursor-mcp-config.json` в домашней директории или в настройках Cursor:
+Create `cursor-mcp-config.json` in your home directory or in Cursor settings:
 
 **Windows:**
 ```
@@ -48,7 +48,7 @@ Cursor поддерживает MCP серверы через HTTP. Настро
 ~/.config/Cursor/User/globalStorage/mcp-config.json
 ```
 
-#### Шаг 2: Добавьте конфигурацию MCP сервера
+#### Step 2: Add MCP server configuration
 
 ```json
 {
@@ -68,37 +68,37 @@ Cursor поддерживает MCP серверы через HTTP. Настро
 }
 ```
 
-#### Шаг 3: Перезапустите Cursor
+#### Step 3: Restart Cursor
 
-После добавления конфигурации перезапустите Cursor, чтобы изменения вступили в силу.
+After adding the configuration, restart Cursor for changes to take effect.
 
-### Способ 2: Через настройки Cursor UI
+### Method 2: Via Cursor UI settings
 
-1. Откройте Cursor
-2. Перейдите в **Settings** → **Features** → **MCP Servers**
-3. Нажмите **Add Server**
-4. Заполните форму:
+1. Open Cursor
+2. Go to **Settings** → **Features** → **MCP Servers**
+3. Click **Add Server**
+4. Fill in the form:
    - **Name**: `agentstack`
    - **Type**: `HTTP`
    - **Base URL**: `https://agentstack.tech/mcp`
-   - **API Key**: ваш API ключ (если требуется)
-5. Сохраните настройки
+   - **API Key**: your API key (if required)
+5. Save settings
 
-### Способ 3: Использование через Chat (без настройки)
+### Method 3: Using from Chat (no config)
 
-Если MCP сервер запущен, вы можете использовать его напрямую через HTTP API в чате Cursor:
+If the MCP server is running, you can use it directly via the HTTP API in Cursor chat:
 
 ```
-Создай проект через MCP:
+Create a project via MCP:
 POST https://agentstack.tech/mcp/tools/projects.create_project_anonymous
 Body: {"tool": "projects.create_project_anonymous", "params": {"name": "Test Project"}}
 ```
 
-### Получение API ключа
+### Getting an API key
 
-Если требуется API ключ для аутентификации:
+If an API key is required for authentication:
 
-1. **Создайте анонимный проект** (получите API ключ):
+1. **Create an anonymous project** (get API key):
 ```bash
 curl -X POST https://agentstack.tech/mcp/tools/projects.create_project_anonymous \
   -H "Content-Type: application/json" \
@@ -110,87 +110,87 @@ curl -X POST https://agentstack.tech/mcp/tools/projects.create_project_anonymous
   }'
 ```
 
-2. **Используйте полученный `api_key`** в конфигурации Cursor
+2. **Use the returned `api_key`** in Cursor configuration
 
-### Использование в Cursor Chat
+### Using in Cursor Chat
 
-После настройки вы можете использовать MCP tools прямо в чате Cursor:
+After setup you can use MCP tools directly in Cursor chat:
 
-#### Пример 1: Создание проекта
-
-```
-Создай новый проект через MCP с названием "My Test Project"
-```
-
-Cursor автоматически вызовет `projects.create_project_anonymous` с параметрами.
-
-#### Пример 2: Получение списка проектов
+#### Example 1: Create a project
 
 ```
-Покажи все мои проекты через MCP
+Create a new project via MCP named "My Test Project"
 ```
 
-#### Пример 3: Управление пользователями
+Cursor will automatically call `projects.create_project_anonymous` with the parameters.
+
+#### Example 2: List projects
 
 ```
-Добавь пользователя user@example.com в проект 1025 с ролью member
+Show all my projects via MCP
 ```
 
-**Примечание:** Для `add_user` и `remove_user` требуется Professional подписка.
+#### Example 3: User management
 
-### Отладка подключения
+```
+Add user user@example.com to project 1025 with role member
+```
 
-Если MCP сервер не работает в Cursor:
+**Note:** `add_user` and `remove_user` require a Professional subscription.
 
-1. **Проверьте доступность MCP:**
+### Connection debugging
+
+If the MCP server is not working in Cursor:
+
+1. **Check MCP availability:**
 ```bash
 curl https://agentstack.tech/mcp/tools
 ```
 
-2. **Проверьте логи Cursor:**
-   - Откройте Developer Tools (Ctrl+Shift+I / Cmd+Option+I)
-   - Перейдите в Console
-   - Ищите ошибки подключения к MCP
+2. **Check Cursor logs:**
+   - Open Developer Tools (Ctrl+Shift+I / Cmd+Option+I)
+   - Go to Console
+   - Look for MCP connection errors
 
-3. **Проверьте конфигурацию:**
-   - Убедитесь, что `baseUrl` = `https://agentstack.tech/mcp`
-   - Убедитесь, что API ключ указан верно (без лишних пробелов)
+3. **Check configuration:**
+   - Ensure `baseUrl` = `https://agentstack.tech/mcp`
+   - Ensure the API key is correct (no extra spaces)
 
-### Примеры команд для Cursor
+### Example commands for Cursor
 
-#### Создание и настройка проекта
-
-```
-Создай анонимный проект "My AI Project" через MCP и покажи API ключ
-```
-
-#### Работа с пользователями
+#### Project creation and setup
 
 ```
-Покажи всех пользователей проекта 1025 через MCP
+Create an anonymous project "My AI Project" via MCP and show the API key
 ```
 
-#### Управление API ключами
+#### Working with users
 
 ```
-Создай новый API ключ для проекта 1025 с именем "Development Key"
+Show all users of project 1025 via MCP
 ```
 
-#### Получение статистики
+#### API key management
 
 ```
-Покажи статистику проекта 1025 через MCP
+Create a new API key for project 1025 named "Development Key"
 ```
 
-#### Просмотр активности
+#### Getting stats
 
 ```
-Покажи последние 10 событий активности проекта 1025
+Show stats for project 1025 via MCP
 ```
 
-### Альтернатива: Использование через HTTP клиент
+#### Viewing activity
 
-Если настройка MCP в Cursor не работает, вы можете использовать HTTP клиент прямо в коде:
+```
+Show the last 10 activity events for project 1025
+```
+
+### Alternative: Using an HTTP client
+
+If MCP setup in Cursor does not work, you can use an HTTP client directly in code:
 
 ```python
 import httpx
@@ -207,117 +207,115 @@ async def create_project_via_mcp(name: str):
         return response.json()
 ```
 
-MCP доступен по адресу **https://agentstack.tech/mcp**. Дополнительные переменные окружения не требуются.
+MCP is available at **https://agentstack.tech/mcp**. No extra environment variables are required.
 
-### Практические примеры работы в Cursor
+### Practical Cursor scenarios
 
-#### Сценарий 1: Создание проекта для тестирования
+#### Scenario 1: Create a test project
 
-**Запрос в Cursor:**
+**Request in Cursor:**
 ```
-Создай новый тестовый проект через MCP с названием "Test Project" и опиши, что получилось
+Create a new test project via MCP named "Test Project" and describe what you got
 ```
 
-**Что происходит:**
-1. Cursor вызывает `projects.create_project_anonymous`
-2. Получает `project_id`, `api_key`, `auth_key`
-3. Показывает результат в чате
+**What happens:**
+1. Cursor calls `projects.create_project_anonymous`
+2. Gets `project_id`, `api_key`, `auth_key`
+3. Shows the result in chat
 
-**Ответ Cursor:**
+**Cursor response:**
 ```
-✅ Проект успешно создан!
+✅ Project created successfully!
 
 Project ID: 1025
 API Key: ask_abc123xyz...
 Auth Key: ask_abc123xyz...
 
-Теперь вы можете использовать этот API ключ для работы с проектом.
+You can now use this API key to work with the project.
 ```
 
-#### Сценарий 2: Прикрепление проекта к пользователю
+#### Scenario 2: Attach project to a user
 
-**Запрос в Cursor:**
+**Request in Cursor:**
 ```
-Прикрепи проект 1025 к пользователю с email user@example.com. Используй auth_key: ask_abc123xyz...
-```
-
-**Что происходит:**
-1. Cursor вызывает `projects.attach_to_user`
-2. Проект переходит в собственность пользователя
-3. Создается новый API ключ для владельца
-
-#### Сценарий 3: Получение информации о проекте
-
-**Запрос в Cursor:**
-```
-Покажи информацию о проекте 1025: статистику, пользователей, настройки
+Attach project 1025 to user with email user@example.com. Use auth_key: ask_abc123xyz...
 ```
 
-**Что происходит:**
-1. Cursor вызывает несколько tools:
-   - `projects.get_project` - основная информация
-   - `projects.get_stats` - статистика
-   - `projects.get_users` - список пользователей
-   - `projects.get_settings` - настройки
-2. Агрегирует результаты и показывает в удобном виде
+**What happens:**
+1. Cursor calls `projects.attach_to_user`
+2. Project ownership is transferred to the user
+3. A new API key is created for the owner
 
-#### Сценарий 4: Управление API ключами
+#### Scenario 3: Get project info
 
-**Запрос в Cursor:**
+**Request in Cursor:**
 ```
-Создай новый API ключ для проекта 1025 с именем "Production Key" и покажи его
+Show info for project 1025: stats, users, settings
 ```
 
-**Что происходит:**
-1. Cursor вызывает `projects.create_api_key`
-2. Получает новый ключ
-3. Показывает его (⚠️ важно сохранить, т.к. показывается только один раз)
+**What happens:**
+1. Cursor calls several tools:
+   - `projects.get_project` — main info
+   - `projects.get_stats` — stats
+   - `projects.get_users` — user list
+   - `projects.get_settings` — settings
+2. Aggregates results and shows them in a readable form
 
-#### Сценарий 5: Просмотр активности
+#### Scenario 4: API key management
 
-**Запрос в Cursor:**
+**Request in Cursor:**
 ```
-Покажи последние 20 событий активности проекта 1025
+Create a new API key for project 1025 named "Production Key" and show it
 ```
 
-**Что происходит:**
-1. Cursor вызывает `projects.get_activity` с `limit=20`
-2. Показывает список событий с временными метками
+**What happens:**
+1. Cursor calls `projects.create_api_key`
+2. Gets the new key
+3. Shows it (⚠️ save it — it is only shown once)
 
-### Советы по использованию
+#### Scenario 5: View activity
 
-1. **Всегда сохраняйте API ключи** - они показываются только один раз при создании
-2. **Используйте анонимное создание** для быстрого тестирования
-3. **Прикрепляйте проекты** к реальным пользователям для production
-4. **Проверяйте подписку** перед добавлением пользователей (требуется Professional)
-5. **Используйте trace_id** для отладки проблем
+**Request in Cursor:**
+```
+Show the last 20 activity events for project 1025
+```
+
+**What happens:**
+1. Cursor calls `projects.get_activity` with `limit=20`
+2. Shows the list of events with timestamps
+
+### Usage tips
+
+1. **Always save API keys** — they are only shown once when created
+2. **Use anonymous creation** for quick testing
+3. **Attach projects** to real users for production
+4. **Check subscription** before adding users (Professional required)
+5. **Use trace_id** when debugging issues
 
 ### Troubleshooting
 
-#### Проблема: "Tool not found"
+#### Issue: "Tool not found"
 
-**Решение:**
-- Убедитесь, что MCP сервер запущен
-- Проверьте, что tool name правильный (с точкой: `projects.create_project`)
-- Проверьте конфигурацию в Cursor
+**Solution:**
+- Ensure the MCP server is running
+- Check that the tool name is correct (with dot: `projects.create_project`)
+- Check Cursor configuration
 
-#### Проблема: "Connection refused"
+#### Issue: "Connection refused"
 
-**Решение:**
-- Проверьте, что сервер запущен на порту 8000
-- Проверьте firewall настройки
-- Убедитесь, что `baseUrl` в конфигурации правильный
+**Solution:**
+- Check that the server is running on port 8000
+- Check firewall settings
+- Ensure `baseUrl` in config is correct
 
-#### Проблема: "403 Forbidden" при добавлении пользователя
+#### Issue: "403 Forbidden" when adding a user
 
-**Решение:**
-- Это нормально - требуется Professional подписка
-- Обновите подписку пользователя или используйте другой метод
+**Solution:**
+- This is expected — Professional subscription is required
+- Upgrade the user's subscription or use another method
 
-#### Проблема: "Invalid auth_key" при прикреплении
+#### Issue: "Invalid auth_key" when attaching
 
-**Решение:**
-- Убедитесь, что используете правильный `auth_key` из анонимного создания
-- Проверьте, что проект еще не прикреплен к другому пользователю
-
----
+**Solution:**
+- Use the correct `auth_key` from the anonymous creation response
+- Check that the project is not already attached to another user
