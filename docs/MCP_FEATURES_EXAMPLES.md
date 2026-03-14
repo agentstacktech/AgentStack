@@ -292,7 +292,7 @@ data: {"status": "completed", "result": {...}}
 - **Buffs**: 10 tools
 - **Assets**: 4 tools
 
-**Total: 60+ tools**
+**Total: 1 tool (agentstack.execute), 60+ actions** — action list: GET /mcp/actions
 
 ### Recent updates
 

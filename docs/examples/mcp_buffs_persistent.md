@@ -1,24 +1,24 @@
-# MCP Buffs - Постоянные эффекты
+# MCP Buffs - Persistent effects
 
-Примеры использования MCP инструментов для применения постоянных эффектов (подписки, разовые покупки, пакеты улучшений).
+Examples of using MCP tools to apply persistent effects (subscriptions, one-time purchases, upgrade packs).
 
-## Содержание
+## Contents
 
-1. [Подписки](#подписки)
-2. [Разовые покупки](#разовые-покупки)
-3. [Пакеты улучшений](#пакеты-улучшений)
+1. [Subscriptions](#subscriptions)
+2. [One-time purchases](#one-time-purchases)
+3. [Upgrade packs](#upgrade-packs)
 4. [Workflows](#workflows)
-5. [Обработка ошибок](#обработка-ошибок)
+5. [Error handling](#error-handling)
 
 ---
 
-## Подписки
+## Subscriptions
 
-### Пример 1: Месячная подписка Premium
+### Example 1: Premium monthly subscription
 
-**Сценарий:** Создать и применить месячную подписку с автоматическим продлением.
+**Scenario:** Create and apply a monthly subscription with auto-renewal.
 
-**Шаг 1: Создание подписки**
+**Step 1: Create subscription**
 ```json
 {
   "tool": "buffs.create_buff",
@@ -45,7 +45,7 @@
 }
 ```
 
-**Шаг 2: Применение подписки**
+**Step 2: Apply subscription**
 ```json
 {
   "tool": "buffs.apply_buff",
@@ -58,7 +58,7 @@
 }
 ```
 
-**Шаг 3: Продление подписки (через месяц)**
+**Step 3: Extend subscription (after one month)**
 ```json
 {
   "tool": "buffs.extend_buff",
@@ -71,7 +71,7 @@
 }
 ```
 
-### Пример 2: Годовая подписка
+### Example 2: Annual subscription
 
 ```json
 {
@@ -98,13 +98,13 @@
 
 ---
 
-## Разовые покупки
+## One-time purchases
 
-### Пример 1: Lifetime Premium
+### Example 1: Lifetime Premium
 
-**Сценарий:** Применить постоянное улучшение, которое никогда не истекает.
+**Scenario:** Apply a permanent upgrade that never expires.
 
-**Вариант 1: Через create + apply**
+**Option 1: Via create + apply**
 ```json
 [
   {
@@ -139,7 +139,7 @@
 ]
 ```
 
-**Вариант 2: Быстрое применение (одним шагом)**
+**Option 2: Quick apply (single step)**
 ```json
 {
   "tool": "buffs.apply_persistent_effect",
@@ -156,7 +156,7 @@
 }
 ```
 
-### Пример 2: Пакет дополнительных лимитов
+### Example 2: Extra limits pack
 
 ```json
 {
@@ -175,11 +175,11 @@
 
 ---
 
-## Пакеты улучшений
+## Upgrade packs
 
-### Пример 1: Стартовый пакет
+### Example 1: Starter pack
 
-**Сценарий:** Применить набор постоянных улучшений для нового пользователя.
+**Scenario:** Apply a set of permanent upgrades for a new user.
 
 ```json
 {
@@ -199,7 +199,7 @@
 }
 ```
 
-### Пример 2: Бизнес-пакет
+### Example 2: Business pack
 
 ```json
 {
@@ -226,7 +226,7 @@
 
 ## Workflows
 
-### Workflow 1: Создание и применение подписки
+### Workflow 1: Create and apply subscription
 
 ```json
 [
@@ -260,7 +260,7 @@
 ]
 ```
 
-### Workflow 2: Продление подписки
+### Workflow 2: Extend subscription
 
 ```json
 [
@@ -292,7 +292,7 @@
 ]
 ```
 
-### Workflow 3: Применение постоянного улучшения
+### Workflow 3: Apply permanent upgrade
 
 ```json
 [
@@ -325,7 +325,7 @@
 ]
 ```
 
-### Workflow 4: Отмена постоянного баффа (требуются admin права)
+### Workflow 4: Cancel permanent buff (admin rights required)
 
 ```json
 [
@@ -348,67 +348,67 @@
 ]
 ```
 
-**Важно:** Для постоянных баффов в состоянии ACTIVE требуется admin/owner права. Cancel автоматически выполнит revert перед удалением.
+**Note:** For permanent buffs in ACTIVE state, admin/owner rights are required. Cancel will automatically perform revert before removal.
 
 ---
 
-## Обработка ошибок
+## Error handling
 
-### Ошибка: Persistent buffs cannot be reverted
+### Error: Persistent buffs cannot be reverted
 
-**Причина:** Попытка откатить постоянный бафф.
+**Cause:** Attempt to revert a permanent buff.
 
-**Решение:** Постоянные баффы не откатываются. Используйте `buffs.cancel_buff` для удаления (требуются admin права).
+**Solution:** Permanent buffs are not reverted. Use `buffs.cancel_buff` to remove (admin rights required).
 
-### Ошибка: Insufficient permissions to cancel active buff
+### Error: Insufficient permissions to cancel active buff
 
-**Причина:** Попытка отменить активный бафф без admin/owner прав.
+**Cause:** Attempt to cancel an active buff without admin/owner rights.
 
-**Решение:** 
-- Для PENDING баффов - обычные права достаточно
-- Для ACTIVE баффов - требуются admin/owner права
-- Проверьте права через `projects.get_project` или используйте другой подход
+**Solution:**
+- For PENDING buffs - normal rights are enough
+- For ACTIVE buffs - admin/owner rights required
+- Check rights via `projects.get_project` or use another approach
 
-### Ошибка: Buff does not support extension
+### Error: Buff does not support extension
 
-**Причина:** Попытка продлить бафф, который не поддерживает продление.
+**Cause:** Attempt to extend a buff that does not support extension.
 
-**Решение:** Проверьте `config.extends_on_reapply` через `buffs.get_buff`. Если false, создайте новый бафф вместо продления.
+**Solution:** Check `config.extends_on_reapply` via `buffs.get_buff`. If false, create a new buff instead of extending.
 
 ---
 
 ## Best Practices
 
-1. **Используйте persistent=true** для постоянных эффектов:
+1. **Use persistent=true** for permanent effects:
    ```json
    {"config": {"persistent": true, "revert_on_expire": false}}
    ```
 
-2. **Устанавливайте высокий приоритет** для постоянных баффов:
-   - 300+ для lifetime purchases
-   - 250+ для годовых подписок
-   - 200+ для месячных подписок
+2. **Set high priority** for permanent buffs:
+   - 300+ for lifetime purchases
+   - 250+ for annual subscriptions
+   - 200+ for monthly subscriptions
 
-3. **Мониторьте подписки** через регулярные проверки:
+3. **Monitor subscriptions** via regular checks:
    ```json
    {"tool": "buffs.list_active_buffs", "params": {"category": "subscription"}}
    ```
 
-4. **Автоматизируйте продление** через планировщик:
-   - Используйте `scheduler.schedule_task` для автоматического продления
-   - Проверяйте `expires_at` перед истечением
+4. **Automate renewal** via scheduler:
+   - Use `scheduler.schedule_task` for automatic renewal
+   - Check `expires_at` before expiry
 
-5. **Комбинируйте баффы** для накопительных эффектов:
-   - Несколько постоянных баффов суммируются
-   - Используйте `buffs.get_effective_limits` для проверки итоговых лимитов
+5. **Combine buffs** for cumulative effects:
+   - Multiple permanent buffs stack
+   - Use `buffs.get_effective_limits` to verify total limits
 
 ---
 
-## Дополнительные примеры
+## Additional examples
 
-### Пример: Накопительные пакеты
+### Example: Cumulative packs
 
-Применение нескольких постоянных баффов для накопительного эффекта:
+Applying multiple permanent buffs for cumulative effect:
 
 ```json
 [
@@ -440,9 +440,9 @@
 ]
 ```
 
-Итоговый лимит будет суммой всех баффов.
+The final limit will be the sum of all buffs.
 
-### Пример: Подписка с автоматическим продлением
+### Example: Subscription with auto-renewal
 
 ```json
 [
@@ -471,4 +471,4 @@
 ]
 ```
 
-Используйте `scheduler.schedule_task` для автоматического продления через `buffs.extend_buff` каждые 30 дней.
+Use `scheduler.schedule_task` to auto-renew via `buffs.extend_buff` every 30 days.

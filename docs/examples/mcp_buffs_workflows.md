@@ -1,22 +1,22 @@
-# MCP Buffs - Workflows и комбинации инструментов
+# MCP Buffs - Workflows and tool combinations
 
-Готовые workflows и комбинации MCP инструментов для управления баффами.
+Ready-made workflows and MCP tool combinations for managing buffs.
 
-## Содержание
+## Contents
 
-1. [Базовые workflows](#базовые-workflows)
-2. [Продвинутые workflows](#продвинутые-workflows)
-3. [Комбинации инструментов](#комбинации-инструментов)
-4. [Реальные сценарии](#реальные-сценарии)
+1. [Basic workflows](#basic-workflows)
+2. [Advanced workflows](#advanced-workflows)
+3. [Tool combinations](#tool-combinations)
+4. [Real-world scenarios](#real-world-scenarios)
 5. [Best Practices](#best-practices)
 
 ---
 
-## Базовые workflows
+## Basic workflows
 
-### Workflow 1: Полный цикл триального периода
+### Workflow 1: Full trial cycle
 
-**Описание:** Создание, применение и мониторинг триального баффа.
+**Description:** Create, apply and monitor a trial buff.
 
 ```json
 [
@@ -65,9 +65,9 @@
 ]
 ```
 
-### Workflow 2: Продление подписки
+### Workflow 2: Extend subscription
 
-**Описание:** Поиск активной подписки и её продление.
+**Description:** Find active subscription and extend it.
 
 ```json
 [
@@ -111,9 +111,9 @@
 ]
 ```
 
-### Workflow 3: Отмена ошибочного баффа
+### Workflow 3: Cancel erroneous buff
 
-**Описание:** Проверка, откат и удаление ошибочного баффа.
+**Description:** Check, revert and remove an erroneous buff.
 
 ```json
 [
@@ -147,9 +147,9 @@
 ]
 ```
 
-### Workflow 4: Создание и применение промо-акции
+### Workflow 4: Create and apply promo
 
-**Описание:** Создание промо-баффа для проекта и проверка эффектов.
+**Description:** Create a promo buff for the project and verify effects.
 
 ```json
 [
@@ -196,11 +196,11 @@
 
 ---
 
-## Продвинутые workflows
+## Advanced workflows
 
-### Workflow 5: Конвертация триала в подписку
+### Workflow 5: Convert trial to subscription
 
-**Описание:** После истечения триала создание и применение подписки.
+**Description:** After trial expiry, create and apply a subscription.
 
 ```json
 [
@@ -242,9 +242,9 @@
 ]
 ```
 
-### Workflow 6: Применение нескольких баффов
+### Workflow 6: Apply multiple buffs
 
-**Описание:** Создание и применение нескольких баффов для комбинированного эффекта.
+**Description:** Create and apply multiple buffs for combined effect.
 
 ```json
 [
@@ -279,9 +279,9 @@
 ]
 ```
 
-### Workflow 7: Мониторинг и управление баффами
+### Workflow 7: Monitor and manage buffs
 
-**Описание:** Полный цикл мониторинга активных баффов и управления ими.
+**Description:** Full cycle of monitoring active buffs and managing them.
 
 ```json
 [
@@ -312,11 +312,12 @@
 
 ---
 
-## Комбинации инструментов
+## Tool combinations
 
-### Комбинация 1: Create + Apply = Полный цикл применения
+### Combination 1: Create + Apply = Full apply cycle
 
-**Использование:** Когда нужно создать шаблон и сразу применить.
+**Use when:** You need to create a template and apply it immediately.
+
 
 ```json
 [
@@ -325,11 +326,11 @@
 ]
 ```
 
-**Альтернатива:** Используйте `buffs.apply_temporary_effect` или `buffs.apply_persistent_effect` для одного шага.
+**Alternative:** Use `buffs.apply_temporary_effect` or `buffs.apply_persistent_effect` for a single step.
 
-### Комбинация 2: List + Extend = Продление подписки
+### Combination 2: List + Extend = Extend subscription
 
-**Использование:** Найти активную подписку и продлить её.
+**Use when:** Find active subscription and extend it.
 
 ```json
 [
@@ -338,9 +339,9 @@
 ]
 ```
 
-### Комбинация 3: Get + Revert + Cancel = Полная отмена
+### Combination 3: Get + Revert + Cancel = Full cancellation
 
-**Использование:** Проверить состояние, откатить эффекты и удалить бафф.
+**Use when:** Check state, revert effects and remove buff.
 
 ```json
 [
@@ -350,11 +351,11 @@
 ]
 ```
 
-**Примечание:** Для ACTIVE баффов `buffs.cancel_buff` автоматически выполняет revert перед удалением.
+**Note:** For ACTIVE buffs `buffs.cancel_buff` automatically performs revert before removal.
 
-### Комбинация 4: Apply + Get Effective Limits = Проверка результатов
+### Combination 4: Apply + Get Effective Limits = Verify results
 
-**Использование:** Применить бафф и сразу проверить изменения в лимитах.
+**Use when:** Apply buff and immediately verify limit changes.
 
 ```json
 [
@@ -363,9 +364,9 @@
 ]
 ```
 
-### Комбинация 5: List + Get = Детальный анализ
+### Combination 5: List + Get = Detailed analysis
 
-**Использование:** Получить список активных баффов и детальную информацию о каждом.
+**Use when:** Get list of active buffs and detailed info for each.
 
 ```json
 [
@@ -376,13 +377,13 @@
 
 ---
 
-## Реальные сценарии
+## Real-world scenarios
 
-### Сценарий 1: SaaS подписка с автоматическим продлением
+### Scenario 1: SaaS subscription with auto-renewal
 
-**Задача:** Создать систему подписок с автоматическим продлением через планировщик.
+**Task:** Build a subscription system with automatic renewal via scheduler.
 
-**Шаг 1: Создание подписки**
+**Step 1: Create subscription**
 ```json
 {
   "tool": "buffs.create_buff",
@@ -399,7 +400,7 @@
 }
 ```
 
-**Шаг 2: Применение**
+**Step 2: Apply**
 ```json
 {
   "tool": "buffs.apply_buff",
@@ -411,7 +412,7 @@
 }
 ```
 
-**Шаг 3: Настройка автоматического продления (через планировщик)**
+**Step 3: Configure auto-renewal (via scheduler)**
 ```json
 {
   "tool": "scheduler.schedule_task",
@@ -431,9 +432,9 @@
 }
 ```
 
-### Сценарий 2: Промо-кампания для группы пользователей
+### Scenario 2: Promo campaign for user group
 
-**Задача:** Применить промо-бафф ко всему проекту (влияет на всех пользователей).
+**Task:** Apply promo buff to the whole project (affects all users).
 
 ```json
 [
@@ -464,9 +465,9 @@
 ]
 ```
 
-### Сценарий 3: Пакетная покупка улучшений
+### Scenario 3: Batch purchase of upgrades
 
-**Задача:** Применить несколько постоянных улучшений для накопительного эффекта.
+**Task:** Apply multiple permanent upgrades for cumulative effect.
 
 ```json
 [
@@ -500,11 +501,11 @@
 ]
 ```
 
-Итоговый лимит: 200,000 API calls (сумма всех баффов).
+Total limit: 200,000 API calls (sum of all buffs).
 
-### Сценарий 4: Отмена ошибочного баффа с проверкой
+### Scenario 4: Cancel erroneous buff with verification
 
-**Задача:** Безопасно отменить активный бафф с проверкой возможности отката.
+**Task:** Safely cancel an active buff with revert capability check.
 
 ```json
 [
@@ -534,60 +535,60 @@
 ]
 ```
 
-Если revert не удался (недостаточно ресурсов), будет ошибка с деталями.
+If revert fails (insufficient resources), an error with details will be returned.
 
 ---
 
 ## Best Practices
 
-### 1. Всегда проверяйте состояние перед операциями
+### 1. Always check state before operations
 
 ```json
 {"tool": "buffs.get_buff", "params": {...}}
 ```
 
-### 2. Используйте категории для организации
+### 2. Use categories for organization
 
-- `"subscription"` - для подписок
-- `"event"` - для промо-акций
-- `"trial"` - для триалов
-- `"permanent"` - для постоянных улучшений
+- `"subscription"` - for subscriptions
+- `"event"` - for promos
+- `"trial"` - for trials
+- `"permanent"` - for permanent upgrades
 
-### 3. Устанавливайте правильные приоритеты
+### 3. Set priorities correctly
 
-- 100-200: Обычные баффы
-- 200-300: Важные баффы (промо, подписки)
-- 300+: Критичные баффы (постоянные улучшения)
+- 100-200: Regular buffs
+- 200-300: Important buffs (promos, subscriptions)
+- 300+: Critical buffs (permanent upgrades)
 
-### 4. Проверяйте эффективные лимиты после изменений
+### 4. Check effective limits after changes
 
 ```json
 {"tool": "buffs.get_effective_limits", "params": {...}}
 ```
 
-### 5. Мониторьте истечение баффов
+### 5. Monitor buff expiry
 
-Регулярно проверяйте `expires_at` через `buffs.list_active_buffs` и автоматически продлевайте подписки.
+Regularly check `expires_at` via `buffs.list_active_buffs` and auto-renew subscriptions.
 
-### 6. Используйте быстрые методы для простых случаев
+### 6. Use quick methods for simple cases
 
-- `buffs.apply_temporary_effect` - для одноразовых временных эффектов
-- `buffs.apply_persistent_effect` - для постоянных улучшений
-- `buffs.create_buff + buffs.apply_buff` - когда нужен шаблон для повторного использования
+- `buffs.apply_temporary_effect` - for one-off temporary effects
+- `buffs.apply_persistent_effect` - for permanent upgrades
+- `buffs.create_buff + buffs.apply_buff` - when you need a reusable template
 
-### 7. Обрабатывайте ошибки gracefully
+### 7. Handle errors gracefully
 
-- Проверяйте `buff_not_found` - используйте `buffs.list_active_buffs` для поиска
-- Проверяйте `insufficient_permissions` - для ACTIVE баффов требуются admin права
-- Проверяйте `revert_failed` - ресурсы не могут быть откачены
+- Check `buff_not_found` - use `buffs.list_active_buffs` to find
+- Check `insufficient_permissions` - admin rights required for ACTIVE buffs
+- Check `revert_failed` - resources cannot be reverted
 
 ---
 
-## Интеграция с другими инструментами
+## Integration with other tools
 
-### Интеграция с планировщиком
+### Scheduler integration
 
-Автоматическое продление подписок:
+Auto-renew subscriptions:
 
 ```json
 {
@@ -604,9 +605,9 @@
 }
 ```
 
-### Интеграция с Logic Engine
+### Logic Engine integration
 
-Автоматическое применение баффов при событиях:
+Auto-apply buffs on events:
 
 ```json
 {
@@ -634,39 +635,39 @@
 
 ---
 
-## Частые ошибки и решения
+## Common errors and solutions
 
-### Ошибка: "Revert failed: insufficient resources"
+### Error: "Revert failed: insufficient resources"
 
-**Причина:** Бафф добавил ресурсы, которые были потрачены, и откат невозможен.
+**Cause:** Buff added resources that were spent; revert is not possible.
 
-**Решение:** 
-- Проверьте текущее состояние через `buffs.get_buff`
-- Используйте `buffs.cancel_buff` с admin правами для принудительной отмены
-- Или дождитесь истечения баффа (автоматический revert)
+**Solution:**
+- Check current state via `buffs.get_buff`
+- Use `buffs.cancel_buff` with admin rights for forced cancellation
+- Or wait for buff expiry (automatic revert)
 
-### Ошибка: "Buff does not support extension"
+### Error: "Buff does not support extension"
 
-**Причина:** `config.extends_on_reapply` = false.
+**Cause:** `config.extends_on_reapply` = false.
 
-**Решение:** Создайте новый бафф вместо продления существующего.
+**Solution:** Create a new buff instead of extending the existing one.
 
-### Ошибка: "Insufficient permissions to cancel active buff"
+### Error: "Insufficient permissions to cancel active buff"
 
-**Причина:** Попытка отменить ACTIVE бафф без admin/owner прав.
+**Cause:** Attempt to cancel ACTIVE buff without admin/owner rights.
 
-**Решение:** 
-- Для PENDING баффов - обычные права достаточно
-- Для ACTIVE баффов - требуются admin/owner права
-- Используйте `buffs.revert_buff` отдельно, если у вас нет прав на cancel
+**Solution:**
+- For PENDING buffs - normal rights are enough
+- For ACTIVE buffs - admin/owner rights required
+- Use `buffs.revert_buff` separately if you don't have cancel rights
 
 ---
 
-## Продвинутые техники
+## Advanced techniques
 
-### Техника 1: Накопительные эффекты
+### Technique 1: Cumulative effects
 
-Применение нескольких баффов для суммирования эффектов:
+Applying multiple buffs to sum effects:
 
 ```json
 [
@@ -676,23 +677,23 @@
 ]
 ```
 
-Итоговый лимит будет суммой всех баффов.
+Total limit will be the sum of all buffs.
 
-### Техника 2: Условное применение
+### Technique 2: Conditional apply
 
-Проверка существующих баффов перед применением:
+Check existing buffs before applying:
 
 ```json
 [
   {"tool": "buffs.list_active_buffs", "params": {"category": "subscription"}},
-  {"tool": "buffs.create_buff", "params": {...}},  // Только если нет активной подписки
+  {"tool": "buffs.create_buff", "params": {...}},  // Only if no active subscription
   {"tool": "buffs.apply_buff", "params": {...}}
 ]
 ```
 
-### Техника 3: Групповое управление
+### Technique 3: Group management
 
-Применение баффов к нескольким пользователям:
+Applying buffs to multiple users:
 
 ```json
 [
@@ -703,5 +704,5 @@
 
 ---
 
-**Последнее обновление:** 2025-01-20
-**Версия:** 1.0.0
+**Last updated:** 2025-01-20
+**Version:** 1.0.0

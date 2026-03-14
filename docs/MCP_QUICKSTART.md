@@ -13,7 +13,7 @@
 MCP is available in the cloud at **[agentstack.tech](https://agentstack.tech)** — no local server setup required.
 
 1. **Get an API key:** Sign up at [agentstack.tech](https://agentstack.tech) and create a project in the dashboard, or create an anonymous project with a single request (see below).
-2. **Configure the plugin** (Cursor, Claude, VS Code, or GPT): Set MCP URL to `https://agentstack.tech/mcp` and your API key. Done — 60+ tools are available in chat.
+2. **Configure the plugin** (Cursor, Claude, VS Code, or GPT): Set MCP URL to `https://agentstack.tech/mcp` and your API key. 60+ actions are available in chat.
 
 **Check availability:**
 ```bash
@@ -54,10 +54,11 @@ Create `cursor-mcp-config.json` in your home directory or in Cursor settings:
 {
   "mcpServers": {
     "agentstack": {
-      "type": "http",
-      "baseUrl": "https://agentstack.tech/mcp",
+      "type": "streamable-http",
+      "url": "https://agentstack.tech/mcp",
       "headers": {
-        "X-API-Key": "your-api-key-here"
+        "Content-Type": "application/json",
+        "X-API-Key": ""
       },
       "tools": {
         "enabled": true,
@@ -67,6 +68,8 @@ Create `cursor-mcp-config.json` in your home directory or in Cursor settings:
   }
 }
 ```
+
+Put your API key in `X-API-Key` (see [Getting an API key](#getting-an-api-key) to obtain one).
 
 #### Step 3: Restart Cursor
 
@@ -79,9 +82,9 @@ After adding the configuration, restart Cursor for changes to take effect.
 3. Click **Add Server**
 4. Fill in the form:
    - **Name**: `agentstack`
-   - **Type**: `HTTP`
-   - **Base URL**: `https://agentstack.tech/mcp`
-   - **API Key**: your API key (if required)
+   - **Type**: `Streamable HTTP`
+   - **URL**: `https://agentstack.tech/mcp`
+   - **Headers**: `Content-Type: application/json`, `X-API-Key`: your API key (if required)
 5. Save settings
 
 ### Method 3: Using from Chat (no config)
@@ -153,8 +156,8 @@ curl https://agentstack.tech/mcp/tools
    - Look for MCP connection errors
 
 3. **Check configuration:**
-   - Ensure `baseUrl` = `https://agentstack.tech/mcp`
-   - Ensure the API key is correct (no extra spaces)
+   - Ensure `url` = `https://agentstack.tech/mcp` and `type` = `streamable-http`
+   - Ensure the API key in `X-API-Key` is correct (no extra spaces)
 
 ### Example commands for Cursor
 
@@ -306,7 +309,7 @@ Show the last 20 activity events for project 1025
 **Solution:**
 - Check that the server is running on port 8000
 - Check firewall settings
-- Ensure `baseUrl` in config is correct
+- Ensure `url` in config is correct (`https://agentstack.tech/mcp`)
 
 #### Issue: "403 Forbidden" when adding a user
 

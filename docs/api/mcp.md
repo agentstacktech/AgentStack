@@ -1,44 +1,97 @@
 # MCP Documentation
 
-## 🤖 Model Context Protocol для AI агентов
+## 🤖 Model Context Protocol for AI agents
 
-AgentStack предоставляет полнофункциональный MCP (Model Context Protocol) сервер для интеграции с AI агентами. MCP позволяет AI агентам безопасно взаимодействовать с платформой через стандартизированный протокол.
+AgentStack provides a full-featured MCP (Model Context Protocol) server for integration with AI agents. MCP lets AI agents interact with the platform securely via a standardized protocol.
 
-## 🔧 Конфигурация
+## 🔧 Configuration
 
-MCP доступен в облачной экосистеме **[agentstack.tech](https://agentstack.tech)**. Локальный запуск сервера не требуется.
+MCP is available in the cloud at **[agentstack.tech](https://agentstack.tech)**. No local server setup required.
 
-### Базовый URL
-```
+### Base URL
+
+```text
 https://agentstack.tech/mcp
 ```
 
-### Аутентификация
+### Authentication
 ```bash
-# API Key в заголовке
+# API Key in header
 curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 ```
 
-### Публичные эндпоинты (без X-API-Key)
+### Public endpoints (no X-API-Key)
 
-Следующие эндпоинты **допускают вызов без заголовка X-API-Key** и предназначены для онбординга и получения первого ключа:
+The following endpoints **can be called without the X-API-Key header** and are for onboarding and getting a first key:
 
-| Метод | Путь | Описание |
-|-------|------|----------|
-| GET | `/mcp/tools` | Список всех MCP tools (описания и схемы). Используется сканерами и клиентами до аутентификации. |
-| POST | `/mcp/tools` | JSON-RPC с `method: "tools/call"` и `params.name: "projects.create_project_anonymous"` — создание анонимного проекта без ключа. Возвращает `user_api_key`, `project_id` и др. |
-| POST | `/mcp/tools/projects.create_project_anonymous` | (Standalone MCP) Прямой вызов инструмента; тело `{"params": {"name": "..."}}`. Возвращает `api_key` / `user_api_key`, `project_id`. |
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/mcp/tools` | List all MCP tools (descriptions and schemas). Used by scanners and clients before auth. |
+| POST | `/mcp/tools` | JSON-RPC with `method: "tools/call"` and `params.name: "projects.create_project_anonymous"` — create anonymous project without a key. Returns `user_api_key`, `project_id`, etc. |
+| POST | `/mcp/tools/projects.create_project_anonymous` | (Standalone MCP) Direct tool call; body `{"params": {"name": "..."}}`. Returns `api_key` / `user_api_key`, `project_id`. |
 
-После получения ключа из `projects.create_project_anonymous` все остальные запросы должны отправляться с заголовком `X-API-Key: <user_api_key>`.
+After getting a key from `projects.create_project_anonymous`, all other requests must be sent with header `X-API-Key: <user_api_key>`.
 
-## 🛠️ Доступные инструменты
+---
 
-### 💳 Платежные инструменты
+## 🧩 Execute (agentstack.execute)
+
+MCP exposes one tool `agentstack.execute` that accepts **batched steps**. Base URL: `https://agentstack.tech/mcp`.
+
+```http
+POST https://agentstack.tech/mcp
+X-API-Key: your_mcp_api_key
+Content-Type: application/json
+
+{
+  "steps": [
+    {
+      "id": "p1",
+      "action": "projects.create_project_anonymous",
+      "params": { "name": "My project from MCP" }
+    },
+    {
+      "id": "trial",
+      "action": "buffs.apply_temporary_effect",
+      "if": {
+        "equals": [
+          { "from": "p1.result.project_id" },
+          { "from": "p1.result.project_id" }
+        ]
+      },
+      "params": {
+        "project_id": { "from": "p1.result.project_id" },
+        "user_id": { "from": "context.user_id" },
+        "effect": "trial_7_days"
+      }
+    }
+  ],
+  "options": { "stopOnError": true }
+}
+```
+
+- `action` is the name of an MCP action, e.g. `projects.get_project`, `buffs.apply_temporary_effect`, `payments.create_payment` (full list via `GET /mcp/actions`).
+- `params` is the parameter object for that tool.
+- References to previous steps and context use `{ "from": "stepId.result.field" }` or `{ "from": "context.project_id" }`.
+- Conditional execution uses the `if` field with simple JSON conditions (`equals`, `greater_than`, `and`, `or`, `exists`, etc.).
+
+**Helper endpoints:**
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/mcp/actions` | List all available `action` values by domain (projects, buffs, auth, payments, logic, assets, scheduler, analytics, api_keys, rules, webhooks, notifications, wallets). |
+| GET | `/mcp/discovery` | Discovery: protocol info and the single tool schema for `agentstack.execute`. |
+
+The VS Code AgentStack plugin uses base URL `https://agentstack.tech/mcp` for Chat MCP and sidebar.
+
+## 🛠️ Available tools
+
+### 💳 Payment tools
 
 #### `create_payment`
-Создание нового платежа
+Create a new payment
 
-**Параметры**:
+**Parameters**:
 ```json
 {
   "merchant_id": 123,
@@ -50,7 +103,7 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-**Ответ**:
+**Response**:
 ```json
 {
   "payment_id": "pay_123456",
@@ -62,16 +115,16 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 ```
 
 #### `get_payment_status`
-Получение статуса платежа
+Get payment status
 
-**Параметры**:
+**Parameters**:
 ```json
 {
   "payment_id": "pay_123456"
 }
 ```
 
-**Ответ**:
+**Response**:
 ```json
 {
   "payment_id": "pay_123456",
@@ -84,9 +137,9 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 ```
 
 #### `pay_card`
-Оплата банковской картой
+Pay with card
 
-**Параметры**:
+**Parameters**:
 ```json
 {
   "merchant_id": 123,
@@ -100,9 +153,9 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 ```
 
 #### `pay_usdt`
-Оплата в USDT
+Pay with USDT
 
-**Параметры**:
+**Parameters**:
 ```json
 {
   "merchant_id": 123,
@@ -113,12 +166,12 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-### 🔐 Аутентификация
+### 🔐 Authentication
 
 #### `quick_auth`
-Быстрая аутентификация пользователя
+Quick user authentication
 
-**Параметры**:
+**Parameters**:
 ```json
 {
   "user_id": 123,
@@ -127,7 +180,7 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-**Ответ**:
+**Response**:
 ```json
 {
   "access_token": "jwt_token",
@@ -136,12 +189,12 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-### 📊 Аналитика
+### 📊 Analytics
 
 #### `get_analytics`
-Получение аналитических данных
+Get analytics data
 
-**Параметры**:
+**Parameters**:
 ```json
 {
   "project_id": 123,
@@ -150,7 +203,7 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-**Ответ**:
+**Response**:
 ```json
 {
   "period": "week",
@@ -166,12 +219,12 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-### 🏗️ Проекты
+### 🏗️ Projects
 
 #### `create_project`
-Создание нового проекта (требует авторизацию)
+Create a new project (requires auth)
 
-**Параметры**:
+**Parameters**:
 ```json
 {
   "name": "My AI Project",
@@ -183,7 +236,7 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-**Ответ**:
+**Response**:
 ```json
 {
   "project_id": 789,
@@ -194,9 +247,9 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 ```
 
 #### `create_project_anonymous`
-**⭐ НОВОЕ:** Создание проекта без авторизации (для AI агентов)
+**⭐ NEW:** Create a project without auth (for AI agents)
 
-**Параметры**:
+**Parameters**:
 ```json
 {
   "name": "My AI Project",
@@ -204,7 +257,7 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-**Ответ**:
+**Response**:
 ```json
 {
   "project_id": 1025,
@@ -223,25 +276,25 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-**Особенности:**
-- Автоматически создает анонимного пользователя с ANONYMOUS тарифом
-- Возвращает `user_api_key` (префикс `anon_ask_`), `project_api_key`, `session_token`
-- Пользователь сразу аутентифицирован и готов к использованию
-- **⚠️ Ограничения ANONYMOUS тарифа:**
-  - 1 проект максимум
-  - 1 API ключ
-  - 1,000 вызовов Logic Engine/месяц
-  - 20 MB JSON хранилища
-  - 20 триггеров
-  - Платежи отключены
-- Для конвертации в FREE тариф используйте `auth.convert_anonymous_user`
+**Details:**
+- Automatically creates an anonymous user on ANONYMOUS tier
+- Returns `user_api_key` (prefix `anon_ask_`), `project_api_key`, `session_token`
+- User is immediately authenticated and ready to use
+- **⚠️ ANONYMOUS tier limits:**
+  - 1 project max
+  - 1 API key
+  - 1,000 Logic Engine calls/month
+  - 20 MB JSON storage
+  - 20 triggers
+  - Payments disabled
+- Use `auth.convert_anonymous_user` to convert to FREE tier
 
-### ⏰ Планировщик
+### ⏰ Scheduler
 
 #### `schedule_task`
-Планирование задачи
+Schedule a task
 
-**Параметры**:
+**Parameters**:
 ```json
 {
   "project_id": 123,
@@ -253,7 +306,7 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-**Ответ**:
+**Response**:
 ```json
 {
   "task_id": "task_456",
@@ -266,12 +319,12 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 
 ### 🎁 Buff Management Tools (10 tools)
 
-Система баффов позволяет применять временные или постоянные эффекты к пользователям и проектам. Идеально для триальных периодов, промо-акций, подписок и разовых покупок.
+The buff system lets you apply temporary or persistent effects to users and projects. Ideal for trials, promos, subscriptions, and one-time purchases.
 
 #### `buffs.create_buff`
-Создание шаблона баффа в состоянии PENDING.
+Create a buff template in PENDING state.
 
-**Параметры**:
+**Parameters**:
 ```json
 {
   "entity_id": 1,
@@ -292,7 +345,7 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-**Ответ**:
+**Response**:
 ```json
 {
   "success": true,
@@ -305,9 +358,9 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 ```
 
 #### `buffs.apply_buff`
-Применение баффа к сущности (активация PENDING баффа).
+Apply a buff to an entity (activate a PENDING buff).
 
-**Параметры**:
+**Parameters**:
 ```json
 {
   "buff_id": "uuid-here",
@@ -317,7 +370,7 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-**Ответ**:
+**Response**:
 ```json
 {
   "success": true,
@@ -331,9 +384,9 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 ```
 
 #### `buffs.extend_buff`
-Продление активного баффа.
+Extend an active buff.
 
-**Параметры**:
+**Parameters**:
 ```json
 {
   "buff_id": "uuid-here",
@@ -343,7 +396,7 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-**Ответ**:
+**Response**:
 ```json
 {
   "success": true,
@@ -356,9 +409,9 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 ```
 
 #### `buffs.revert_buff`
-Откат активного баффа с валидацией успешности.
+Revert an active buff with success validation.
 
-**Параметры**:
+**Parameters**:
 ```json
 {
   "buff_id": "uuid-here",
@@ -368,7 +421,7 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-**Ответ**:
+**Response**:
 ```json
 {
   "success": true,
@@ -379,14 +432,14 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-**Ошибки:**
-- `Revert failed: insufficient resources` - Недостаточно ресурсов для отката
-- `Revert failed: cannot restore state` - Невозможно восстановить состояние
+**Errors:**
+- `Revert failed: insufficient resources` — Insufficient resources to revert
+- `Revert failed: cannot restore state` — Cannot restore state
 
 #### `buffs.cancel_buff`
-Принудительная отмена баффа в любом состоянии.
+Force-cancel a buff in any state.
 
-**Параметры**:
+**Parameters**:
 ```json
 {
   "buff_id": "uuid-here",
@@ -395,7 +448,7 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-**Ответ**:
+**Response**:
 ```json
 {
   "success": true,
@@ -408,12 +461,12 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-**Важно:** Для ACTIVE баффов требуется admin/owner права. Сначала выполняется revert, затем удаление.
+**Important:** For ACTIVE buffs admin/owner is required. Revert runs first, then deletion.
 
 #### `buffs.get_buff`
-Получение информации о конкретном баффе.
+Get info for a specific buff.
 
-**Параметры**:
+**Parameters**:
 ```json
 {
   "buff_id": "uuid-here",
@@ -423,7 +476,7 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-**Ответ**:
+**Response**:
 ```json
 {
   "success": true,
@@ -445,9 +498,9 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 ```
 
 #### `buffs.list_active_buffs`
-Список активных баффов для сущности.
+List active buffs for an entity.
 
-**Параметры**:
+**Parameters**:
 ```json
 {
   "entity_id": 123,
@@ -457,7 +510,7 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-**Ответ**:
+**Response**:
 ```json
 {
   "success": true,
@@ -477,9 +530,9 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 ```
 
 #### `buffs.get_effective_limits`
-Получение эффективных лимитов с учетом всех активных баффов.
+Get effective limits taking all active buffs into account.
 
-**Параметры**:
+**Parameters**:
 ```json
 {
   "entity_id": 123,
@@ -488,7 +541,7 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-**Ответ**:
+**Response**:
 ```json
 {
   "success": true,
@@ -504,9 +557,9 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 ```
 
 #### `buffs.apply_temporary_effect`
-Быстрое применение временного эффекта (создает и применяет в одном шаге).
+Quick-apply a temporary effect (create and apply in one step).
 
-**Параметры**:
+**Parameters**:
 ```json
 {
   "entity_id": 123,
@@ -519,7 +572,7 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-**Ответ**:
+**Response**:
 ```json
 {
   "success": true,
@@ -533,9 +586,9 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 ```
 
 #### `buffs.apply_persistent_effect`
-Быстрое применение постоянного эффекта (создает и применяет в одном шаге).
+Quick-apply a persistent effect (create and apply in one step).
 
-**Параметры**:
+**Parameters**:
 ```json
 {
   "entity_id": 123,
@@ -548,7 +601,7 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-**Ответ**:
+**Response**:
 ```json
 {
   "success": true,
@@ -561,9 +614,9 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-### Workflows для баффов
+### Buff workflows
 
-**Workflow 1: Полный цикл триального периода**
+**Workflow 1: Full trial cycle**
 ```json
 [
   {
@@ -594,7 +647,7 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 ]
 ```
 
-**Workflow 2: Продление подписки**
+**Workflow 2: Subscription renewal**
 ```json
 [
   {
@@ -619,12 +672,12 @@ curl -H "X-API-Key: your_mcp_api_key" https://agentstack.tech/mcp/tools
 
 ## 🔍 Discovery API
 
-### Получение списка инструментов
+### Get tool list
 ```bash
 curl -H "X-API-Key: your_api_key" https://agentstack.tech/mcp/tools
 ```
 
-**Ответ**:
+**Response**:
 ```json
 {
   "tools": [
@@ -645,14 +698,14 @@ curl -H "X-API-Key: your_api_key" https://agentstack.tech/mcp/tools
 }
 ```
 
-### Информация об инструменте
+### Tool info
 ```bash
 curl -H "X-API-Key: your_api_key" https://agentstack.tech/mcp/tools/create_payment
 ```
 
 ## 🌊 Streaming API
 
-### Streaming выполнение
+### Streaming execution
 ```bash
 curl -N -H "X-API-Key: your_api_key" \
      -H "Content-Type: application/json" \
@@ -660,7 +713,7 @@ curl -N -H "X-API-Key: your_api_key" \
      https://agentstack.tech/mcp/tools/create_payment/stream
 ```
 
-**Ответ** (Server-Sent Events):
+**Response** (Server-Sent Events):
 ```
 data: {"status": "processing", "message": "Creating payment..."}
 
@@ -669,140 +722,140 @@ data: {"status": "progress", "progress": 50, "message": "Validating payment data
 data: {"status": "completed", "result": {"payment_id": "pay_123", "status": "pending"}}
 ```
 
-## 🤖 Практические примеры - Что может делать AI агент?
+## 🤖 Practical examples — What can an AI agent do?
 
-AI агенты могут использовать MCP инструменты AgentStack для автоматизации различных задач. Вот практические примеры:
+AI agents can use AgentStack MCP tools to automate various tasks. Here are practical examples:
 
-### Автоматизировать обработку платежей
+### Automate payment handling
 
-**Задача:** Настроить биллинг, подписки, обработку транзакций
+**Task:** Set up billing, subscriptions, transaction processing
 
-**Как это работает:**
-- AI агент использует MCP tools для платежей (`create_payment`, `get_payment_status`, `pay_card`, `pay_usdt`)
-- Настройка биллинга и подписок через MCP tools для биллинга
-- Автоматическая обработка транзакций
+**How it works:**
+- AI agent uses MCP payment tools (`create_payment`, `get_payment_status`, `pay_card`, `pay_usdt`)
+- Configure billing and subscriptions via MCP billing tools
+- Automatic transaction processing
 
-**Пример запроса в Cursor/Claude:**
+**Example Cursor/Claude request:**
 ```
-Настрой биллинг для проекта через MCP. Создай подписку на $29/месяц.
-```
-
-### Отправлять отчёты
-
-**Задача:** Генерация и отправка аналитических отчётов
-
-**Как это работает:**
-- AI агент использует MCP tools для аналитики (`get_analytics`)
-- Генерация отчётов через Logic Engine
-- Отправка через webhooks или email через MCP tools для уведомлений
-
-**Пример запроса в Cursor/Claude:**
-```
-Создай отчёт по проекту за последний месяц и отправь на email admin@example.com
+Set up billing for the project via MCP. Create a $29/month subscription.
 ```
 
-### Управлять пользователями
+### Send reports
 
-**Задача:** Создание, обновление, управление правами доступа
+**Task:** Generate and send analytics reports
 
-**Как это работает:**
-- AI агент использует MCP tools для проектов (`create_project`, `get_project`, `update_project`)
-- Управление пользователями проектов через MCP tools
-- Настройка RBAC через MCP tools для RBAC
+**How it works:**
+- AI agent uses MCP analytics tools (`get_analytics`)
+- Report generation via Logic Engine
+- Send via webhooks or email using MCP notification tools
 
-**Пример запроса в Cursor/Claude:**
+**Example Cursor/Claude request:**
 ```
-Добавь пользователя user@example.com в проект с ролью editor через MCP
-```
-
-### Применять баффы и эффекты
-
-**Что такое бафы?** Бафы (Buffs) - это система временных и постоянных эффектов, которые изменяют лимиты, функции и ресурсы пользователей и проектов. 
-
-**Временные эффекты (автоматически истекают и откатываются):**
-- Триальные периоды (7-30 дней) - бесплатные пробные версии функций
-- Промо-акции и события - ограниченные по времени предложения
-- Временные бонусы - дополнительные ресурсы на короткий срок
-
-**Постоянные эффекты (не истекают, требуют ручного управления):**
-- Подписки - ежемесячные/годовые планы с возможностью продления
-- Разовые покупки - одноразовые улучшения (например, увеличение лимитов)
-- Пакеты улучшений - накопительные постоянные бонусы
-
-**Задача:** Управление временными и постоянными эффектами для пользователей и проектов
-
-**Как это работает:**
-- AI агент использует MCP tools для баффов (`buffs.create_buff`, `buffs.apply_buff`, `buffs.extend_buff`)
-- Создание триальных периодов через `buffs.apply_temporary_effect`
-- Применение постоянных улучшений через `buffs.apply_persistent_effect`
-- Управление подписками через продление баффов
-- Интеграция с платежами для продажи подписок и покупок
-- Автоматизация через Logic Engine и Scheduler
-
-**Пример запроса в Cursor/Claude:**
-```
-Создай 7-дневный триал для пользователя с увеличенными лимитами API вызовов
+Create a project report for the last month and send it to admin@example.com
 ```
 
-**Пример запроса:**
+### Manage users
+
+**Task:** Create, update, manage access
+
+**How it works:**
+- AI agent uses MCP project tools (`create_project`, `get_project`, `update_project`)
+- Project user management via MCP tools
+- RBAC setup via MCP RBAC tools
+
+**Example Cursor/Claude request:**
 ```
-Примени промо-бафф "Black Friday" к проекту с 50% скидкой на 30 дней
-```
-
-**Пример комплексного проекта:**
-```
-Создай SaaS платформу с автоматическими триалами для новых пользователей, подписками с авто-продлением и аналитикой использования
-```
-
-**Подробные примеры комплексных проектов:** См. [mcp_complex_projects.md](../examples/mcp_complex_projects.md), [mcp_buffs_workflows.md](../examples/mcp_buffs_workflows.md) и др. в [examples/](../examples/).
-
-### Настраивать мониторинг
-
-**Задача:** Настройка триггеров, webhooks, планировщика задач
-
-**Как это работает:**
-- AI агент использует MCP tools для Logic Engine (`create_logic_rule`, `update_logic_rule`)
-- Настройка webhooks через MCP tools для webhooks
-- Планировщик задач через MCP tools для Scheduler (`schedule_task`)
-
-**Пример запроса в Cursor/Claude:**
-```
-Настрой webhook для события payment_completed через MCP. Отправляй уведомление на https://example.com/webhook
+Add user user@example.com to the project with role editor via MCP
 ```
 
-### Создавать проекты
+### Apply buffs and effects
 
-**Задача:** Автоматическое создание и настройка проектов
+**What are buffs?** Buffs are a system of temporary and persistent effects that change limits, features, and resources for users and projects.
 
-**Как это работает:**
-- AI агент использует MCP tools для проектов (`create_project` или `create_project_anonymous`)
-- Автоматическая настройка проекта через MCP tools
-- Получение API ключей автоматически
+**Temporary effects (expire and revert automatically):**
+- Trial periods (7-30 days) — free trials of features
+- Promos and events — time-limited offers
+- Temporary bonuses — extra resources for a short time
 
-**Пример запроса в Cursor/Claude:**
+**Persistent effects (do not expire, require manual management):**
+- Subscriptions — monthly/yearly plans with renewal
+- One-time purchases — single upgrades (e.g. higher limits)
+- Upgrade packs — cumulative persistent bonuses
+
+**Task:** Manage temporary and persistent effects for users and projects
+
+**How it works:**
+- AI agent uses MCP buff tools (`buffs.create_buff`, `buffs.apply_buff`, `buffs.extend_buff`)
+- Create trials via `buffs.apply_temporary_effect`
+- Apply persistent upgrades via `buffs.apply_persistent_effect`
+- Manage subscriptions by extending buffs
+- Integrate with payments to sell subscriptions and purchases
+- Automate via Logic Engine and Scheduler
+
+**Example Cursor/Claude request:**
 ```
-Создай новый проект "My SaaS" через MCP с настройками для SaaS продукта
+Create a 7-day trial for the user with increased API call limits
 ```
 
-### Получать аналитику
-
-**Задача:** Получение метрик и аналитики через чат
-
-**Как это работает:**
-- AI агент использует MCP tools для аналитики (`get_analytics`)
-- Получение метрик проекта в реальном времени
-- Визуализация данных через MCP tools
-
-**Пример запроса в Cursor/Claude:**
+**Example request:**
 ```
-Покажи статистику проекта за последний месяц: количество пользователей, платежи, активность
+Apply "Black Friday" promo buff to the project with 50% discount for 30 days
 ```
 
-## 🔗 Интеграция с AI агентами
+**Example complex project:**
+```
+Create a SaaS platform with automatic trials for new users, auto-renew subscriptions, and usage analytics
+```
+
+**Detailed complex project examples:** See [mcp_complex_projects.md](../examples/mcp_complex_projects.md), [mcp_buffs_workflows.md](../examples/mcp_buffs_workflows.md), etc. in [examples/](../examples/).
+
+### Set up monitoring
+
+**Task:** Configure triggers, webhooks, task scheduler
+
+**How it works:**
+- AI agent uses MCP Logic Engine tools (`create_logic_rule`, `update_logic_rule`)
+- Configure webhooks via MCP webhook tools
+- Task scheduler via MCP Scheduler tools (`schedule_task`)
+
+**Example Cursor/Claude request:**
+```
+Set up a webhook for payment_completed via MCP. Send notifications to https://example.com/webhook
+```
+
+### Create projects
+
+**Task:** Automatically create and configure projects
+
+**How it works:**
+- AI agent uses MCP project tools (`create_project` or `create_project_anonymous`)
+- Automatic project setup via MCP tools
+- Get API keys automatically
+
+**Example Cursor/Claude request:**
+```
+Create a new project "My SaaS" via MCP with settings for a SaaS product
+```
+
+### Get analytics
+
+**Task:** Get metrics and analytics via chat
+
+**How it works:**
+- AI agent uses MCP analytics tools (`get_analytics`)
+- Real-time project metrics
+- Data visualization via MCP tools
+
+**Example Cursor/Claude request:**
+```
+Show project stats for the last month: user count, payments, activity
+```
+
+## 🔗 Integration with AI agents
 
 ### Claude Desktop
 
-Добавьте в конфигурацию Claude Desktop:
+Add to your Claude Desktop config:
 
 ```json
 {
@@ -845,13 +898,13 @@ class AgentStackMCP:
             ) as response:
                 return await response.json()
 
-# Использование
+# Usage
 mcp = AgentStackMCP("your_api_key")
 
-# Получение списка инструментов
+# Get tool list
 tools = await mcp.list_tools()
 
-# Создание платежа
+# Create payment
 payment = await mcp.execute_tool("create_payment", {
     "merchant_id": 123,
     "amount_minor": 10000,
@@ -889,13 +942,13 @@ class AgentStackMCP {
   }
 }
 
-// Использование
+// Usage
 const mcp = new AgentStackMCP('your_api_key');
 
-// Получение списка инструментов
+// Get tool list
 const tools = await mcp.listTools();
 
-// Создание платежа
+// Create payment
 const payment = await mcp.executeTool('create_payment', {
   merchant_id: 123,
   amount_minor: 10000,
@@ -903,33 +956,33 @@ const payment = await mcp.executeTool('create_payment', {
 });
 ```
 
-## 🔒 Безопасность
+## 🔒 Security
 
 ### API Key Management
-- API ключи имеют ограниченные права доступа
-- Поддержка scopes для контроля доступа к инструментам
-- Rate limiting для предотвращения злоупотреблений
-- Audit logging всех операций
+- API keys have limited access
+- Scopes for controlling access to tools
+- Rate limiting to prevent abuse
+- Audit logging of all operations
 
-### Валидация параметров
-- Все параметры валидируются по схеме
-- Sanitization входных данных
-- Защита от injection атак
+### Parameter validation
+- All parameters validated against schema
+- Input sanitization
+- Protection against injection attacks
 
-### Мониторинг
-- Логирование всех MCP операций
-- Метрики использования инструментов
-- Алерты при подозрительной активности
+### Monitoring
+- Logging of all MCP operations
+- Tool usage metrics
+- Alerts on suspicious activity
 
-## 📊 Мониторинг и метрики
+## 📊 Monitoring and metrics
 
-### Метрики MCP
-- Количество вызовов инструментов
-- Время выполнения операций
-- Частота ошибок
-- Использование по API ключам
+### MCP metrics
+- Tool call count
+- Operation duration
+- Error rate
+- Usage by API key
 
-### Логирование
+### Logging
 ```json
 {
   "timestamp": "2024-01-15T10:00:00Z",
@@ -942,21 +995,21 @@ const payment = await mcp.executeTool('create_payment', {
 }
 ```
 
-## 🧪 Тестирование
+## 🧪 Testing
 
-### Тестовые API ключи
+### Test API keys
 ```bash
-# Тестовый ключ для разработки
+# Test key for development
 MCP_TEST_API_KEY="test_key_123"
 
-# Тестовые данные
+# Test data
 TEST_MERCHANT_ID=1
 TEST_PROJECT_ID=1
 ```
 
-### Примеры тестов
+### Test examples
 ```bash
-# Тест создания платежа
+# Test payment creation
 curl -X POST https://agentstack.tech/mcp/tools/create_payment \
   -H "X-API-Key: test_key_123" \
   -H "Content-Type: application/json" \
@@ -967,7 +1020,7 @@ curl -X POST https://agentstack.tech/mcp/tools/create_payment \
     "description": "Test payment"
   }'
 
-# Тест получения статуса
+# Test get status
 curl -H "X-API-Key: test_key_123" \
      https://agentstack.tech/mcp/tools/get_payment_status \
      -d '{"payment_id": "pay_test_123"}'

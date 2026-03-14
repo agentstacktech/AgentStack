@@ -11,7 +11,7 @@ The DNA API exposes a key-value interface for built apps: keys of the form `proj
 
 ## Endpoints
 
-Базовый путь DNA API: **`/api/dna`** (версий в путях нет).
+DNA API base path: **`/api/dna`** (no version in paths).
 
 | Method | Full path   | Description |
 |--------|-------------|-------------|

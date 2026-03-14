@@ -1,22 +1,22 @@
-# MCP - Примеры комплексных проектов
+# MCP - Complex project examples
 
-Демонстрация синергии между различными системами AgentStack через MCP инструменты. Эти примеры показывают, как комбинировать Buff System, Projects, Payments, Scheduler, Analytics и другие модули для создания полноценных проектов.
+Demonstration of synergy between AgentStack systems via MCP tools. These examples show how to combine Buff System, Projects, Payments, Scheduler, Analytics and other modules to build full-featured projects.
 
-## Содержание
+## Contents
 
-1. [SaaS платформа с подписками](#1-saas-платформа-с-подписками)
-2. [Игра с прогрессом и монетизацией](#2-игра-с-прогрессом-и-монетизацией)
-3. [Маркетплейс с промо-кампаниями](#3-маркетплейс-с-промо-кампаниями)
-4. [Образовательная платформа с триалами](#4-образовательная-платформа-с-триалами)
-5. [Enterprise система с аналитикой](#5-enterprise-система-с-аналитикой)
+1. [SaaS platform with subscriptions](#1-saas-platform-with-subscriptions)
+2. [Game with progress and monetization](#2-game-with-progress-and-monetization)
+3. [Marketplace with promo campaigns](#3-marketplace-with-promo-campaigns)
+4. [Education platform with trials](#4-education-platform-with-trials)
+5. [Enterprise system with analytics](#5-enterprise-system-with-analytics)
 
 ---
 
-## 1. SaaS платформа с подписками
+## 1. SaaS platform with subscriptions
 
-**Цель:** Создать полноценную SaaS платформу с автоматическими триалами, подписками, платежами и аналитикой.
+**Goal:** Build a full SaaS platform with automatic trials, subscriptions, payments and analytics.
 
-### Этап 1: Создание проекта и настройка
+### Stage 1: Project creation and setup
 
 ```json
 [
@@ -24,7 +24,7 @@
     "tool": "projects.create_project_anonymous",
     "params": {
       "name": "MySaaS Platform",
-      "description": "SaaS платформа с подписками"
+      "description": "SaaS platform with subscriptions"
     }
   },
   {
@@ -37,9 +37,9 @@
 ]
 ```
 
-**Результат:** Проект создан, API ключ получен.
+**Result:** Project created, API key obtained.
 
-### Этап 2: Настройка триального периода для новых пользователей
+### Stage 2: Trial period for new users
 
 ```json
 [
@@ -80,9 +80,9 @@
 ]
 ```
 
-**Результат:** Каждый новый пользователь автоматически получает 7-дневный триал.
+**Result:** Every new user automatically gets a 7-day trial.
 
-### Этап 3: Создание подписок и интеграция с платежами
+### Stage 3: Subscriptions and payment integration
 
 ```json
 [
@@ -131,9 +131,9 @@
 ]
 ```
 
-**Результат:** Пользователь оплатил подписку и получил премиум функции.
+**Result:** User paid for subscription and received premium features.
 
-### Этап 4: Автоматическое продление подписок
+### Stage 4: Automatic subscription renewal
 
 ```json
 [
@@ -192,9 +192,9 @@
 ]
 ```
 
-**Результат:** Подписки автоматически продлеваются каждый месяц.
+**Result:** Subscriptions renew automatically every month.
 
-### Этап 5: Аналитика использования
+### Stage 5: Usage analytics
 
 ```json
 [
@@ -217,15 +217,15 @@
 ]
 ```
 
-**Результат:** Полная аналитика использования и подписок.
+**Result:** Full usage and subscription analytics.
 
 ---
 
-## 2. Игра с прогрессом и монетизацией
+## 2. Game with progress and monetization
 
-**Цель:** Создать игру с системой прогресса, внутриигровыми покупками и сезонными событиями.
+**Goal:** Build a game with progress system, in-app purchases and seasonal events.
 
-### Этап 1: Создание проекта игры
+### Stage 1: Game project creation
 
 ```json
 [
@@ -233,13 +233,13 @@
     "tool": "projects.create_project_anonymous",
     "params": {
       "name": "MyGame",
-      "description": "Мобильная игра с прогрессом"
+      "description": "Mobile game with progress"
     }
   }
 ]
 ```
 
-### Этап 2: Настройка стартового пакета для новых игроков
+### Stage 2: Starter pack for new players
 
 ```json
 [
@@ -261,9 +261,9 @@
 ]
 ```
 
-**Результат:** Новый игрок получает стартовый набор.
+**Result:** New player receives the starter pack.
 
-### Этап 3: Сезонное событие (временный бафф)
+### Stage 3: Seasonal event (temporary buff)
 
 ```json
 [
@@ -298,9 +298,9 @@
 ]
 ```
 
-**Результат:** Все игроки получают бонусы от сезонного события.
+**Result:** All players receive bonuses from the seasonal event.
 
-### Этап 4: Покупка внутриигровой валюты
+### Stage 4: In-game currency purchase
 
 ```json
 [
@@ -330,9 +330,9 @@
 ]
 ```
 
-**Результат:** Игрок купил внутриигровую валюту.
+**Result:** Player purchased in-game currency.
 
-### Этап 5: Премиум подписка для игры
+### Stage 5: Game premium subscription
 
 ```json
 [
@@ -370,15 +370,15 @@
 ]
 ```
 
-**Результат:** Премиум подписка с ежедневными наградами.
+**Result:** Premium subscription with daily rewards.
 
 ---
 
-## 3. Маркетплейс с промо-кампаниями
+## 3. Marketplace with promo campaigns
 
-**Цель:** Создать маркетплейс с автоматическими промо-акциями, скидками и аналитикой продаж.
+**Goal:** Build a marketplace with automatic promos, discounts and sales analytics.
 
-### Этап 1: Создание проекта маркетплейса
+### Stage 1: Marketplace project creation
 
 ```json
 [
@@ -386,13 +386,13 @@
     "tool": "projects.create_project_anonymous",
     "params": {
       "name": "MyMarketplace",
-      "description": "Маркетплейс с промо-кампаниями"
+      "description": "Marketplace with promo campaigns"
     }
   }
 ]
 ```
 
-### Этап 2: Черная пятница - промо-кампания для всех продавцов
+### Stage 2: Black Friday - promo for all sellers
 
 ```json
 [
@@ -429,15 +429,15 @@
     "params": {
       "project_id": "<project_id>",
       "type": "broadcast",
-      "message": "Black Friday началась! Скидки до 50%!"
+      "message": "Black Friday has started! Up to 50% off!"
     }
   }
 ]
 ```
 
-**Результат:** Все продавцы получают скидки и сниженные комиссии.
+**Result:** All sellers get discounts and reduced fees.
 
-### Этап 3: Премиум подписка для продавцов
+### Stage 3: Premium subscription for sellers
 
 ```json
 [
@@ -465,9 +465,9 @@
 ]
 ```
 
-**Результат:** Продавец получает премиум функции.
+**Result:** Seller receives premium features.
 
-### Этап 4: Аналитика продаж и промо-эффективности
+### Stage 4: Sales and promo effectiveness analytics
 
 ```json
 [
@@ -494,15 +494,15 @@
 ]
 ```
 
-**Результат:** Полная аналитика эффективности промо-кампаний.
+**Result:** Full promo campaign effectiveness analytics.
 
 ---
 
-## 4. Образовательная платформа с триалами
+## 4. Education platform with trials
 
-**Цель:** Создать образовательную платформу с автоматическими триалами курсов и подписками.
+**Goal:** Build an education platform with automatic course trials and subscriptions.
 
-### Этап 1: Создание проекта
+### Stage 1: Project creation
 
 ```json
 [
@@ -510,13 +510,13 @@
     "tool": "projects.create_project_anonymous",
     "params": {
       "name": "EduPlatform",
-      "description": "Образовательная платформа"
+      "description": "Education platform"
     }
   }
 ]
 ```
 
-### Этап 2: Автоматический триал курса при регистрации
+### Stage 2: Automatic course trial on signup
 
 ```json
 [
@@ -557,9 +557,9 @@
 ]
 ```
 
-**Результат:** Новые пользователи автоматически получают 14-дневный триал.
+**Result:** New users automatically get a 14-day trial.
 
-### Этап 3: Премиум подписка с доступом ко всем курсам
+### Stage 3: Premium subscription with access to all courses
 
 ```json
 [
@@ -587,9 +587,9 @@
 ]
 ```
 
-**Результат:** Студент получает доступ ко всем курсам.
+**Result:** Student gets access to all courses.
 
-### Этап 4: Сезонная акция - скидка на подписку
+### Stage 4: Seasonal promo - subscription discount
 
 ```json
 [
@@ -615,15 +615,15 @@
 ]
 ```
 
-**Результат:** Скидка 40% на подписки в течение месяца.
+**Result:** 40% discount on subscriptions for one month.
 
 ---
 
-## 5. Enterprise система с аналитикой
+## 5. Enterprise system with analytics
 
-**Цель:** Создать enterprise систему с автоматическим управлением лимитами, аналитикой и уведомлениями.
+**Goal:** Build an enterprise system with automatic limit management, analytics and notifications.
 
-### Этап 1: Создание enterprise проекта
+### Stage 1: Enterprise project creation
 
 ```json
 [
@@ -631,13 +631,13 @@
     "tool": "projects.create_project_anonymous",
     "params": {
       "name": "Enterprise System",
-      "description": "Enterprise платформа с аналитикой"
+      "description": "Enterprise platform with analytics"
     }
   }
 ]
 ```
 
-### Этап 2: Автоматическое увеличение лимитов при достижении порога
+### Stage 2: Automatic limit increase when threshold is reached
 
 ```json
 [
@@ -691,7 +691,7 @@
             "params": {
               "project_id": "<project_id>",
               "type": "alert",
-              "message": "Лимиты увеличены автоматически на 7 дней"
+              "message": "Limits increased automatically for 7 days"
             }
           }
         }
@@ -701,9 +701,9 @@
 ]
 ```
 
-**Результат:** Система автоматически увеличивает лимиты при высоком использовании.
+**Result:** System automatically increases limits under high usage.
 
-### Этап 3: Мониторинг и отчеты
+### Stage 3: Monitoring and reports
 
 ```json
 [
@@ -759,28 +759,28 @@
 ]
 ```
 
-**Результат:** Еженедельные отчеты генерируются автоматически.
+**Result:** Weekly reports are generated automatically.
 
 ---
 
-## Ключевые паттерны синергии
+## Key synergy patterns
 
-### Паттерн 1: Buffs + Logic Engine = Автоматизация
-Комбинируйте бафы с Logic Engine для автоматического применения эффектов при событиях.
+### Pattern 1: Buffs + Logic Engine = Automation
+Combine buffs with Logic Engine to apply effects automatically on events.
 
-### Паттерн 2: Buffs + Scheduler = Периодические эффекты
-Используйте планировщик для автоматического продления подписок и сезонных событий.
+### Pattern 2: Buffs + Scheduler = Periodic effects
+Use the scheduler for automatic subscription renewal and seasonal events.
 
-### Паттерн 3: Buffs + Payments = Монетизация
-Интегрируйте платежи с бафами для продажи подписок и разовых покупок.
+### Pattern 3: Buffs + Payments = Monetization
+Integrate payments with buffs for subscriptions and one-time purchases.
 
-### Паттерн 4: Buffs + Analytics = Оптимизация
-Отслеживайте эффективность бафов через аналитику и оптимизируйте предложения.
+### Pattern 4: Buffs + Analytics = Optimization
+Track buff effectiveness via analytics and optimize offerings.
 
-### Паттерн 5: Buffs + Notifications = Уведомления
-Уведомляйте пользователей о новых бафах, истечении триалов и промо-акциях.
+### Pattern 5: Buffs + Notifications = Notifications
+Notify users about new buffs, trial expiry and promo campaigns.
 
 ---
 
-**Последнее обновление:** 2025-01-20  
-**Версия:** 1.0.0
+**Last updated:** 2025-01-20  
+**Version:** 1.0.0

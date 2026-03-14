@@ -9,6 +9,14 @@ Single entry point for MCP (Model Context Protocol) documentation, plugins, ecos
 - **[MCP_SERVER_CAPABILITIES.md](MCP_SERVER_CAPABILITIES.md)** — MCP doc index: quick start ([MCP_QUICKSTART](MCP_QUICKSTART.md)), overview and API ([MCP_OVERVIEW](MCP_OVERVIEW.md)), tools reference ([MCP_TOOLS](MCP_TOOLS.md)), features and examples ([MCP_FEATURES_EXAMPLES](MCP_FEATURES_EXAMPLES.md)). 60+ tools for Cursor, Claude, GPT, VS Code plugins.
 - **[api/mcp.md](api/mcp.md)** — MCP configuration, authentication, public endpoints, examples for AI agents.
 
+### MCP
+
+- **Base URL:** `https://agentstack.tech/mcp`
+- **Entrypoint:** `POST /mcp` — body: `{ "steps": [ { "id": "...", "action": "projects.get_project", "params": {...} } ], "options": { "stopOnError": true } }`
+- **Action list for AI:** `GET /mcp/actions` — all available `action` values by domain (projects, buffs, auth, payments, logic, assets, etc.).
+- **Discovery:** `GET /mcp/discovery` — protocol info and the single tool schema.
+- **Capability map:** [plugins/CONTEXT_FOR_AI_MCP.md](plugins/CONTEXT_FOR_AI_MCP.md) · [MCP_CAPABILITY_MAP.md](MCP_CAPABILITY_MAP.md).
+
 ---
 
 ## Plugins
@@ -34,4 +42,4 @@ Single entry point for MCP (Model Context Protocol) documentation, plugins, ecos
 
 ---
 
-**Quick links for plugins:** [MCP_SERVER_CAPABILITIES](MCP_SERVER_CAPABILITIES.md) · [Plugins index](plugins/README.md) · [CONTEXT_FOR_AI](plugins/CONTEXT_FOR_AI.md).
+**Quick links for plugins:** [MCP_SERVER_CAPABILITIES](MCP_SERVER_CAPABILITIES.md) · [Plugins index](plugins/README.md) · [CONTEXT_FOR_AI](plugins/CONTEXT_FOR_AI.md) · [CONTEXT_FOR_AI MCP](plugins/CONTEXT_FOR_AI_MCP.md).

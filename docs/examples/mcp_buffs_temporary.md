@@ -1,24 +1,24 @@
-# MCP Buffs - Временные эффекты
+# MCP Buffs - Temporary effects
 
-Примеры использования MCP инструментов для применения временных эффектов (триалы, промо-акции, бонусы).
+Examples of using MCP tools to apply temporary effects (trials, promos, bonuses).
 
-## Содержание
+## Contents
 
-1. [Триальные периоды](#триальные-периоды)
-2. [Промо-акции](#промо-акции)
-3. [Временные бонусы](#временные-бонусы)
+1. [Trial periods](#trial-periods)
+2. [Promo campaigns](#promo-campaigns)
+3. [Temporary bonuses](#temporary-bonuses)
 4. [Workflows](#workflows)
-5. [Обработка ошибок](#обработка-ошибок)
+5. [Error handling](#error-handling)
 
 ---
 
-## Триальные периоды
+## Trial periods
 
-### Пример 1: 7-дневный триал для нового пользователя
+### Example 1: 7-day trial for new user
 
-**Сценарий:** Предоставить новому пользователю 7-дневный триал с увеличенными лимитами.
+**Scenario:** Grant a new user a 7-day trial with increased limits.
 
-**Шаг 1: Создание баффа**
+**Step 1: Create buff**
 ```json
 {
   "tool": "buffs.create_buff",
@@ -43,7 +43,7 @@
 }
 ```
 
-**Ответ:**
+**Response:**
 ```json
 {
   "success": true,
@@ -55,7 +55,7 @@
 }
 ```
 
-**Шаг 2: Применение баффа**
+**Step 2: Apply buff**
 ```json
 {
   "tool": "buffs.apply_buff",
@@ -68,7 +68,7 @@
 }
 ```
 
-**Ответ:**
+**Response:**
 ```json
 {
   "success": true,
@@ -81,7 +81,7 @@
 }
 ```
 
-**Шаг 3: Проверка активных баффов**
+**Step 3: List active buffs**
 ```json
 {
   "tool": "buffs.list_active_buffs",
@@ -93,7 +93,7 @@
 }
 ```
 
-**Шаг 4: Проверка эффективных лимитов**
+**Step 4: Get effective limits**
 ```json
 {
   "tool": "buffs.get_effective_limits",
@@ -105,9 +105,9 @@
 }
 ```
 
-### Пример 2: Быстрое применение триала (одним шагом)
+### Example 2: Quick trial apply (single step)
 
-Используйте `buffs.apply_temporary_effect` для быстрого применения:
+Use `buffs.apply_temporary_effect` for a one-step apply:
 
 ```json
 {
@@ -128,13 +128,13 @@
 
 ---
 
-## Промо-акции
+## Promo campaigns
 
-### Пример 1: Черная пятница - промо для проекта
+### Example 1: Black Friday - project promo
 
-**Сценарий:** Применить промо-бафф ко всему проекту на 30 дней.
+**Scenario:** Apply a promo buff to the whole project for 30 days.
 
-**Шаг 1: Создание промо-баффа**
+**Step 1: Create promo buff**
 ```json
 {
   "tool": "buffs.create_buff",
@@ -159,7 +159,7 @@
 }
 ```
 
-**Шаг 2: Применение к проекту**
+**Step 2: Apply to project**
 ```json
 {
   "tool": "buffs.apply_buff",
@@ -171,7 +171,7 @@
 }
 ```
 
-### Пример 2: Сезонная акция
+### Example 2: Seasonal promo
 
 ```json
 {
@@ -192,11 +192,11 @@
 
 ---
 
-## Временные бонусы
+## Temporary bonuses
 
-### Пример 1: Выходные бонусы
+### Example 1: Weekend bonus
 
-**Сценарий:** Дать пользователю бонус на выходные (2 дня).
+**Scenario:** Grant the user a weekend bonus (2 days).
 
 ```json
 {
@@ -215,7 +215,7 @@
 }
 ```
 
-### Пример 2: Событийный бонус
+### Example 2: Event bonus
 
 ```json
 {
@@ -238,7 +238,7 @@
 
 ## Workflows
 
-### Workflow 1: Полный цикл триального периода
+### Workflow 1: Full trial cycle
 
 ```json
 [
@@ -279,7 +279,7 @@
 ]
 ```
 
-### Workflow 2: Продление триала
+### Workflow 2: Trial extension
 
 ```json
 [
@@ -311,7 +311,7 @@
 ]
 ```
 
-### Workflow 3: Применение промо-акции к проекту
+### Workflow 3: Apply promo to project
 
 ```json
 [
@@ -347,13 +347,13 @@
 
 ---
 
-## Обработка ошибок
+## Error handling
 
-### Ошибка: Buff not found
+### Error: Buff not found
 
-**Причина:** Бафф не существует или был удален.
+**Cause:** Buff does not exist or was deleted.
 
-**Решение:**
+**Solution:**
 ```json
 {
   "tool": "buffs.list_active_buffs",
@@ -363,13 +363,13 @@
   }
 }
 ```
-Проверьте список активных баффов, чтобы найти правильный buff_id.
+Check the active buffs list to find the correct buff_id.
 
-### Ошибка: Buff not in PENDING state
+### Error: Buff not in PENDING state
 
-**Причина:** Попытка применить бафф, который уже активен или в другом состоянии.
+**Cause:** Attempting to apply a buff that is already active or in another state.
 
-**Решение:**
+**Solution:**
 ```json
 {
   "tool": "buffs.get_buff",
@@ -380,47 +380,47 @@
   }
 }
 ```
-Проверьте состояние баффа перед применением.
+Check buff state before applying.
 
-### Ошибка: Entity not found
+### Error: Entity not found
 
-**Причина:** Пользователь или проект не существует.
+**Cause:** User or project does not exist.
 
-**Решение:** Убедитесь, что entity_id и entity_kind правильные. Для пользователей убедитесь, что project_id указан.
+**Solution:** Ensure entity_id and entity_kind are correct. For users, ensure project_id is set.
 
 ---
 
 ## Best Practices
 
-1. **Всегда проверяйте состояние баффа** перед операциями:
+1. **Always check buff state** before operations:
    ```json
    {"tool": "buffs.get_buff", "params": {...}}
    ```
 
-2. **Используйте категории** для организации баффов:
-   - "subscription" - для подписок
-   - "event" - для промо-акций
-   - "trial" - для триалов
+2. **Use categories** to organize buffs:
+   - "subscription" - for subscriptions
+   - "event" - for promos
+   - "trial" - for trials
 
-3. **Проверяйте эффективные лимиты** после применения:
+3. **Check effective limits** after applying:
    ```json
    {"tool": "buffs.get_effective_limits", "params": {...}}
    ```
 
-4. **Используйте приоритеты** правильно:
-   - 100-200: Обычные баффы
-   - 200-300: Важные баффы (промо, подписки)
-   - 300+: Критичные баффы (постоянные улучшения)
+4. **Use priorities** correctly:
+   - 100-200: Regular buffs
+   - 200-300: Important buffs (promos, subscriptions)
+   - 300+: Critical buffs (permanent upgrades)
 
-5. **Мониторьте истечение** через `buffs.list_active_buffs`:
-   - Проверяйте `expires_at` для активных баффов
-   - Автоматически продлевайте подписки через `buffs.extend_buff`
+5. **Monitor expiry** via `buffs.list_active_buffs`:
+   - Check `expires_at` for active buffs
+   - Renew subscriptions via `buffs.extend_buff`
 
 ---
 
-## Дополнительные примеры
+## Additional examples
 
-### Пример: Триал с автоматическим продлением
+### Example: Trial with auto-renewal
 
 ```json
 [
@@ -458,9 +458,9 @@
 ]
 ```
 
-### Пример: Групповое применение промо
+### Example: Group promo apply
 
-Для применения промо к нескольким пользователям:
+To apply a promo to multiple users:
 
 ```json
 [
@@ -486,4 +486,4 @@
 ]
 ```
 
-Промо-баффы на проекте автоматически влияют на всех пользователей проекта.
+Project-level promo buffs automatically apply to all project users.
