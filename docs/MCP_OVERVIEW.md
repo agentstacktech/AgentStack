@@ -40,44 +40,23 @@
 
 ## Architecture
 
-### Project structure
+### Logical components
 
-```
-mcp/
-├── main.py              # FastAPI app, middleware, registration
-├── routes.py            # API endpoints for tools
-├── tools.py             # Implementation of all MCP tools
-├── sdk_wrapper.py       # SDK wrapper for project operations
-└── dependencies.py      # Dependencies
-```
+The cloud MCP endpoint is a **thin layer** over the same REST API the dashboard uses. Internally it is organised roughly as:
 
-### Components
-
-1. **FastAPI Application** (`main.py`)
-   - CORS middleware
-   - Metrics middleware
-   - Correlation ID tracking
-   - Health checks
-   - Prometheus metrics
-
-2. **Routes** (`routes.py`)
-   - `GET /mcp/discovery` — discovery (single tool agentstack.execute)
+1. **HTTP application** — serves `/mcp`, middleware (CORS, metrics, correlation IDs), health, Prometheus where enabled.
+2. **Route handlers** — for example:
+   - `GET /mcp/discovery` — discovery (single tool `agentstack.execute`)
    - `GET /mcp/actions` — list all actions by domain
-   - `POST /mcp` — execute batch of steps (agentstack.execute)
+   - `POST /mcp` — execute a batch of steps
    - `POST /mcp/tools` — JSON-RPC tools/call compatibility
    - `POST /mcp/stream` — streaming execution
    - `GET /mcp/jobs/{job_id}` — job status
-   - OAuth, AI prompts, recipes, health, cache/clear under `/mcp`
+   - OAuth, prompts, recipes, health, cache helpers under `/mcp` as documented in [OpenAPI](OPENAPI.md) / [Swagger](https://agentstack.tech/docs)
+3. **Tool registry** — maps each `action` string to the corresponding backend call; validates parameters.
+4. **API client** — performs authenticated HTTP requests to the AgentStack API (no duplicate business logic in the MCP layer).
 
-3. **Tools Registry** (`tools.py`)
-   - All tools registered in `MCP_TOOLS`
-   - Pydantic models for request validation
-   - Error handling and logging
-
-4. **SDK Wrapper** (`sdk_wrapper.py`)
-   - Wrapper over HTTP API for project operations
-   - Uses existing endpoints from `agentstack-core`
-   - Unified interface for all operations
+Exact repository filenames are **not** part of the public contract; they may change between releases.
 
 ---
 

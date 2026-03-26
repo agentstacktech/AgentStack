@@ -4,6 +4,12 @@ Single entry point for MCP (Model Context Protocol) documentation, plugins, ecos
 
 ---
 
+## HTTP API (OpenAPI)
+
+Explore and try **REST** endpoints interactively: **[OPENAPI.md](OPENAPI.md)** — [Swagger UI](https://agentstack.tech/docs) · [ReDoc](https://agentstack.tech/redoc) · [openapi.json](https://agentstack.tech/openapi.json).
+
+---
+
 ## MCP (Model Context Protocol)
 
 - **[MCP_SERVER_CAPABILITIES.md](MCP_SERVER_CAPABILITIES.md)** — MCP doc index: quick start ([MCP_QUICKSTART](MCP_QUICKSTART.md)), overview and API ([MCP_OVERVIEW](MCP_OVERVIEW.md)), tools reference ([MCP_TOOLS](MCP_TOOLS.md)), features and examples ([MCP_FEATURES_EXAMPLES](MCP_FEATURES_EXAMPLES.md)). 60+ tools for Cursor, Claude, GPT, VS Code plugins.
@@ -33,6 +39,13 @@ Single entry point for MCP (Model Context Protocol) documentation, plugins, ecos
 
 ---
 
+## Sandboxes & access control
+
+- **[SANDBOX_AND_ENVIRONMENTS.md](SANDBOX_AND_ENVIRONMENTS.md)** — Developer guide: environments, generations, fork/checkpoint/promote, A/B tests, canary rollout, segments, shadow writes, protected fields, REST `/api/sandbox/*`, React hooks, subscription limits.
+- **[ACCESS_AND_FIELD_POLICY.md](ACCESS_AND_FIELD_POLICY.md)** — **L1** API key `service_caps`, **L2** RBAC, **L3** Field Access Policy (FAP); global template; REST DataAccess summary; MCP `data_access.*` tools.
+
+---
+
 ## Usage examples
 
 - **[examples/mcp_complex_projects.md](examples/mcp_complex_projects.md)** — Complex scenarios: SaaS with subscriptions, game with monetization, marketplace with promos, education platform with trials, enterprise with analytics. Synergy of Buffs, Projects, Payments, Scheduler, Logic Engine.
@@ -42,4 +55,4 @@ Single entry point for MCP (Model Context Protocol) documentation, plugins, ecos
 
 ---
 
-**Quick links for plugins:** [MCP_SERVER_CAPABILITIES](MCP_SERVER_CAPABILITIES.md) · [Plugins index](plugins/README.md) · [CONTEXT_FOR_AI](plugins/CONTEXT_FOR_AI.md) · [CONTEXT_FOR_AI MCP](plugins/CONTEXT_FOR_AI_MCP.md).
+**Quick links:** [OpenAPI](OPENAPI.md) · [MCP_SERVER_CAPABILITIES](MCP_SERVER_CAPABILITIES.md) · [Plugins index](plugins/README.md) · [CONTEXT_FOR_AI](plugins/CONTEXT_FOR_AI.md) · [CONTEXT_FOR_AI MCP](plugins/CONTEXT_FOR_AI_MCP.md) · [Sandbox & environments](SANDBOX_AND_ENVIRONMENTS.md) · [Access & FAP](ACCESS_AND_FIELD_POLICY.md).

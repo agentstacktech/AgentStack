@@ -1,13 +1,13 @@
 # DNA Key-Value API (sdk.db.get / sdk.db.set)
 
 **Version:** 0.1  
-**Related:** 8DNA, PHILOSOPHY_INDEX
+**Related:** 8DNA · [MCP and ecosystem index](../MCP_AND_ECOSYSTEM.md) · [OpenAPI](../OPENAPI.md) (`/api/dna/data` in [Swagger](https://agentstack.tech/docs))
 
 ---
 
 ## Overview
 
-The DNA API exposes a key-value interface for built apps: keys of the form `project.data.<path>` or `user.data.<path>` map to JSON stored in 8DNA tables `data_projects_project` and `data_projects_user` respectively. This corresponds to SDK usage: `sdk.db.get(key)` and `sdk.db.set(key, value)`.
+The DNA API exposes a key-value interface for built apps: keys of the form `project.data.<path>` or `user.data.<path>` map to JSON in the platform’s **project** and **per-user (per-project)** stores. This corresponds to SDK usage: `sdk.db.get(key)` and `sdk.db.set(key, value)`.
 
 ## Endpoints
 
@@ -30,10 +30,9 @@ DNA API base path: **`/api/dna`** (no version in paths).
 
 ## Source of truth
 
-- Project key-value: `data_projects_project.data` (one row per project).
-- User key-value: `data_projects_user.data` (per project_id + user_id). Missing row is created on first set for user.data.
+- **Project keys** — one JSON document per project; `project.data.*` paths read/write inside it.
+- **User keys** — one JSON document per **user + project** pair; `user.data.*` paths read/write inside it. A missing document is created on first set for `user.data`.
 
-## Philosophy
+## Design notes
 
-- **8DNA:** Single API for all project/user data; one source of truth per entity.
-- **Decomposition:** Key-value module is separate from other DNA endpoints; permissions checked at API boundary.
+- **8DNA:** single key-value surface for app data; permissions are enforced at the API boundary.

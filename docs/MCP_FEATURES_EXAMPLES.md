@@ -56,7 +56,7 @@
 - ✅ Validates `auth_key` from anonymous creation
 - ✅ Transfer ownership:
   - Updates `project.user_id`
-  - Creates records in `data_projects_user`
+  - Creates per-user project records as needed
   - Removes old anonymous key
   - Creates new key for the owner
 
@@ -77,8 +77,8 @@
 **Project user management** (`add_user`, `remove_user`) requires a **Professional subscription**.
 
 **Implementation:**
-- Check at API endpoint level (`agentstack-core/endpoints/projects_endpoints.py`)
-- Uses `SubscriptionService.get_user_subscription()`
+- Enforced on the server when handling membership APIs
+- Uses subscription / plan checks for the account
 - Checks `plan_type` in ['pro', 'professional', 'enterprise']
 - Returns 403 Forbidden when subscription is missing
 - Error is passed through MCP unchanged
@@ -91,14 +91,13 @@
 }
 ```
 
-### 4. SDK Wrapper
+### 4. SDK / client layer
 
-**Architecture:**
-- `ProjectsSDKWrapper` — wrapper over HTTP API
-- Uses `shared.clients.http.request` for requests
+The MCP server calls the **HTTP API** (same base URL as the product). Internal wrapper class names are not part of the public contract — use [Swagger UI](https://agentstack.tech/docs) or [openapi.json](https://agentstack.tech/openapi.json) ([OPENAPI.md](OPENAPI.md)) for stable request/response shapes.
+
 - Unified interface for all operations
 - Automatic header building (Authorization, X-Project-ID)
-- Uses existing endpoints (no duplicated logic)
+- Uses existing HTTP routes (no duplicated business logic)
 
 **Details:**
 - API keys managed via `/api/apikeys/keys` (no duplicates)

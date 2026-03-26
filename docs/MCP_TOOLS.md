@@ -266,7 +266,7 @@ Update a user's role in the project.
 **Process:**
 1. Validates `auth_key` against project API keys
 2. Updates `project.user_id` to the new owner
-3. Creates records in `data_projects_user`
+3. Ensures per-user project records exist for the new owner
 4. Removes old anonymous key
 5. Creates new API key for the owner
 

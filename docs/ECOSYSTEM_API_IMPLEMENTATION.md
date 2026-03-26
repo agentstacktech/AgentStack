@@ -11,7 +11,7 @@ In the AgentStack ecosystem **there are no versions in API paths** (paths like `
 | Task | Endpoint or tool | Description |
 |------|------------------|-------------|
 | Project data (read/write by path) | `GET /api/projects/{project_id}/data`<br>`PATCH /api/projects/{project_id}/data` | Optional `?path=...` for GET; body `{ "path": "...", "value": ... }` for PATCH. Authentication and project access required. |
-| Current user data in project | `GET /api/projects/{project_id}/users/me/data`<br>`PATCH /api/projects/{project_id}/users/me/data` | Same path/value format. Data is stored in `data_projects_user` for the project_id + user_id pair. |
+| Current user data in project | `GET /api/projects/{project_id}/users/me/data`<br>`PATCH /api/projects/{project_id}/users/me/data` | Same path/value format. **Scoped to the signed-in user** for that `project_id`. |
 | Key-value (project.data.* / user.data.*) | `GET /api/dna/data`<br>`POST /api/dna/data` | Query: `key` (required), `project_id` (for `project.data.*`). Body: `{ "key", "value", "project_id" }`. See [DNA_KEY_VALUE_API.md](architecture/DNA_KEY_VALUE_API.md). |
 | Full project (including data) via MCP | `projects.get_project`, `projects.update_project` | `data` field in request/response. Convenient for agents and plugins. See [MCP_SERVER_CAPABILITIES.md](MCP_SERVER_CAPABILITIES.md). |
 
@@ -104,4 +104,4 @@ Rules and logic (when/then, triggers) are available via the Logic Engine API: pr
 ---
 
 **Version:** 0.2 — guide to actual endpoints, no versioning in paths.  
-**Source of truth for paths:** `agentstack-core` code (projects_endpoints, dna_api_endpoints, core_app).
+**Source of truth for paths:** [OpenAPI](OPENAPI.md) — [Swagger UI](https://agentstack.tech/docs), [ReDoc](https://agentstack.tech/redoc), [openapi.json](https://agentstack.tech/openapi.json) on your deployment (and product release notes when routes change).
