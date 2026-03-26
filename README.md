@@ -4,14 +4,14 @@ This repository contains the official documentation for **AgentStack**: MCP (Mod
 
 **Start here:** [docs/MCP_AND_ECOSYSTEM.md](docs/MCP_AND_ECOSYSTEM.md) — index of MCP, Plugins, Ecosystem, and Examples.
 
-**REST / OpenAPI:** [docs/OPENAPI.md](docs/OPENAPI.md) — [Swagger UI](https://agentstack.tech/docs) · [ReDoc](https://agentstack.tech/redoc) · [openapi.json](https://agentstack.tech/openapi.json).
+**REST / OpenAPI:** [docs/OPENAPI.md](docs/OPENAPI.md) — [Swagger UI](https://agentstack.tech/swagger) · [openapi.json](https://agentstack.tech/openapi.json) · [API overview](https://agentstack.tech/api-docs).
 
 ## Contents
 
 | Section | Description |
 |--------|--------------|
 | [docs/](docs/) | All documentation (MCP, plugins, architecture, examples). |
-| [docs/OPENAPI.md](docs/OPENAPI.md) | OpenAPI: Swagger, ReDoc, JSON schema (cloud + self-hosted). |
+| [docs/OPENAPI.md](docs/OPENAPI.md) | OpenAPI: Swagger (`/swagger`), JSON schema, `/api-docs`, self-hosted. |
 | [docs/MCP_AND_ECOSYSTEM.md](docs/MCP_AND_ECOSYSTEM.md) | Single entry point: MCP tools, Plugins index, Ecosystem API, Examples. |
 | [docs/MCP_SERVER_CAPABILITIES.md](docs/MCP_SERVER_CAPABILITIES.md) | Full list of 60+ MCP tools and parameters. |
 | [docs/SANDBOX_AND_ENVIRONMENTS.md](docs/SANDBOX_AND_ENVIRONMENTS.md) | Sandboxes: fork, A/B, canary, `/api/sandbox` API and examples. |

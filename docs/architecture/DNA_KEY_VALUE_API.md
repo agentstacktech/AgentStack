@@ -1,7 +1,7 @@
 # DNA Key-Value API (sdk.db.get / sdk.db.set)
 
 **Version:** 0.1  
-**Related:** 8DNA · [MCP and ecosystem index](../MCP_AND_ECOSYSTEM.md) · [OpenAPI](../OPENAPI.md) (`/api/dna/data` in [Swagger](https://agentstack.tech/docs))
+**Related:** 8DNA · [MCP and ecosystem index](../MCP_AND_ECOSYSTEM.md) · [OpenAPI](../OPENAPI.md) (`/api/dna/data` in [Swagger](https://agentstack.tech/swagger))
 
 ---
 

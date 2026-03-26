@@ -6,7 +6,7 @@
 
 AgentStack lets you fork project data into **isolated environments** (sandboxes, staging, A/B variants). Each environment has a **generation** number: production is `generation=0`; each fork increments generation. Sandboxes store **diffs** (changed fields only) on top of a **parent** entity; full state is **resolved** by merging the ancestor chain. That keeps forks cheap and makes checkpoints and rollbacks predictable.
 
-**Related:** [OPENAPI.md](OPENAPI.md) (Swagger / ReDoc / schema) · [ACCESS_AND_FIELD_POLICY.md](ACCESS_AND_FIELD_POLICY.md) (API keys, roles, and Field Access Policy) · Subscription limits below.
+**Related:** [OPENAPI.md](OPENAPI.md) (Swagger, schema, `/api-docs`) · [ACCESS_AND_FIELD_POLICY.md](ACCESS_AND_FIELD_POLICY.md) (API keys, roles, and Field Access Policy) · Subscription limits below.
 
 ---
 
@@ -231,7 +231,7 @@ If any check fails, promotion is blocked and the response contains `checks` with
 GET /api/sandbox/diff?uuid_a=<prod_uuid>&uuid_b=<env_uuid>&project_id=42&table=<entity_kind>
 ```
 
-Use the `table` value required by your deployment (see [Swagger UI](https://agentstack.tech/docs) or [OPENAPI.md](OPENAPI.md) — it identifies which root entity type to compare).
+Use the `table` value required by your deployment (see [Swagger UI](https://agentstack.tech/swagger) or [OPENAPI.md](OPENAPI.md) — it identifies which root entity type to compare).
 
 Response:
 
@@ -341,7 +341,7 @@ For any UUID in a lineage, the platform reconstructs **effective JSON** by walki
 
 **Caching:** merge results are cached server-side with a **short TTL**; any write to the chain clears the relevant cache so you do not see stale merged state.
 
-**Integration surface:** use **REST** (`/api/sandbox/*`, tree, diff, promote) and the published API schema ([OPENAPI.md](OPENAPI.md) · [Swagger](https://agentstack.tech/docs)). Server-side SDKs or internal modules are not part of the public contract.
+**Integration surface:** use **REST** (`/api/sandbox/*`, tree, diff, promote) and the published API schema ([OPENAPI.md](OPENAPI.md) · [Swagger](https://agentstack.tech/swagger)). Server-side SDKs or internal modules are not part of the public contract.
 
 ---
 
@@ -349,7 +349,7 @@ For any UUID in a lineage, the platform reconstructs **effective JSON** by walki
 
 A/B tests use **stable bucketing** (hash-based assignment): `hash(user_uuid + ab_seed) % 100`. The same user always gets the same variant across restarts and horizontal scaling.
 
-Use the **REST** routes under `/api/sandbox/ab-test/*` (create test, metrics, variant, result, promote). See [Swagger UI](https://agentstack.tech/docs) (tag **Sandbox**) or [OPENAPI.md](OPENAPI.md) for request/response shapes.
+Use the **REST** routes under `/api/sandbox/ab-test/*` (create test, metrics, variant, result, promote). See [Swagger UI](https://agentstack.tech/swagger) (tag **Sandbox**) or [OPENAPI.md](OPENAPI.md) for request/response shapes.
 
 ---
 
@@ -368,7 +368,7 @@ Canary rollout shifts production traffic gradually via `traffic_weight` (0–100
 ]
 ```
 
-Advance or abort via **`POST /api/sandbox/canary/advance`** and **`POST /api/sandbox/canary/abort`** (see [Swagger](https://agentstack.tech/docs) for bodies).
+Advance or abort via **`POST /api/sandbox/canary/advance`** and **`POST /api/sandbox/canary/abort`** (see [Swagger](https://agentstack.tech/swagger) for bodies).
 
 ---
 
@@ -479,7 +479,7 @@ The plaintext is compared on the server; the response only indicates match or no
 
 ## Dashboard UI (product)
 
-The hosted web app includes a **sandbox** area with: environment switcher, generation tree, diff viewer, A/B dashboard, canary controls, promotion flow, and segment builder. Exact layout and labels may change between releases — use **REST** and [OpenAPI](OPENAPI.md) (e.g. [Swagger](https://agentstack.tech/docs)) as the stable integration surface.
+The hosted web app includes a **sandbox** area with: environment switcher, generation tree, diff viewer, A/B dashboard, canary controls, promotion flow, and segment builder. Exact layout and labels may change between releases — use **REST** and [OpenAPI](OPENAPI.md) (e.g. [Swagger](https://agentstack.tech/swagger)) as the stable integration surface.
 
 ---
 
@@ -487,7 +487,7 @@ The hosted web app includes a **sandbox** area with: environment switcher, gener
 
 ### JavaScript / TypeScript: call the REST API
 
-Use `fetch` or your HTTP client with `Authorization: Bearer <token>` and the endpoints in this guide. Example: list environments, then fork — see [Swagger UI](https://agentstack.tech/docs) or [openapi.json](https://agentstack.tech/openapi.json) for full schemas ([OPENAPI.md](OPENAPI.md)).
+Use `fetch` or your HTTP client with `Authorization: Bearer <token>` and the endpoints in this guide. Example: list environments, then fork — see [Swagger UI](https://agentstack.tech/swagger) or [openapi.json](https://agentstack.tech/openapi.json) for full schemas ([OPENAPI.md](OPENAPI.md)).
 
 If you use the **official web dashboard**, it may expose client hooks or helpers; those are **not** part of the public API contract.
 

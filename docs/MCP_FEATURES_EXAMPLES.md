@@ -93,7 +93,7 @@
 
 ### 4. SDK / client layer
 
-The MCP server calls the **HTTP API** (same base URL as the product). Internal wrapper class names are not part of the public contract — use [Swagger UI](https://agentstack.tech/docs) or [openapi.json](https://agentstack.tech/openapi.json) ([OPENAPI.md](OPENAPI.md)) for stable request/response shapes.
+The MCP server calls the **HTTP API** (same base URL as the product). Internal wrapper class names are not part of the public contract — use [Swagger UI](https://agentstack.tech/swagger) or [openapi.json](https://agentstack.tech/openapi.json) ([OPENAPI.md](OPENAPI.md)) for stable request/response shapes.
 
 - Unified interface for all operations
 - Automatic header building (Authorization, X-Project-ID)

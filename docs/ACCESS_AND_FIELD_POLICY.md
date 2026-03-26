@@ -2,7 +2,7 @@
 
 This document describes how **authentication** becomes **authorization** in AgentStack: project API keys, roles (RBAC), and **Field Access Policy** (FAP) for per-field visibility in API responses.
 
-**Related:** [OPENAPI.md](OPENAPI.md) (Swagger / ReDoc / schema) · [SANDBOX_AND_ENVIRONMENTS.md](SANDBOX_AND_ENVIRONMENTS.md) (sandbox routing and protected fields) · [MCP_TOOLS.md](MCP_TOOLS.md) (`data_access.*` tools).
+**Related:** [OPENAPI.md](OPENAPI.md) (Swagger, schema, `/api-docs`) · [SANDBOX_AND_ENVIRONMENTS.md](SANDBOX_AND_ENVIRONMENTS.md) (sandbox routing and protected fields) · [MCP_TOOLS.md](MCP_TOOLS.md) (`data_access.*` tools).
 
 ---
 
@@ -114,7 +114,7 @@ The ecosystem project holds a **template** (`field_access_defaults`: `default_ac
 
 ## REST API (summary)
 
-**Interactive docs:** [Swagger UI](https://agentstack.tech/docs) → filter by tag **DataAccess** — base path `/api/data-access/*`. See also [OPENAPI.md](OPENAPI.md) (ReDoc, `openapi.json`).
+**Interactive docs:** [Swagger UI](https://agentstack.tech/swagger) → filter by tag **DataAccess** — base path `/api/data-access/*`. See also [OPENAPI.md](OPENAPI.md) and [`openapi.json`](https://agentstack.tech/openapi.json).
 
 All routes require a valid session or Bearer token. **403** if the user lacks the required project role.
 
@@ -129,7 +129,7 @@ All routes require a valid session or Bearer token. **403** if the user lacks th
 | POST | `/api/data-access/cache/invalidate?project_id=` | Admin or owner |
 | GET | `/api/data-access/cache/stats` | Admin or owner on ecosystem project |
 
-For full parameter lists and bodies, use **[Swagger](https://agentstack.tech/docs)** or **[openapi.json](https://agentstack.tech/openapi.json)** on your deployment ([OPENAPI.md](OPENAPI.md)).
+For full parameter lists and bodies, use **[Swagger](https://agentstack.tech/swagger)** or **[openapi.json](https://agentstack.tech/openapi.json)** on your deployment ([OPENAPI.md](OPENAPI.md)).
 
 ---
 

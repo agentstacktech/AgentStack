@@ -6,7 +6,7 @@ Single entry point for MCP (Model Context Protocol) documentation, plugins, ecos
 
 ## HTTP API (OpenAPI)
 
-Explore and try **REST** endpoints interactively: **[OPENAPI.md](OPENAPI.md)** — [Swagger UI](https://agentstack.tech/docs) · [ReDoc](https://agentstack.tech/redoc) · [openapi.json](https://agentstack.tech/openapi.json).
+Explore and try **REST** endpoints interactively: **[OPENAPI.md](OPENAPI.md)** — [Swagger UI](https://agentstack.tech/swagger) · [openapi.json](https://agentstack.tech/openapi.json) · [API overview](https://agentstack.tech/api-docs).
 
 ---
 
@@ -21,7 +21,7 @@ Explore and try **REST** endpoints interactively: **[OPENAPI.md](OPENAPI.md)** �
 - **Entrypoint:** `POST /mcp` — body: `{ "steps": [ { "id": "...", "action": "projects.get_project", "params": {...} } ], "options": { "stopOnError": true } }`
 - **Action list for AI:** `GET /mcp/actions` — all available `action` values by domain (projects, buffs, auth, payments, logic, assets, etc.).
 - **Discovery:** `GET /mcp/discovery` — protocol info and the single tool schema.
-- **Capability map:** [plugins/CONTEXT_FOR_AI_MCP.md](plugins/CONTEXT_FOR_AI_MCP.md) · [MCP_CAPABILITY_MAP.md](MCP_CAPABILITY_MAP.md).
+- **Capability map:** [CONTEXT_FOR_AI_MCP (monorepo)](https://github.com/agentstacktech/AgentStack/blob/main/docs/plugins/CONTEXT_FOR_AI_MCP.md) · [MCP_CAPABILITY_MAP (monorepo)](https://github.com/agentstacktech/AgentStack/blob/main/docs/MCP_CAPABILITY_MAP.md).
 
 ---
 
@@ -41,7 +41,7 @@ Explore and try **REST** endpoints interactively: **[OPENAPI.md](OPENAPI.md)** �
 
 ## Sandboxes & access control
 
-- **[SANDBOX_AND_ENVIRONMENTS.md](SANDBOX_AND_ENVIRONMENTS.md)** — Developer guide: environments, generations, fork/checkpoint/promote, A/B tests, canary rollout, segments, shadow writes, protected fields, REST `/api/sandbox/*`, React hooks, subscription limits.
+- **[SANDBOX_AND_ENVIRONMENTS.md](SANDBOX_AND_ENVIRONMENTS.md)** — Developer guide: environments, generations, fork/checkpoint/promote, A/B tests, canary rollout, segments, shadow writes, protected fields, REST `/api/sandbox/*`, subscription limits.
 - **[ACCESS_AND_FIELD_POLICY.md](ACCESS_AND_FIELD_POLICY.md)** — **L1** API key `service_caps`, **L2** RBAC, **L3** Field Access Policy (FAP); global template; REST DataAccess summary; MCP `data_access.*` tools.
 
 ---
@@ -55,4 +55,4 @@ Explore and try **REST** endpoints interactively: **[OPENAPI.md](OPENAPI.md)** �
 
 ---
 
-**Quick links:** [OpenAPI](OPENAPI.md) · [MCP_SERVER_CAPABILITIES](MCP_SERVER_CAPABILITIES.md) · [Plugins index](plugins/README.md) · [CONTEXT_FOR_AI](plugins/CONTEXT_FOR_AI.md) · [CONTEXT_FOR_AI MCP](plugins/CONTEXT_FOR_AI_MCP.md) · [Sandbox & environments](SANDBOX_AND_ENVIRONMENTS.md) · [Access & FAP](ACCESS_AND_FIELD_POLICY.md).
+**Quick links:** [OpenAPI](OPENAPI.md) · [MCP_SERVER_CAPABILITIES](MCP_SERVER_CAPABILITIES.md) · [Plugins index](plugins/README.md) · [CONTEXT_FOR_AI](plugins/CONTEXT_FOR_AI.md) · [CONTEXT_FOR_AI MCP (monorepo)](https://github.com/agentstacktech/AgentStack/blob/main/docs/plugins/CONTEXT_FOR_AI_MCP.md) · [Sandbox & environments](SANDBOX_AND_ENVIRONMENTS.md) · [Access & FAP](ACCESS_AND_FIELD_POLICY.md).

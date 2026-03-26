@@ -4,4 +4,4 @@ REST surface for environments, forks, checkpoints, A/B tests, canary, and promot
 
 **Full guide:** [SANDBOX_AND_ENVIRONMENTS.md](../SANDBOX_AND_ENVIRONMENTS.md)
 
-**OpenAPI:** [Swagger UI](https://agentstack.tech/docs) → tag **Sandbox** · [OpenAPI index](../OPENAPI.md) · [openapi.json](https://agentstack.tech/openapi.json)
+**OpenAPI:** [Swagger UI](https://agentstack.tech/swagger) → tag **Sandbox** · [OpenAPI index](../OPENAPI.md) · [openapi.json](https://agentstack.tech/openapi.json)

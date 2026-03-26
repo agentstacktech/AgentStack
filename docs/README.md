@@ -4,7 +4,7 @@ Documentation for **AgentStack**: MCP, plugins, ecosystem API, sandbox environme
 
 **Start here:** [MCP_AND_ECOSYSTEM.md](MCP_AND_ECOSYSTEM.md) — index of MCP tools, Plugins, Ecosystem API, and usage examples.
 
-**HTTP / REST:** [OPENAPI.md](OPENAPI.md) — [Swagger UI](https://agentstack.tech/docs), [ReDoc](https://agentstack.tech/redoc), [OpenAPI JSON](https://agentstack.tech/openapi.json).
+**HTTP / REST:** [OPENAPI.md](OPENAPI.md) — [Swagger UI](https://agentstack.tech/swagger), [openapi.json](https://agentstack.tech/openapi.json), [API overview](https://agentstack.tech/api-docs).
 
 ---
 
@@ -12,7 +12,7 @@ Documentation for **AgentStack**: MCP, plugins, ecosystem API, sandbox environme
 
 | Section | Description |
 |--------|--------------|
-| [OPENAPI.md](OPENAPI.md) | **OpenAPI:** Swagger UI, ReDoc, `openapi.json`, tags, self-hosted note. |
+| [OPENAPI.md](OPENAPI.md) | **OpenAPI:** Swagger (`/swagger`), `openapi.json`, `/api-docs`, self-hosted. |
 | [MCP_AND_ECOSYSTEM.md](MCP_AND_ECOSYSTEM.md) | Single entry point: MCP, Plugins, Ecosystem, Examples. |
 | [MCP_SERVER_CAPABILITIES.md](MCP_SERVER_CAPABILITIES.md) | MCP index: quick start, overview, [tools reference](MCP_TOOLS.md), features and examples. |
 | [ACCESS_AND_FIELD_POLICY.md](ACCESS_AND_FIELD_POLICY.md) | **Three-layer access** (API key caps, RBAC, FAP) and Field Access Policy. |
