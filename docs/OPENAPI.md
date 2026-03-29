@@ -16,8 +16,8 @@ Use the same paths on your domain: **`/swagger`**, **`/openapi.json`**, and the 
 
 ## Navigation tips
 
-In **Swagger**, endpoints are grouped by **tags** (e.g. **DataAccess**, **Projects**, **Sandbox** — exact names match your build). Use the filter box to jump to `/api/data-access`, `/api/sandbox`, etc.
+In **Swagger**, endpoints are grouped by **tags** (e.g. **DataAccess**, **Projects**, **Sandbox**, **RAG** — exact names match your build). Use the filter box to jump to `/api/data-access`, `/api/sandbox`, `/api/rag`, etc.
 
 ## Related docs
 
-[ACCESS_AND_FIELD_POLICY.md](ACCESS_AND_FIELD_POLICY.md) (FAP) · [SANDBOX_AND_ENVIRONMENTS.md](SANDBOX_AND_ENVIRONMENTS.md) (sandboxes) · [ECOSYSTEM_API_IMPLEMENTATION.md](ECOSYSTEM_API_IMPLEMENTATION.md) (project/user data).
+[ACCESS_AND_FIELD_POLICY.md](ACCESS_AND_FIELD_POLICY.md) (FAP) · [SANDBOX_AND_ENVIRONMENTS.md](SANDBOX_AND_ENVIRONMENTS.md) (sandboxes) · [RAG_PLATFORM_GUIDE.md](RAG_PLATFORM_GUIDE.md) (RAG) · [ECOSYSTEM_API_IMPLEMENTATION.md](ECOSYSTEM_API_IMPLEMENTATION.md) (project/user data).

@@ -4,7 +4,7 @@
 - [Architecture](#architecture)
 - [API Endpoints](#api-endpoints)
 
-**Other sections:** [Quick start](MCP_QUICKSTART.md) · [Tools reference](MCP_TOOLS.md) · [Features and examples](MCP_FEATURES_EXAMPLES.md) · [Capabilities and metrics (monorepo)](https://github.com/agentstacktech/AgentStack/blob/master/docs/MCP_CAPABILITY_MAP.md) · [Synergies and instructions (monorepo)](https://github.com/agentstacktech/AgentStack/blob/master/docs/MCP_SYNERGIES_AND_INSTRUCTIONS.md) · [Flows and synergies (monorepo)](https://github.com/agentstacktech/AgentStack/blob/master/docs/MCP_FLOWS_AND_SYNERGIES.md)
+**Other sections:** [Quick start](MCP_QUICKSTART.md) · [Tools reference](MCP_TOOLS.md) · [Features and examples](MCP_FEATURES_EXAMPLES.md) · [Capabilities and metrics](MCP_CAPABILITY_MAP.md) · [Synergies and instructions](MCP_SYNERGIES_AND_INSTRUCTIONS.md) · [Flows and synergies (full steps)](MCP_FLOWS_AND_SYNERGIES.md)
 
 ---
 
@@ -40,29 +40,50 @@
 
 ## Architecture
 
-### Logical components
+### Project structure
 
-The cloud MCP endpoint is a **thin layer** over the same REST API the dashboard uses. Internally it is organised roughly as:
+```
+mcp/
+├── main.py              # FastAPI app, middleware, registration
+├── routes.py            # API endpoints for tools
+├── tools.py             # Implementation of all MCP tools
+├── sdk_wrapper.py       # SDK wrapper for project operations
+└── dependencies.py      # Dependencies
+```
 
-1. **HTTP application** — serves `/mcp`, middleware (CORS, metrics, correlation IDs), health, Prometheus where enabled.
-2. **Route handlers** — for example:
-   - `GET /mcp/discovery` — discovery (single tool `agentstack.execute`)
+### Components
+
+1. **FastAPI Application** (`main.py`)
+   - CORS middleware
+   - Metrics middleware
+   - Correlation ID tracking
+   - Health checks
+   - Prometheus metrics
+
+2. **Routes** (`routes.py`)
+   - `GET /mcp/discovery` — discovery (single tool agentstack.execute)
    - `GET /mcp/actions` — list all actions by domain
-   - `POST /mcp` — execute a batch of steps
+   - `POST /mcp` — execute batch of steps (agentstack.execute)
    - `POST /mcp/tools` — JSON-RPC tools/call compatibility
    - `POST /mcp/stream` — streaming execution
    - `GET /mcp/jobs/{job_id}` — job status
-   - OAuth, prompts, recipes, health, cache helpers under `/mcp` as documented in [OpenAPI](OPENAPI.md) / [Swagger](https://agentstack.tech/swagger)
-3. **Tool registry** — maps each `action` string to the corresponding backend call; validates parameters.
-4. **API client** — performs authenticated HTTP requests to the AgentStack API (no duplicate business logic in the MCP layer).
+   - OAuth, AI prompts, recipes, health, cache/clear under `/mcp`
 
-Exact repository filenames are **not** part of the public contract; they may change between releases.
+3. **Tools Registry** (`tools.py`)
+   - All tools registered in `MCP_TOOLS`
+   - Pydantic models for request validation
+   - Error handling and logging
+
+4. **SDK Wrapper** (`sdk_wrapper.py`)
+   - Wrapper over HTTP API for project operations
+   - Uses existing endpoints from `agentstack-core`
+   - Unified interface for all operations
 
 ---
 
 ## Execute and discovery
 
-A single tool **agentstack.execute** with batched steps; suitable for providers that limit the number of tools. One API, async jobs and streaming.
+A single tool **agentstack.execute** with batched steps and 70+ available actions (incl. RAG). One API, async jobs and streaming.
 
 - **Base URL:** `https://agentstack.tech/mcp`
 - **Execute (sync):** `POST /mcp` — body: `{ "steps": [ { "id": "p1", "action": "projects.create_project_anonymous", "params": { "name": "My app" } } ], "options": { "stopOnError": true } }`
@@ -70,10 +91,10 @@ A single tool **agentstack.execute** with batched steps; suitable for providers 
 - **Execute (stream):** `POST /mcp/stream` — same body, response is `text/event-stream` with `started` and `completed` events.
 - **List actions:** `GET /mcp/actions` — all valid `action` values by domain (projects, buffs, auth, payments, logic, assets, scheduler, analytics, etc.).
 - **Discovery:** `GET /mcp/discovery` — protocol, single-tool schema, streaming and jobs flags.
-- **Health:** `GET /mcp/health` — lightweight health check.
+- **Health:** `GET /mcp/health` — lightweight status (`status`, `module`, `version`, `tools_count`) plus `discovery_url` and `actions_url`.
 - **AI help:** `POST /mcp/ai/plan_steps` — suggests `steps[]` from goal and history.
 
-Steps can reference previous results via `{ "from": "stepId.result.field" }` and use optional `if` for conditions. See [CONTEXT_FOR_AI_MCP (monorepo)](https://github.com/agentstacktech/AgentStack/blob/master/docs/plugins/CONTEXT_FOR_AI_MCP.md) and [MCP_CAPABILITY_MAP (monorepo)](https://github.com/agentstacktech/AgentStack/blob/master/docs/MCP_CAPABILITY_MAP.md).
+Steps can reference previous results via `{ "from": "stepId.result.field" }` and use optional `if` for conditions. See [CONTEXT_FOR_AI_MCP.md](plugins/CONTEXT_FOR_AI_MCP.md) and [MCP_CAPABILITY_MAP.md](MCP_CAPABILITY_MAP.md).
 
 ### Full management and permissions
 

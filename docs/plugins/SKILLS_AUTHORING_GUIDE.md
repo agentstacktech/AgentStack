@@ -2,7 +2,7 @@
 
 **Version:** 0.1  
 **Date:** 2026-02-24  
-**Validation:** Recommended principles: Creation over Conflict, Decomposition, Elegant Minimalism, Time-Decomposition-Completion (see repo documentation).
+**Validation:** Keep skills **focused** (one domain per skill), **complete** (no half-finished flows), **short** (link to docs instead of pasting large tables), and aligned with published **docs** in this repository.
 
 ---
 
@@ -18,7 +18,7 @@ Shared rules and quality examples for skills in Cursor and Claude plugins. Skill
 2. **When to use** — when the agent should apply this skill (triggers, typical requests).
 3. **Capabilities** and/or **Instructions** — what the skill does and step-by-step guidance.
 4. **Examples** — concrete examples in "user request → tool/action" format.
-5. **References** — links to MCP_SERVER_CAPABILITIES, MCP_QUICKSTART, 8DNA/philosophy docs.
+5. **References** — links to **MCP_SERVER_CAPABILITIES**, **MCP_QUICKSTART**, and **docs/architecture/DNA_KEY_VALUE_API.md** where 8DNA is relevant.
 
 Optional: **Tips**, **Flow**, **Core concepts** — as needed, without bloat.
 
@@ -52,9 +52,9 @@ Why: no WHEN, no triggers, vague WHAT.
 
 ## Link rules
 
-- **Repo (docs, philosophy):** in the skill text use neutral references: "See **MCP_SERVER_CAPABILITIES** in repo docs", "See **8DNA_HIERARCHY_EVOLUTION_CAPABILITIES**, **PARADIGM_SHIFT_BIOLOGICAL_COMPUTING** in repo philosophy". When opening from repo: paths `docs/MCP_SERVER_CAPABILITIES.md`, `philosophy/…`.
-- **Plugin:** "See **MCP_QUICKSTART.md** in plugin root" — in cursor-plugin or claude-plugin root. Do not use absolute paths; Cursor/Claude supply plugin context.
-- **Elegant Minimalism:** do not copy large MCP tables from docs into the skill; short table in skill + link to MCP_SERVER_CAPABILITIES for full list.
+- **This docs repo:** reference files under `docs/` only (e.g. `docs/MCP_SERVER_CAPABILITIES.md`, `docs/architecture/DNA_KEY_VALUE_API.md`). Do not point skills at paths that are not published here.
+- **Plugin bundle:** "See **MCP_QUICKSTART.md** in plugin root" — in cursor-plugin or claude-plugin root. Do not use absolute paths; Cursor/Claude supply plugin context.
+- **Keep skills small:** do not copy large MCP tables from docs into the skill; use a short table + link to **MCP_SERVER_CAPABILITIES** for the full list.
 
 ---
 
@@ -76,9 +76,9 @@ Reference for structure and tone of an MCP-oriented skill.
 | **description** | Third person, WHAT (creates/manages projects and API keys via MCP), WHEN (create project, get API key, list, stats…), triggers (project, API key, stats, attach) | Agent reliably picks the skill from the user request. |
 | **When to use** | Concrete user phrases and scenarios (anonymous, attach to account) | Clear triggers, no vague wording. |
 | **Capabilities** | MCP tools table with short purpose | Quick scan; details in MCP_SERVER_CAPABILITIES. |
-| **Instructions** | Numbered steps: first-time, list/inspect, attach, API keys | Complete module (Time-Decomposition-Completion); each step has an outcome. |
+| **Instructions** | Numbered steps: first-time, list/inspect, attach, API keys | Complete module; each step has an outcome. |
 | **Examples** | Format ""User says…" → `tool` with params» | Concrete input → action; reproducible. |
-| **References** | MCP_SERVER_CAPABILITIES, MCP_QUICKSTART (plugin) | Links instead of copy-paste (Elegant Minimalism). |
+| **References** | MCP_SERVER_CAPABILITIES, MCP_QUICKSTART (plugin) | Links instead of copy-paste. |
 | **Tips** | Short constraints (anonymous tier, keys shown once) | Minimal text, only what's needed. |
 
 For the Claude plugin use the same skill but replace "Cursor" with "Claude Code" and ensure links point to claude-plugin artifacts (MCP_QUICKSTART in plugin root).
@@ -89,8 +89,8 @@ For the Claude plugin use the same skill but replace "Cursor" with "Claude Code"
 
 Before changing a skill, check:
 
-- Creation over Conflict: we create value, not fight alternatives.
-- Time-Decomposition-Completion: complete module, no half-finished instructions.
-- Decomposition: one skill — one domain.
-- Elegant Minimalism: minimal text, links instead of duplication, SKILL.md up to ~500 lines.
-- 8DNA / Time: 8DNA skill matches official architecture; versions and CHANGELOG when evolving skills.
+- **Value:** the skill should help the user accomplish a task, not argue with other approaches.
+- **Completeness:** no half-finished instructions; each advertised flow should be runnable.
+- **Scope:** one skill — one domain.
+- **Size:** minimal text, links instead of duplication; **SKILL.md** up to ~500 lines.
+- **Accuracy:** 8DNA and API wording match **docs/**; bump skill version notes when behaviour changes.

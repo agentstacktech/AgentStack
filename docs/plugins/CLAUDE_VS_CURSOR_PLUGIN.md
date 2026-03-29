@@ -2,7 +2,7 @@
 
 **Version:** 0.3  
 **Date:** 2026-02-23  
-**Context:** AgentStack plugins for **Claude Code**, **Cursor**, **GPT (OpenAI)**, and **VS Code**; alignment and philosophy. Plugin index: [docs/plugins/README.md](README.md).
+**Context:** AgentStack plugins for **Claude Code**, **Cursor**, **GPT (OpenAI)**, and **VS Code** — same MCP endpoint, different packaging. Plugin index: [docs/plugins/README.md](README.md).
 
 ---
 
@@ -52,7 +52,7 @@ One plugin — one artifact (Decomposition). Shared MCP endpoint and ecosystem; 
   ```
   Or configures MCP in Claude Code UI (if available) per MCP_QUICKSTART.md.
 
-- **Summary:** we do not add `.mcp.json` with HTTP in `provided_plugins/claude-plugin/` (HTTP format in plugin bundle is not fixed); all MCP connection steps are described in `MCP_QUICKSTART.md` and README (Elegant Minimalism: minimal steps, one API key).
+- **Summary:** we do not add `.mcp.json` with HTTP in `provided_plugins/claude-plugin/` (HTTP format in plugin bundle is not fixed); all MCP connection steps are described in `MCP_QUICKSTART.md` and README (minimal steps, one API key).
 
 ### Claude and OAuth
 
@@ -74,8 +74,8 @@ One plugin — one artifact (Decomposition). Shared MCP endpoint and ecosystem; 
 
 - **Source of truth:** edits go in `provided_plugins/cursor-plugin/skills/`. On release or skill update, copy content to `provided_plugins/claude-plugin/skills/` (folders: agentstack-8dna, agentstack-projects, agentstack-rules-engine, agentstack-assets, agentstack-rbac, agentstack-buffs, agentstack-payments, agentstack-auth).
 - **Claude adaptation:** in copied SKILL.md replace "Cursor" with "Claude Code" in the body (e.g. "add MCP in Cursor" → "add MCP in Claude Code"). Frontmatter (name, description) unchanged.
-- **Links in Claude version:** References to MCP_QUICKSTART and README point to artifacts in claude-plugin root (MCP_QUICKSTART.md, README.md — same plugin). Repo links (MCP_SERVER_CAPABILITIES, philosophy) stay shared.
-- **Versioning:** when changing skills, update CHANGELOG in both plugins (Time Processes Philosophy). See also [SKILLS_AUTHORING_GUIDE.md](SKILLS_AUTHORING_GUIDE.md).
+- **Links in Claude version:** References to MCP_QUICKSTART and README point to artifacts in claude-plugin root (MCP_QUICKSTART.md, README.md — same plugin). Links to **MCP_SERVER_CAPABILITIES** and other files under **docs/** stay shared from this repository.
+- **Versioning:** when changing skills, update CHANGELOG in both plugins. See also [SKILLS_AUTHORING_GUIDE.md](SKILLS_AUTHORING_GUIDE.md).
 
 ---
 

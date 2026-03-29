@@ -41,6 +41,68 @@ Update user profile.
 
 ---
 
+### 🔒 Data Access Tools (9 tools)
+
+Field-Level Access Policy (FAP) — declarative, role-based access at field level. Policies in `project.data.config.field_access_policy`; **global template** on ecosystem project (`field_access_defaults`); **field_triggers** (v1.2) for emit-driven reactions. REST mirrors: `/api/data-access/*` (see [api/data-access-api.md](api/data-access-api.md), Swagger **DataAccess**).
+
+#### `data_access.set_policy`
+Set a field-level access policy for a resource.
+
+**Parameters:**
+- `resource` (string, required) - Resource key (e.g. `orders`, `project_payload`)
+- `resource_policy` (object, required) - Field → descriptor map; optional `path_rules`
+- `project_id` (int, required) - Project ID
+- `default_access`, `globals` (optional)
+
+**Example:**
+```json
+{
+  "tool": "data_access.set_policy",
+  "params": {
+    "resource": "user_profile",
+    "resource_policy": {
+      "email": "owner",
+      "balance": "admin",
+      "display_name": "user",
+      "__default__": "deny"
+    },
+    "project_id": 1
+  }
+}
+```
+
+#### `data_access.get_policy`
+Full project FAP or one resource.
+
+**Parameters:** `project_id` (required), `resource` (optional).
+
+#### `data_access.check_field`
+**Parameters:** `project_id`, `field_path` (e.g. `orders.total`), `user_role`, `permission` (read/write), optional `permissions_bitmap`, `user_id`.
+
+**Returns:** `{ "allowed": bool, ... }`
+
+#### `data_access.test_mask`
+Preview per-field read/write for a role; optional `sample_data`.
+
+**Parameters:** `project_id`, `resource`, `user_role`, optional `sample_data`, `permissions_bitmap`.
+
+#### `data_access.get_defaults_template`
+No parameters. Returns `{ template: { default_access, globals, resources, field_triggers? } }` from ecosystem project DNA.
+
+#### `data_access.set_defaults_template`
+**Parameters:** `resources` (object, required), `default_access`, `globals`, optional `field_triggers` (FAP v1.2). Writes global template on project 1. Omit `field_triggers` to keep the previous template value.
+
+#### `data_access.apply_defaults_template`
+**Parameters:** `target_project_id` (int). Copies only **missing** keys from `resources.*` and `field_triggers.*` in the global template into that project. Cannot target project id `1`.
+
+#### `data_access.get_triggers`
+**Parameters:** `project_id` (int). Returns `field_triggers` map for the project.
+
+#### `data_access.set_triggers`
+**Parameters:** `project_id`, `resource` (string), `triggers` (object: field pattern → list of trigger definitions). Validates and merges into `field_access_policy.field_triggers`. See **FIELD_ACCESS_POLICY.md** — Field Triggers (v1.2).
+
+---
+
 ### ⚙️ Logic Engine Tools (9 tools)
 
 #### `logic.create`
@@ -266,7 +328,7 @@ Update a user's role in the project.
 **Process:**
 1. Validates `auth_key` against project API keys
 2. Updates `project.user_id` to the new owner
-3. Ensures per-user project records exist for the new owner
+3. Creates records in `data_projects_user`
 4. Removes old anonymous key
 5. Creates new API key for the owner
 

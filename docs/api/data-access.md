@@ -1,7 +1,9 @@
-# Data Access API (FAP) — pointer
+# Data Access API (Field Access Policy) — pointer
 
-REST surface for **Field Access Policy** and related operations: `/api/data-access/*`.
+REST surface for **Field Access Policy** and related operations under `/api/data-access/*`.
 
-**Full guide (layers L1–L3, storage, MCP, examples):** [ACCESS_AND_FIELD_POLICY.md](../ACCESS_AND_FIELD_POLICY.md)
+**Overview (users and admins):** [ACCESS_AND_FIELD_POLICY.md](../ACCESS_AND_FIELD_POLICY.md) · [FIELD_ACCESS_POLICY.md](../FIELD_ACCESS_POLICY.md)
 
-**OpenAPI:** [Swagger UI](https://agentstack.tech/swagger) → tag **DataAccess** · [OpenAPI index](../OPENAPI.md) · [openapi.json](https://agentstack.tech/openapi.json)
+**Endpoint summary:** [data-access-api.md](data-access-api.md)
+
+**OpenAPI:** [Swagger UI](https://agentstack.tech/swagger) (tag **DataAccess**) · [OPENAPI.md](../OPENAPI.md)

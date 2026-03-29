@@ -4,8 +4,6 @@
 
 AgentStack provides a full-featured MCP (Model Context Protocol) server for integration with AI agents. MCP lets AI agents interact with the platform securely via a standardized protocol.
 
-**REST / OpenAPI:** for non-MCP HTTP endpoints (`/api/*`), see **[OPENAPI.md](../OPENAPI.md)** — [Swagger UI](https://agentstack.tech/swagger), [openapi.json](https://agentstack.tech/openapi.json).
-
 ## 🔧 Configuration
 
 MCP is available in the cloud at **[agentstack.tech](https://agentstack.tech)**. No local server setup required.
