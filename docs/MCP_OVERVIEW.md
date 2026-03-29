@@ -4,7 +4,7 @@
 - [Architecture](#architecture)
 - [API Endpoints](#api-endpoints)
 
-**Other sections:** [Quick start](MCP_QUICKSTART.md) · [Tools reference](MCP_TOOLS.md) · [Features and examples](MCP_FEATURES_EXAMPLES.md) · [Capabilities and metrics (monorepo)](https://github.com/agentstacktech/AgentStack/blob/main/docs/MCP_CAPABILITY_MAP.md) · [Synergies and instructions (monorepo)](https://github.com/agentstacktech/AgentStack/blob/main/docs/MCP_SYNERGIES_AND_INSTRUCTIONS.md) · [Flows and synergies (monorepo)](https://github.com/agentstacktech/AgentStack/blob/main/docs/MCP_FLOWS_AND_SYNERGIES.md)
+**Other sections:** [Quick start](MCP_QUICKSTART.md) · [Tools reference](MCP_TOOLS.md) · [Features and examples](MCP_FEATURES_EXAMPLES.md) · [Capabilities and metrics (monorepo)](https://github.com/agentstacktech/AgentStack/blob/master/docs/MCP_CAPABILITY_MAP.md) · [Synergies and instructions (monorepo)](https://github.com/agentstacktech/AgentStack/blob/master/docs/MCP_SYNERGIES_AND_INSTRUCTIONS.md) · [Flows and synergies (monorepo)](https://github.com/agentstacktech/AgentStack/blob/master/docs/MCP_FLOWS_AND_SYNERGIES.md)
 
 ---
 
@@ -73,7 +73,7 @@ A single tool **agentstack.execute** with batched steps; suitable for providers 
 - **Health:** `GET /mcp/health` — lightweight health check.
 - **AI help:** `POST /mcp/ai/plan_steps` — suggests `steps[]` from goal and history.
 
-Steps can reference previous results via `{ "from": "stepId.result.field" }` and use optional `if` for conditions. See [CONTEXT_FOR_AI_MCP (monorepo)](https://github.com/agentstacktech/AgentStack/blob/main/docs/plugins/CONTEXT_FOR_AI_MCP.md) and [MCP_CAPABILITY_MAP (monorepo)](https://github.com/agentstacktech/AgentStack/blob/main/docs/MCP_CAPABILITY_MAP.md).
+Steps can reference previous results via `{ "from": "stepId.result.field" }` and use optional `if` for conditions. See [CONTEXT_FOR_AI_MCP (monorepo)](https://github.com/agentstacktech/AgentStack/blob/master/docs/plugins/CONTEXT_FOR_AI_MCP.md) and [MCP_CAPABILITY_MAP (monorepo)](https://github.com/agentstacktech/AgentStack/blob/master/docs/MCP_CAPABILITY_MAP.md).
 
 ### Full management and permissions
 

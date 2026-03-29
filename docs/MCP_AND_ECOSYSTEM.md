@@ -21,7 +21,7 @@ Explore and try **REST** endpoints interactively: **[OPENAPI.md](OPENAPI.md)** �
 - **Entrypoint:** `POST /mcp` — body: `{ "steps": [ { "id": "...", "action": "projects.get_project", "params": {...} } ], "options": { "stopOnError": true } }`
 - **Action list for AI:** `GET /mcp/actions` — all available `action` values by domain (projects, buffs, auth, payments, logic, assets, etc.).
 - **Discovery:** `GET /mcp/discovery` — protocol info and the single tool schema.
-- **Capability map:** [CONTEXT_FOR_AI_MCP (monorepo)](https://github.com/agentstacktech/AgentStack/blob/main/docs/plugins/CONTEXT_FOR_AI_MCP.md) · [MCP_CAPABILITY_MAP (monorepo)](https://github.com/agentstacktech/AgentStack/blob/main/docs/MCP_CAPABILITY_MAP.md).
+- **Capability map:** [CONTEXT_FOR_AI_MCP (monorepo)](https://github.com/agentstacktech/AgentStack/blob/master/docs/plugins/CONTEXT_FOR_AI_MCP.md) · [MCP_CAPABILITY_MAP (monorepo)](https://github.com/agentstacktech/AgentStack/blob/master/docs/MCP_CAPABILITY_MAP.md).
 
 ---
 
@@ -55,4 +55,4 @@ Explore and try **REST** endpoints interactively: **[OPENAPI.md](OPENAPI.md)** �
 
 ---
 
-**Quick links:** [OpenAPI](OPENAPI.md) · [MCP_SERVER_CAPABILITIES](MCP_SERVER_CAPABILITIES.md) · [Plugins index](plugins/README.md) · [CONTEXT_FOR_AI](plugins/CONTEXT_FOR_AI.md) · [CONTEXT_FOR_AI MCP (monorepo)](https://github.com/agentstacktech/AgentStack/blob/main/docs/plugins/CONTEXT_FOR_AI_MCP.md) · [Sandbox & environments](SANDBOX_AND_ENVIRONMENTS.md) · [Access & FAP](ACCESS_AND_FIELD_POLICY.md).
+**Quick links:** [OpenAPI](OPENAPI.md) · [MCP_SERVER_CAPABILITIES](MCP_SERVER_CAPABILITIES.md) · [Plugins index](plugins/README.md) · [CONTEXT_FOR_AI](plugins/CONTEXT_FOR_AI.md) · [CONTEXT_FOR_AI MCP (monorepo)](https://github.com/agentstacktech/AgentStack/blob/master/docs/plugins/CONTEXT_FOR_AI_MCP.md) · [Sandbox & environments](SANDBOX_AND_ENVIRONMENTS.md) · [Access & FAP](ACCESS_AND_FIELD_POLICY.md).

@@ -1,6 +1,6 @@
 # MCP Server — Capabilities Overview
 
-Single index for MCP (Model Context Protocol) documentation for AgentStack. MCP is available in the cloud at **[agentstack.tech](https://agentstack.tech)** — one tool **agentstack.execute** with batched steps, 60+ actions. Base URL: `https://agentstack.tech/mcp`. Extended maps and flow write-ups live in the [main AgentStack repo](https://github.com/agentstacktech/AgentStack) ([MCP capability map](https://github.com/agentstacktech/AgentStack/blob/main/docs/MCP_CAPABILITY_MAP.md), [flows and synergies](https://github.com/agentstacktech/AgentStack/blob/main/docs/MCP_FLOWS_AND_SYNERGIES.md)).
+Single index for MCP (Model Context Protocol) documentation for AgentStack. MCP is available in the cloud at **[agentstack.tech](https://agentstack.tech)** — one tool **agentstack.execute** with batched steps, 60+ actions. Base URL: `https://agentstack.tech/mcp`. Extended maps and flow write-ups live in the [main AgentStack repo](https://github.com/agentstacktech/AgentStack) ([MCP capability map](https://github.com/agentstacktech/AgentStack/blob/master/docs/MCP_CAPABILITY_MAP.md), [flows and synergies](https://github.com/agentstacktech/AgentStack/blob/master/docs/MCP_FLOWS_AND_SYNERGIES.md)).
 
 ---
 
@@ -24,5 +24,5 @@ Single index for MCP (Model Context Protocol) documentation for AgentStack. MCP 
 - **Configuration and authentication:** [api/mcp.md](api/mcp.md)
 - **Ecosystem index:** [MCP_AND_ECOSYSTEM.md](MCP_AND_ECOSYSTEM.md)
 - **Sandbox & REST:** [SANDBOX_AND_ENVIRONMENTS.md](SANDBOX_AND_ENVIRONMENTS.md) · **Access & FAP:** [ACCESS_AND_FIELD_POLICY.md](ACCESS_AND_FIELD_POLICY.md) · [api/data-access.md](api/data-access.md)
-- **Capability map for AI:** [plugins/CONTEXT_FOR_AI.md](plugins/CONTEXT_FOR_AI.md) · **Extended capability map (monorepo):** [MCP_CAPABILITY_MAP.md on GitHub](https://github.com/agentstacktech/AgentStack/blob/main/docs/MCP_CAPABILITY_MAP.md)
+- **Capability map for AI:** [plugins/CONTEXT_FOR_AI.md](plugins/CONTEXT_FOR_AI.md) · **Extended capability map (monorepo):** [MCP_CAPABILITY_MAP.md on GitHub](https://github.com/agentstacktech/AgentStack/blob/master/docs/MCP_CAPABILITY_MAP.md)
 - **Scenario examples:** [examples/mcp_complex_projects.md](examples/mcp_complex_projects.md), [examples/mcp_buffs_workflows.md](examples/mcp_buffs_workflows.md)
