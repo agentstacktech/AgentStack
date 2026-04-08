@@ -1,6 +1,8 @@
 # OpenAPI — HTTP API reference
 
-The AgentStack **REST** API is described with **OpenAPI**. On **agentstack.tech**, Swagger is **not** at `/docs` on the site root — nginx exposes the backend Swagger UI at **`/swagger`** (see `deploy/vps/nginx.conf`: proxy to backend `/docs`).
+The AgentStack **REST compatibility** surface (many `/api/*` paths) is described with **OpenAPI**. **AI-oriented semantics** are primarily **`GET /mcp/actions`** and `POST /mcp` (`agentstack.execute`), plus 8DNA KV and Protein commands — see the main repo **[docs/API_CHANNELS_AND_PROTOCOLS.md](../../docs/API_CHANNELS_AND_PROTOCOLS.md)**.
+
+On **agentstack.tech**, Swagger is **not** at `/docs` on the site root — nginx exposes the backend Swagger UI at **`/swagger`** (see `deploy/vps/nginx.conf`: proxy to backend `/docs`).
 
 ## Production (agentstack.tech)
 
@@ -16,7 +18,7 @@ Use the same paths on your domain: **`/swagger`**, **`/openapi.json`**, and the 
 
 ## Navigation tips
 
-In **Swagger**, endpoints are grouped by **tags** (e.g. **DataAccess**, **Projects**, **Sandbox**, **RAG** — exact names match your build). Use the filter box to jump to `/api/data-access`, `/api/sandbox`, `/api/rag`, etc.
+In **Swagger**, tags are ordered with **unified access** first (**MCP**, **8DNA API**, **Commands**), then domain **REST compatibility** tags. **Redoc** may show **x-tagGroups** (“Unified access”, “Field access policy”). Use the filter box to jump to `/mcp`, `/api/dna/data`, `/api/commands`, or domain routes.
 
 ## Related docs
 
