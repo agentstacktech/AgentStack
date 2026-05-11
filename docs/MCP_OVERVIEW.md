@@ -76,7 +76,7 @@ mcp/
 
 4. **SDK Wrapper** (`sdk_wrapper.py`)
    - Wrapper over HTTP API for project operations
-   - Uses existing endpoints from `agentstack-core`
+   - Uses existing **public REST** endpoints on `agentstack.tech`
    - Unified interface for all operations
 
 ---

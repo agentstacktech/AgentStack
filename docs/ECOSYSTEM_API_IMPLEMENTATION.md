@@ -104,4 +104,4 @@ Rules and logic (when/then, triggers) are available via the Logic Engine API: pr
 ---
 
 **Version:** 0.2 — guide to actual endpoints, no versioning in paths.  
-**Source of truth for paths:** `agentstack-core` code (projects_endpoints, dna_api_endpoints, core_app).
+**Source of truth for paths:** published **OpenAPI** at [agentstack.tech/swagger](https://agentstack.tech/swagger) and live REST behaviour on production/staging.

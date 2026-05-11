@@ -45,7 +45,7 @@
 
 ## Метрики (замеры)
 
-Замеры: `python mcp/collect_metrics.py` из `agentstack-core`. In-process TestClient, 15 сэмплов на эндпоинт.
+Замеры выполняются в **CI платформы** (in-process TestClient; несколько сэмплов на эндпоинт). Конкретные команды и пути артефактов — внутренние и не дублируются в публичной документации.
 
 ### Латентность (ms)
 
@@ -71,7 +71,7 @@
 |-----------|--------------|-------------------|
 | ~99 | ~104 | ~4.3 |
 
-*Актуальные цифры после прогона: `agentstack-core/mcp/mcp_metrics_report.json`, `mcp_metrics_report.md`.*
+*Актуальные цифры после прогона CI публикуются во внутренних артефактах сборки (не дублируем пути здесь).*
 
 ---
 
@@ -88,4 +88,4 @@
 | Контракт discovery | protocol_version, capabilities, tools[0].name=agentstack.execute, actions_url | test_mcp_discovery |
 | Совместимость | Cursor, Claude, GPT scan flow | test_cursor_compatibility, test_claude_compatibility, test_mcp_gpt_scan_flow |
 
-Запуск: из `agentstack-core`: `python -m pytest mcp/tests tests/test_mcp_gpt_scan_flow.py -v` или `python mcp/run_all_tests.py`.
+Запуск полного набора тестов MCP выполняется в **CI платформы** (`pytest`); детали команд — внутренние.

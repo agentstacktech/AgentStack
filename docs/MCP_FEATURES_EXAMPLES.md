@@ -77,7 +77,7 @@
 **Project user management** (`add_user`, `remove_user`) requires a **Professional subscription**.
 
 **Implementation:**
-- Check at API endpoint level (`agentstack-core/endpoints/projects_endpoints.py`)
+- Check at API endpoint level on the server (subscription enforcement)
 - Uses `SubscriptionService.get_user_subscription()`
 - Checks `plan_type` in ['pro', 'professional', 'enterprise']
 - Returns 403 Forbidden when subscription is missing

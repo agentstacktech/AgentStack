@@ -6,6 +6,20 @@ This guide is for **people using AgentStack through the website** ([agentstack.t
 
 ---
 
+## What's new (Mar–May 2026)
+
+Highlights you may see in the product (availability varies by plan and role):
+
+- **Dual-shell + triple-shell routing** — separate chrome for everyday use, developer integrations, and ecosystem-operator tools; mobile-first layouts.
+- **Agents** — project-scoped **Agents** module and profile surfaces for automation tied to your workspace.
+- **Project support** — support conversations that reuse the messenger experience where enabled for your project.
+- **Web Push for DMs** — OS-level notifications when the tab is backgrounded (browser / OS permissions required).
+- **Storage explorer polish** — smoother scrolling and media loading patterns aligned with messenger performance work.
+
+For integration details (REST/MCP/SDK), use [MCP_AND_ECOSYSTEM.md](MCP_AND_ECOSYSTEM.md) and the section index in [README.md](README.md).
+
+---
+
 ## 1. Dashboard (web)
 
 After you log in, open **Dashboard** and select a **project**. Modules you may see include:

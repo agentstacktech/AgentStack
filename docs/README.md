@@ -1,44 +1,48 @@
-# AgentStack Documentation
+# AgentStack documentation (public mirror)
 
-Public documentation for **AgentStack** (**English only**): web dashboard, MCP, plugins, REST APIs, **RAG**, sandboxes, access control, subscriptions, and examples.
+**English only.** This tree mirrors **integrator- and user-facing** guides published alongside the product. For **REST**, **MCP**, **SDK**, **RAG**, and **plugins**, start here and drill into the sections below.
 
----
-
-## For people using the website
-
-**Start here:** [USER_FEATURES_GUIDE.md](USER_FEATURES_GUIDE.md) — dashboard modules, **RAG**, sandboxes, field access, subscriptions, AI Builder note, links to detail guides.
-
-Then, as needed: [subscription/SUBSCRIPTION_TIERS.md](subscription/SUBSCRIPTION_TIERS.md) · [ACCESS_AND_FIELD_POLICY.md](ACCESS_AND_FIELD_POLICY.md) · [RAG_PLATFORM_GUIDE.md](RAG_PLATFORM_GUIDE.md) · [SANDBOX_PLAYGROUND_GUIDE.md](SANDBOX_PLAYGROUND_GUIDE.md).
+**Product:** [agentstack.tech](https://agentstack.tech) · **OpenAPI:** [Swagger](https://agentstack.tech/swagger)
 
 ---
 
-## For integrators and developers
+## Start here
 
-**Ecosystem index:** [MCP_AND_ECOSYSTEM.md](MCP_AND_ECOSYSTEM.md) — MCP, plugins, ecosystem data, **RAG**, sandboxes, examples.
-
-**HTTP / REST:** [OPENAPI.md](OPENAPI.md) — [Swagger UI](https://agentstack.tech/swagger), [openapi.json](https://agentstack.tech/openapi.json), [API overview](https://agentstack.tech/api-docs).
+| Audience | Document |
+|----------|----------|
+| **Dashboard users** | [USER_FEATURES_GUIDE.md](USER_FEATURES_GUIDE.md) |
+| **Integrators & automations** | [MCP_AND_ECOSYSTEM.md](MCP_AND_ECOSYSTEM.md) |
+| **REST overview** | [OPENAPI.md](OPENAPI.md) |
 
 ---
 
-## Full contents
+## What's new (Mar–May 2026)
 
-| Section | Description |
-|--------|--------------|
-| [USER_FEATURES_GUIDE.md](USER_FEATURES_GUIDE.md) | **Users:** dashboard, RAG, sandboxes, access, subscriptions (plain language). |
-| [OPENAPI.md](OPENAPI.md) | **OpenAPI:** Swagger (`/swagger`), `openapi.json`, `/api-docs`, self-hosted. |
-| [MCP_AND_ECOSYSTEM.md](MCP_AND_ECOSYSTEM.md) | Single entry point: MCP, Plugins, Ecosystem, **RAG**, Sandboxes, FAP, Examples. |
-| [MCP_SERVER_CAPABILITIES.md](MCP_SERVER_CAPABILITIES.md) | MCP index: quick start, overview, [tools reference](MCP_TOOLS.md), features and examples. |
-| [RAG_PLATFORM_GUIDE.md](RAG_PLATFORM_GUIDE.md) | **RAG platform:** collections, memory, hybrid search, REST `/api/rag/*`, MCP `rag.*`, tiers. |
-| [SANDBOX_PLAYGROUND_GUIDE.md](SANDBOX_PLAYGROUND_GUIDE.md) | **Sandbox Playground:** flows, rollout patterns, limits (companion to SANDBOX_AND_ENVIRONMENTS). |
-| [ACCESS_AND_FIELD_POLICY.md](ACCESS_AND_FIELD_POLICY.md) | **Three-layer access** (API key caps, RBAC, FAP). |
-| [FIELD_ACCESS_POLICY.md](FIELD_ACCESS_POLICY.md) | FAP policy format, ecosystem, triggers (detailed). |
-| [SANDBOX_AND_ENVIRONMENTS.md](SANDBOX_AND_ENVIRONMENTS.md) | **Sandboxes:** fork, checkpoints, A/B, canary, promotion, segments, API. |
-| [ECOSYSTEM_API_IMPLEMENTATION.md](ECOSYSTEM_API_IMPLEMENTATION.md) | Ecosystem API: data API, endpoints, usage. |
-| [subscription/](subscription/) | **Tiers:** [SUBSCRIPTION_TIERS.md](subscription/SUBSCRIPTION_TIERS.md), [ANONYMOUS_TIER.md](subscription/ANONYMOUS_TIER.md). |
-| [plugins/](plugins/) | Plugins index (Cursor, Claude, GPT, VS Code), comparison, CONTEXT_FOR_AI, Skills guide. |
-| [examples/](examples/) | MCP usage examples: complex projects, buffs (workflows, temporary, persistent). |
-| [architecture/](architecture/) | DNA Key-Value API (project.data, user.data). |
-| [api/](api/) | [mcp.md](api/mcp.md), [rag.md](api/rag.md), [sandbox.md](api/sandbox.md), [data-access-api.md](api/data-access-api.md); all REST: [OPENAPI.md](OPENAPI.md). |
+Themes shipped across **0.4.7 → 0.4.13**: unified **8DNA** data plane, **resilience / RAG** hardening, **local-first messenger** (delta, ordering, CRDT, SharedWorker), **dual-shell + triple-shell** SPA audiences (`/user/*`, `/dev/*`, `/platform/*`), **Agents Fleet** as first-class project DNA, **project support** on the messenger plane, **SDK media v2** (capture denoise + photo ladder), **Web Push** reliability for DMs, and **support search** for staff flows.
+
+**Narrative (monorepo journal):** see the evolution note linked from the main repo `docs/EVOLUTION_AND_RELEASE_2026-05.md` on GitHub (`master` branch).
+
+---
+
+## Section index
+
+| Section | Contents |
+|---------|-----------|
+| **[messenger/](messenger/)** | Social API integration, offline behaviour, reliability — [`README.md`](messenger/README.md), [`INTEGRATION_QUICKSTART.md`](messenger/INTEGRATION_QUICKSTART.md), [`SOCIAL_API_REFERENCE.md`](messenger/SOCIAL_API_REFERENCE.md), [`OFFLINE_AND_RELIABILITY.md`](messenger/OFFLINE_AND_RELIABILITY.md) |
+| **[storage/](storage/)** | Client-side thumbnails, OPFS, resumable uploads, lightbox — [`README.md`](storage/README.md), [`INTEGRATION_QUICKSTART.md`](storage/INTEGRATION_QUICKSTART.md), [`LIGHTBOX_GUIDE.md`](storage/LIGHTBOX_GUIDE.md) |
+| **[agents/](agents/)** | Agents Fleet REST + MCP surfaces — [`README.md`](agents/README.md), [`INTEGRATION_QUICKSTART.md`](agents/INTEGRATION_QUICKSTART.md), [`OWNERSHIP_AND_SCOPES.md`](agents/OWNERSHIP_AND_SCOPES.md) |
+| **[support/](support/)** | Project support threads, eligibility, AI handoff — [`README.md`](support/README.md), [`INTEGRATION_QUICKSTART.md`](support/INTEGRATION_QUICKSTART.md), [`AI_HANDOFF.md`](support/AI_HANDOFF.md) |
+| **[dual-shell/](dual-shell/)** | User vs Developer vs Platform shells — [`README.md`](dual-shell/README.md) |
+| **[sdk/](sdk/)** | Typed SDK entry points (`sdk.protocol`, `sdk.platform`, façade modules) — [`README.md`](sdk/README.md), [`MEDIA_V2_DENOISE_AND_COMPRESS.md`](sdk/MEDIA_V2_DENOISE_AND_COMPRESS.md) |
+| **[api/](api/)** | Topic guides — [`mcp.md`](api/mcp.md), [`rag.md`](api/rag.md), [`sandbox.md`](api/sandbox.md), [`agents.md`](api/agents.md), [`support.md`](api/support.md), [`messenger.md`](api/messenger.md), [`data-access-api.md`](api/data-access-api.md) |
+| **MCP** | [MCP_AND_ECOSYSTEM.md](MCP_AND_ECOSYSTEM.md) · [MCP_QUICKSTART.md](MCP_QUICKSTART.md) · [MCP_SERVER_CAPABILITIES.md](MCP_SERVER_CAPABILITIES.md) · [MCP_TOOLS.md](MCP_TOOLS.md) · [MCP_CAPABILITY_MATRIX.md](MCP_CAPABILITY_MATRIX.md) |
+| **RAG** | [RAG_PLATFORM_GUIDE.md](RAG_PLATFORM_GUIDE.md) |
+| **Sandboxes** | [SANDBOX_PLAYGROUND_GUIDE.md](SANDBOX_PLAYGROUND_GUIDE.md) · [SANDBOX_AND_ENVIRONMENTS.md](SANDBOX_AND_ENVIRONMENTS.md) |
+| **Access** | [ACCESS_AND_FIELD_POLICY.md](ACCESS_AND_FIELD_POLICY.md) · [FIELD_ACCESS_POLICY.md](FIELD_ACCESS_POLICY.md) |
+| **Subscriptions** | [subscription/SUBSCRIPTION_TIERS.md](subscription/SUBSCRIPTION_TIERS.md) · [subscription/ANONYMOUS_TIER.md](subscription/ANONYMOUS_TIER.md) |
+| **[plugins/](plugins/)** | Cursor, Claude, GPT, VS Code — [plugins/README.md](plugins/README.md) |
+| **[examples/](examples/)** | MCP recipes |
+| **[architecture/](architecture/)** | DNA key/value overview |
 
 ---
 
@@ -49,4 +53,4 @@ Then, as needed: [subscription/SUBSCRIPTION_TIERS.md](subscription/SUBSCRIPTION_
 - [gpt-plugin](https://github.com/agentstacktech/gpt-plugin)
 - [vscode-plugin](https://github.com/agentstacktech/vscode-plugin)
 
-Product: [agentstack.tech](https://agentstack.tech) · GitHub: [agentstacktech](https://github.com/agentstacktech)
+**Cursor plugin v0.4.9+:** five-layer bundle (rules, skills, commands, agents, hooks) plus **OAuth 2.1 device code** activation — see each repo’s README.

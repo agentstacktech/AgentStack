@@ -1,34 +1,29 @@
 # AgentStack — Documentation
 
-This repository contains the **public** documentation for **AgentStack** (English, user- and integrator-facing). It covers the web product, MCP, plugins, REST APIs, **RAG**, sandboxes, subscriptions, and examples.
+[![platform](https://img.shields.io/badge/platform-v0.4.11%2B-blue)](https://agentstack.tech)
 
-**If you use the website (dashboard):** start with [docs/USER_FEATURES_GUIDE.md](docs/USER_FEATURES_GUIDE.md) — RAG, sandboxes, field access, subscriptions, and dashboard modules in plain language.
+This repository contains the **public** documentation for **AgentStack** (English, user- and integrator-facing): web product, MCP, plugins, REST APIs, **RAG**, sandboxes, subscriptions, and examples.
 
-**If you integrate AI or automate:** [docs/MCP_AND_ECOSYSTEM.md](docs/MCP_AND_ECOSYSTEM.md) — MCP, REST, RAG, sandboxes, plugins, and examples.
+**If you use the website (dashboard):** start with [docs/USER_FEATURES_GUIDE.md](docs/USER_FEATURES_GUIDE.md) — RAG, sandboxes, field access, subscriptions, dual-shell surfaces, and dashboard modules in plain language.
+
+**If you integrate AI or automate:** [docs/MCP_AND_ECOSYSTEM.md](docs/MCP_AND_ECOSYSTEM.md) — MCP, REST, RAG, sandboxes, plugins, SDK sections (`messenger`, `agents`, `support`, `storage`), and examples.
 
 **REST / OpenAPI:** [docs/OPENAPI.md](docs/OPENAPI.md) — [Swagger UI](https://agentstack.tech/swagger) · [openapi.json](https://agentstack.tech/openapi.json) · [API overview](https://agentstack.tech/api-docs).
 
-## Contents
+**Full index:** [docs/README.md](docs/README.md) — includes **What’s new (Mar–May 2026)** and tables for **messenger**, **storage**, **agents**, **support**, **dual-shell**, **sdk**, and **MCP**.
 
-| Section | Description |
-|--------|--------------|
-| [docs/](docs/) | All documentation (MCP, plugins, architecture, RAG, sandbox, examples). |
-| [docs/USER_FEATURES_GUIDE.md](docs/USER_FEATURES_GUIDE.md) | **Web users:** dashboard, RAG, sandboxes, access control, subscriptions (plain English). |
-| [docs/OPENAPI.md](docs/OPENAPI.md) | OpenAPI: Swagger (`/swagger`), JSON schema, `/api-docs`, self-hosted. |
-| [docs/MCP_AND_ECOSYSTEM.md](docs/MCP_AND_ECOSYSTEM.md) | Single entry point: MCP tools, Plugins index, Ecosystem API, **RAG**, Sandboxes, Examples. |
-| [docs/MCP_SERVER_CAPABILITIES.md](docs/MCP_SERVER_CAPABILITIES.md) | Full list of MCP actions and parameters. |
-| [docs/RAG_PLATFORM_GUIDE.md](docs/RAG_PLATFORM_GUIDE.md) | RAG platform: TurboQuant, collections, memory, REST, MCP, dashboard. |
-| [docs/SANDBOX_PLAYGROUND_GUIDE.md](docs/SANDBOX_PLAYGROUND_GUIDE.md) | Sandbox & Playground deep dive (v0.4.2). |
-| [docs/SANDBOX_AND_ENVIRONMENTS.md](docs/SANDBOX_AND_ENVIRONMENTS.md) | Sandboxes: fork, A/B, canary, `/api/sandbox` API. |
-| [docs/ACCESS_AND_FIELD_POLICY.md](docs/ACCESS_AND_FIELD_POLICY.md) | Three-layer access (L1/L2/L3) and Field Access Policy (FAP). |
-| [docs/plugins/README.md](docs/plugins/README.md) | Plugins index (Cursor, Claude, GPT, VS Code) and quick links. |
+---
 
 ## Plugins (separate repositories)
 
-- [cursor-plugin](https://github.com/agentstacktech/cursor-plugin)
-- [claude-plugin](https://github.com/agentstacktech/claude-plugin)
-- [gpt-plugin](https://github.com/agentstacktech/gpt-plugin)
-- [vscode-plugin](https://github.com/agentstacktech/vscode-plugin)
+| Plugin | Notes |
+|--------|--------|
+| [cursor-plugin](https://github.com/agentstacktech/cursor-plugin) | **v0.4.9+** — 5-layer architecture (rules, skills, commands, agents, hooks); **OAuth 2.1 device code** flow for activation |
+| [claude-plugin](https://github.com/agentstacktech/claude-plugin) | Claude Desktop / API installers |
+| [gpt-plugin](https://github.com/agentstacktech/gpt-plugin) | ChatGPT / OpenAI ecosystem |
+| [vscode-plugin](https://github.com/agentstacktech/vscode-plugin) | VS Code marketplace distribution |
+
+---
 
 ## Product
 
