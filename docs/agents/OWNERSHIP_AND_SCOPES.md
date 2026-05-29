@@ -1,5 +1,7 @@
 # Agents — ownership & scopes
 
+**Platform line:** 0.4.13 — scoped REST only (no flat global agents list).
+
 ## Project agents
 
 Owned by a **project** you administer. They appear in **Dashboard → Agents** (`module=agents`) when your shell exposes that module.

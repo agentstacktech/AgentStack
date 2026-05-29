@@ -292,7 +292,7 @@ data: {"status": "completed", "result": {...}}
 - **Buffs**: 10 tools
 - **Assets**: 4 tools
 
-**Total: 1 tool (agentstack.execute), 60+ actions** — action list: GET /mcp/actions
+**Total: 1 tool (agentstack.execute), 332 catalog actions** — action list: `GET /mcp/actions` · [MCP_SCALE.md](MCP_SCALE.md)
 
 ### Recent updates
 

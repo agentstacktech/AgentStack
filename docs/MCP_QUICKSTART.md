@@ -9,7 +9,7 @@ GET https://agentstack.tech/mcp/actions
 Authorization: Bearer <token>
 ```
 
-Snapshot for offline reading: [MCP_CAPABILITY_MATRIX.md](MCP_CAPABILITY_MATRIX.md) (**226** actions in the May 2026 export).
+Snapshot for offline reading: [MCP_CAPABILITY_MATRIX.md](MCP_CAPABILITY_MATRIX.md) (**332** catalog actions · **31** domains · regenerated 2026-05-28).
 
 ## 2. Execute an action
 

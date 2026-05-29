@@ -590,6 +590,7 @@ Webhook / Notify / other processors
 
 ## Related Docs
 
-- [docs/RBAC_ARCHITECTURE.md](RBAC_ARCHITECTURE.md) — route-level RBAC
-- [docs/RULES_ENGINE_API.md](RULES_ENGINE_API.md) — Rules Engine (data_event trigger, data_access_processor)
+- [ACCESS_AND_FIELD_POLICY.md](ACCESS_AND_FIELD_POLICY.md) — L1–L3 summary
+- [logic/README.md](logic/README.md) — Rules Engine overview
+- [api/data-access-api.md](api/data-access-api.md) — REST DataAccess
 - [docs/MCP_TOOLS.md](MCP_TOOLS.md) — MCP tools reference (data_access.*)

@@ -18,3 +18,5 @@ await sdk.media.resumable.uploadChunk(opId, slice, { offset });
 ## Headers
 
 Upload finalize endpoints accept routing hints as documented in OpenAPI (folder/target headers). Use the exact names from **`openapi.json`** for your environment.
+
+**Next:** [LIGHTBOX_GUIDE.md](LIGHTBOX_GUIDE.md) · [../hosting/HOSTING_QUICKSTART.md](../hosting/HOSTING_QUICKSTART.md) · [../sdk/MEDIA_V2_DENOISE_AND_COMPRESS.md](../sdk/MEDIA_V2_DENOISE_AND_COMPRESS.md)

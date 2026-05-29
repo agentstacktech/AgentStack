@@ -14,7 +14,16 @@ Explore and try **REST** endpoints interactively: **[OPENAPI.md](OPENAPI.md)** �
 
 ## MCP (Model Context Protocol)
 
-- **[MCP_SERVER_CAPABILITIES.md](MCP_SERVER_CAPABILITIES.md)** — MCP doc index: quick start ([MCP_QUICKSTART](MCP_QUICKSTART.md)), overview and API ([MCP_OVERVIEW](MCP_OVERVIEW.md)), tools reference ([MCP_TOOLS](MCP_TOOLS.md)), features and examples ([MCP_FEATURES_EXAMPLES](MCP_FEATURES_EXAMPLES.md)). Single tool (`agentstack.execute`) with 70+ actions (incl. RAG) for Cursor, Claude, GPT, and VS Code plugins.
+```mermaid
+flowchart LR
+  Client[Agent or plugin]
+  MCP[POST /mcp]
+  Exec[agentstack.execute]
+  Domains[332 catalog actions]
+  Client --> MCP --> Exec --> Domains
+```
+
+- **[MCP_SERVER_CAPABILITIES.md](MCP_SERVER_CAPABILITIES.md)** — MCP doc index: quick start ([MCP_QUICKSTART](MCP_QUICKSTART.md)), overview and API ([MCP_OVERVIEW](MCP_OVERVIEW.md)), tools reference ([MCP_TOOLS](MCP_TOOLS.md)), features and examples ([MCP_FEATURES_EXAMPLES](MCP_FEATURES_EXAMPLES.md)). Single tool (`agentstack.execute`) with **332 catalog actions** across **31** domains (incl. RAG) — see [MCP_SCALE.md](MCP_SCALE.md) and [MCP_CAPABILITY_MATRIX.md](MCP_CAPABILITY_MATRIX.md).
 - **[api/mcp.md](api/mcp.md)** — MCP configuration, authentication, public endpoints, examples for AI agents.
 
 ### MCP endpoints
@@ -36,7 +45,7 @@ Explore and try **REST** endpoints interactively: **[OPENAPI.md](OPENAPI.md)** �
 
 ## Ecosystem data
 
-- **[ECOSYSTEM_API_IMPLEMENTATION.md](../../docs/archive/ECOSYSTEM_API_IMPLEMENTATION.md)** — Working with data: existing endpoints (no versioned paths), quick start, example of mobile game data storage (user.data.game.progress). Project and user data: `/api/projects/.../data`, `/api/dna/data`, MCP.
+- **[ECOSYSTEM_API_IMPLEMENTATION.md](ECOSYSTEM_API_IMPLEMENTATION.md)** — Working with data: existing endpoints (no versioned paths), quick start, example of mobile game data storage (`user.data.game.progress`). Project and user data: `/api/projects/.../data`, `/api/dna/data`, MCP.
 - **[architecture/DNA_KEY_VALUE_API.md](architecture/DNA_KEY_VALUE_API.md)** — Data store (project.data, user.data), key-value API **GET/POST /api/dna/data**, 8DNA usage.
 
 ---

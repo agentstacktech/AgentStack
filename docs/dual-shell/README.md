@@ -4,9 +4,10 @@ Authenticated AgentStack ships **three chrome contexts** behind one account:
 
 | Shell | Route prefix | Audience |
 |-------|----------------|----------|
-| **User Hub** | `/app/*` | End users — wallets, messaging, support inbox |
-| **Developer Hub** | `/dev/*` | Builders — APIs, logic, sandboxes |
+| **User Hub** | `/user/*` | End users — wallets, messaging, project workspaces |
+| **Developer Hub** | `/dev/*` | Builders — APIs, logic, sandboxes, support staff tools |
 | **Platform** | `/platform/*` | Ecosystem operators — diagnostics, economy hubs |
+| **Hosted mini-app** | `/app/dev/:id`, `/app/prod/:id` | AI Builder / hosted app shells (not the main dashboard chrome) |
 
 ## Resolver
 

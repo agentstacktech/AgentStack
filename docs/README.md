@@ -8,17 +8,18 @@
 
 ## Start here
 
-| Audience | Document |
-|----------|----------|
-| **Dashboard users** | [USER_FEATURES_GUIDE.md](USER_FEATURES_GUIDE.md) |
-| **Integrators & automations** | [MCP_AND_ECOSYSTEM.md](MCP_AND_ECOSYSTEM.md) |
-| **REST overview** | [OPENAPI.md](OPENAPI.md) |
+| Audience | Document | ~Time to first call |
+|----------|----------|---------------------|
+| **Product builders** | [BUILD_YOUR_PRODUCT.md](BUILD_YOUR_PRODUCT.md) | 15 min (hosting tutorial) |
+| **Dashboard users** | [USER_FEATURES_GUIDE.md](USER_FEATURES_GUIDE.md) | 5 min (UI) |
+| **Integrators & automations** | [MCP_AND_ECOSYSTEM.md](MCP_AND_ECOSYSTEM.md) | 10 min (MCP curl) |
+| **REST overview** | [OPENAPI.md](OPENAPI.md) | 5 min (Swagger) |
 
 ---
 
 ## What's new (Mar–May 2026)
 
-Themes shipped across **0.4.7 → 0.4.13**: unified **8DNA** data plane, **resilience / RAG** hardening, **local-first messenger** (delta, ordering, CRDT, SharedWorker), **dual-shell + triple-shell** SPA audiences (`/user/*`, `/dev/*`, `/platform/*`), **Agents Fleet** as first-class project DNA, **project support** on the messenger plane, **SDK media v2** (capture denoise + photo ladder), **Web Push** reliability for DMs, and **support search** for staff flows.
+Themes shipped across **0.4.7 → 0.4.13**: unified **8DNA** data plane, **resilience / RAG** hardening, **offline-friendly messenger** (delta sync, consistent ordering, background workers where supported), **dual-shell + triple-shell** SPA audiences (`/user/*`, `/dev/*`, `/platform/*`), **Agents Fleet** as first-class project DNA, **project support** on the messenger plane, **SDK media v2** (capture denoise + photo ladder), **Web Push** reliability for DMs, **support search** for staff flows, and **MCP scale** — **332** catalog actions / **31** domains via one `agentstack.execute` entry ([MCP_SCALE.md](MCP_SCALE.md), [capability matrix](MCP_CAPABILITY_MATRIX.md)).
 
 **Narrative (monorepo journal):** see the evolution note linked from the main repo `docs/EVOLUTION_AND_RELEASE_2026-05.md` on GitHub (`master` branch).
 
@@ -30,6 +31,7 @@ Themes shipped across **0.4.7 → 0.4.13**: unified **8DNA** data plane, **resil
 |---------|-----------|
 | **[messenger/](messenger/)** | Social API integration, offline behaviour, reliability — [`README.md`](messenger/README.md), [`INTEGRATION_QUICKSTART.md`](messenger/INTEGRATION_QUICKSTART.md), [`SOCIAL_API_REFERENCE.md`](messenger/SOCIAL_API_REFERENCE.md), [`OFFLINE_AND_RELIABILITY.md`](messenger/OFFLINE_AND_RELIABILITY.md) |
 | **[storage/](storage/)** | Client-side thumbnails, OPFS, resumable uploads, lightbox — [`README.md`](storage/README.md), [`INTEGRATION_QUICKSTART.md`](storage/INTEGRATION_QUICKSTART.md), [`LIGHTBOX_GUIDE.md`](storage/LIGHTBOX_GUIDE.md) |
+| **[hosting/](hosting/)** | Static and SPA sites on `/s/` and `/a/` — [`README.md`](hosting/README.md), [`HOSTING_QUICKSTART.md`](hosting/HOSTING_QUICKSTART.md) |
 | **[agents/](agents/)** | Agents Fleet REST + MCP surfaces — [`README.md`](agents/README.md), [`INTEGRATION_QUICKSTART.md`](agents/INTEGRATION_QUICKSTART.md), [`OWNERSHIP_AND_SCOPES.md`](agents/OWNERSHIP_AND_SCOPES.md) |
 | **[support/](support/)** | Project support threads, eligibility, AI handoff — [`README.md`](support/README.md), [`INTEGRATION_QUICKSTART.md`](support/INTEGRATION_QUICKSTART.md), [`AI_HANDOFF.md`](support/AI_HANDOFF.md) |
 | **[dual-shell/](dual-shell/)** | User vs Developer vs Platform shells — [`README.md`](dual-shell/README.md) |
@@ -42,7 +44,15 @@ Themes shipped across **0.4.7 → 0.4.13**: unified **8DNA** data plane, **resil
 | **Subscriptions** | [subscription/SUBSCRIPTION_TIERS.md](subscription/SUBSCRIPTION_TIERS.md) · [subscription/ANONYMOUS_TIER.md](subscription/ANONYMOUS_TIER.md) |
 | **[plugins/](plugins/)** | Cursor, Claude, GPT, VS Code — [plugins/README.md](plugins/README.md) |
 | **[examples/](examples/)** | MCP recipes |
-| **[architecture/](architecture/)** | DNA key/value overview |
+| **[architecture/](architecture/)** | [DNA_KEY_VALUE_API.md](architecture/DNA_KEY_VALUE_API.md), [API_CHANNELS.md](architecture/API_CHANNELS.md), [ROBOT_READY_8DNA.md](architecture/ROBOT_READY_8DNA.md) |
+| **[integrations/](integrations/)** | Integration Hub — recipes, webhooks |
+| **[commerce/](commerce/)** | Shop, wallets, buffs |
+| **[auth/](auth/)** | OAuth device flow, API keys |
+| **[security/](security/)** | Trust, webhook verification |
+| **[tutorials/](tutorials/)** | Golden paths 01–08 |
+| **[ai-builder/](ai-builder/)** | UAM manifest |
+| **Build hub** | [BUILD_YOUR_PRODUCT.md](BUILD_YOUR_PRODUCT.md) · [PARITY_MATRIX.md](PARITY_MATRIX.md) · [JOURNEY_MAP.md](JOURNEY_MAP.md) |
+| **Maintainers** | [CONTRIBUTING_DOCS.md](CONTRIBUTING_DOCS.md) · [operations-public/PRE_PUBLISH_CHECKLIST.md](operations-public/PRE_PUBLISH_CHECKLIST.md) |
 
 ---
 

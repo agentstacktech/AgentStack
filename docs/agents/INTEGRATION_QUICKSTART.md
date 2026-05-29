@@ -29,3 +29,5 @@ Use **`agents.run`**, **`agents.list`**, **`agents.get`** via your MCP client (`
 ```
 
 (Exact envelope matches your SDK version — prefer **`@agentstack/sdk`** typed helpers when available.)
+
+**Next:** [OWNERSHIP_AND_SCOPES.md](OWNERSHIP_AND_SCOPES.md) · [../tutorials/04_ai_rag_agent.md](../tutorials/04_ai_rag_agent.md) · [../PARITY_MATRIX.md](../PARITY_MATRIX.md)

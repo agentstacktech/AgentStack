@@ -15,6 +15,22 @@ AgentStack exposes **real-time messaging** and **social** primitives through the
 - **`GET https://agentstack.tech/mcp/actions`** — full catalog (requires auth as for your integration).
 - Snapshot tables: [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md) (mirrors the live catalog for offline reading).
 
+## Flow (integrator view)
+
+```mermaid
+sequenceDiagram
+  participant App as Your app
+  participant API as agentstack.tech
+  participant User as End users
+  App->>API: REST social or sdk.messenger
+  API-->>User: relay and push
+  User-->>App: live or Web Push
+```
+
+## Ordering
+
+Use the **server timeline key** returned with messages — do not assume per-device sequence numbers are global. Details: [OFFLINE_AND_RELIABILITY.md](OFFLINE_AND_RELIABILITY.md).
+
 ## Related
 
 - [support/](../support/) — project support threads share messenger transports.

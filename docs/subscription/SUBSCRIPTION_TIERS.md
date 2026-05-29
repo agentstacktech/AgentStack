@@ -291,7 +291,7 @@ When limits are exceeded, the API returns appropriate error codes:
 ## Related Documentation
 
 - [Anonymous Tier](./ANONYMOUS_TIER.md) — Anonymous tier details
-- [API Documentation](../api/README.md) — REST topic index
+- [API topic index](../api/README.md) — REST topic index · [OPENAPI.md](../OPENAPI.md)
 - [OPENAPI.md](../OPENAPI.md) — Swagger UI and `openapi.json`
 - [USER_FEATURES_GUIDE.md](../USER_FEATURES_GUIDE.md) — Using the dashboard and new platform features
 

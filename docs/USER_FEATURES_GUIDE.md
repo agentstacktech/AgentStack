@@ -123,4 +123,4 @@ If you use **MCP** or plugins, start from the ecosystem index and the plugins li
 | Full doc index | [README.md](README.md) |
 | MCP + ecosystem index | [MCP_AND_ECOSYSTEM.md](MCP_AND_ECOSYSTEM.md) |
 | OpenAPI / Swagger | [OPENAPI.md](OPENAPI.md) |
-| REST API topics | [api/README.md](api/README.md) |
+| REST API topics | [api/README.md](api/README.md) · [OPENAPI.md](OPENAPI.md) |

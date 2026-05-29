@@ -10,6 +10,10 @@
 
 This document avoids implementation identifiers (storage backends, internal metrics). Treat the platform as a **black box** with the behaviors above.
 
+## Optimistic UI + server reconcile
+
+Show sent messages immediately in your UI, then reconcile when the server timeline confirms or corrects order. On reconnect, fetch delta/history and merge into local state — same pattern as modern local-first chat apps.
+
 ## Merge & edits
 
 Concurrent edits to mutable fields are merged **on the client** so rapid multi-device typing does not corrupt thread state; the server relays updates rather than acting as a manual merge authority for those planes.

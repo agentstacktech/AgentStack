@@ -61,9 +61,9 @@ Why: no WHEN, no triggers, vague WHAT.
 ## Progressive disclosure (reference.md / examples.md)
 
 - **SKILL.md** remains the main carrier; target size up to ~500 lines.
-- **reference.md** — move detailed reference only if the tools/params table grows and duplicates MCP_SERVER_CAPABILITIES. Otherwise prefer a link to the doc.
-- **examples.md** — move extended scenarios only if SKILL accumulates many examples (e.g. >10); keep 2–3 key ones in SKILL.
-- Links from SKILL — one level: "See [reference.md](reference.md)" or "See [examples.md](examples.md)". Do not chain reference → other files.
+- **reference.md** (optional in your plugin) — detailed tables only if they exceed [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md).
+- **examples.md** (optional) — extended scenarios when SKILL has many examples (>10).
+- Link one level from SKILL to companion files or AgentStack doc URLs — avoid deep chains.
 
 ---
 

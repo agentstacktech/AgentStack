@@ -83,7 +83,7 @@ mcp/
 
 ## Execute and discovery
 
-A single tool **agentstack.execute** with batched steps and 70+ available actions (incl. RAG). One API, async jobs and streaming.
+A single tool **agentstack.execute** with batched steps and **332 catalog actions** (see [MCP_SCALE.md](MCP_SCALE.md), [MCP_CAPABILITY_MATRIX.md](MCP_CAPABILITY_MATRIX.md)). One API, async jobs and streaming.
 
 - **Base URL:** `https://agentstack.tech/mcp`
 - **Execute (sync):** `POST /mcp` — body: `{ "steps": [ { "id": "p1", "action": "projects.create_project_anonymous", "params": { "name": "My app" } } ], "options": { "stopOnError": true } }`
@@ -220,4 +220,4 @@ Returns the status of an async job.
 
 1. Check backend logs for the exact exception, e.g. `TypeError: Object of type UUID is not JSON serializable` near `json.dumps` or `_handle_jsonrpc_request`.
 2. Ensure the deployed backend includes the fix: in `_handle_jsonrpc_request` the `tools/call` branch uses `serialize_for_json(result_payload)` before `json.dumps`. Redeploy if needed.
-3. For other 500s on POST /mcp: search logs for `Exception in ASGI application` and the traceback; fix the failing path (tool implementation or route) and add error handling so tool errors return 200 with `result.isError: true` instead of 500 where appropriate. See [deploy/vps/RUNBOOK_MCP_500.md](../deploy/vps/RUNBOOK_MCP_500.md) for runbook steps.
+3. For other 500s on POST /mcp: retry with a smaller batch; confirm action id via `GET /mcp/actions`; ensure tool errors return structured `isError` in step results when the platform supports it. Contact support with request id if persistent.

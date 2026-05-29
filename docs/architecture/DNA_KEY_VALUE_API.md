@@ -37,3 +37,17 @@ DNA API base path: **`/api/dna`** (no version in paths).
 
 - **8DNA:** Single API for all project/user data; one source of truth per entity.
 - **Modularity:** Key-value access is separate from other DNA endpoints; permissions are enforced at the API boundary.
+
+## Project slice (`user_id = 0`)
+
+The **project slice** row (`user_id = 0`) holds project-wide configuration and shared data. User-specific rows use `user_id > 0` in the same project. Integrators should not treat personal user rows as the project config row.
+
+## Anti-patterns
+
+| Avoid | Prefer |
+|-------|--------|
+| One giant `project.data.app` blob for everything | Namespaced keys: `project.data.billing.plan`, `project.data.game.level` |
+| Storing secrets in DNA JSON visible to many roles | Environment secrets + integration connections; FAP hide sensitive fields |
+| Cross-project keys without `project_id` | Always pass `project_id` for `project.data.*` |
+
+**Robot agents:** [ROBOT_READY_8DNA.md](ROBOT_READY_8DNA.md)

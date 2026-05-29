@@ -1,6 +1,6 @@
 # AgentStack Plugins — Index
 
-Plugins for Cursor, Claude Code, GPT (OpenAI), and VS Code: one MCP endpoint, **70+** actions (including **RAG**). Choose your platform and follow the Quick Start in each plugin repository.
+Plugins for Cursor, Claude Code, GPT (OpenAI), and VS Code: one MCP endpoint, **332 catalog actions** ([MCP_SCALE.md](../MCP_SCALE.md), including **RAG**). Choose your platform and follow the Quick Start in each plugin repository.
 
 ---
 
@@ -21,7 +21,7 @@ Plugins for Cursor, Claude Code, GPT (OpenAI), and VS Code: one MCP endpoint, **
 2. **Get an API key** — create an anonymous project (no account) or from [AgentStack](https://agentstack.tech) project settings.
 3. **Follow the Quick Start** in the plugin repo (README, MCP_QUICKSTART, or GPT_QUICKSTART).
 
-**What you get:** one MCP endpoint (`https://agentstack.tech/mcp`), **70+** tools: projects, 8DNA data, Rules Engine, payments, Buffs, RBAC, auth, scheduler, analytics, **RAG** (collections, documents, memory), webhooks, notifications, wallets. Full list: [MCP_SERVER_CAPABILITIES.md](../MCP_SERVER_CAPABILITIES.md).
+**What you get:** one MCP endpoint (`https://agentstack.tech/mcp`), **332 catalog actions** across domains: projects, 8DNA data, Rules Engine, payments, Buffs, RBAC, auth, scheduler, analytics, **RAG**, integrations, agents, support, hosting, commerce, storage, and more. Full list: [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md).
 
 **RAG & sandboxes (REST):** [RAG_PLATFORM_GUIDE.md](../RAG_PLATFORM_GUIDE.md) · [SANDBOX_PLAYGROUND_GUIDE.md](../SANDBOX_PLAYGROUND_GUIDE.md).
 

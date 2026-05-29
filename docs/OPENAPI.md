@@ -1,8 +1,8 @@
 # OpenAPI — HTTP API reference
 
-The AgentStack **REST compatibility** surface (many `/api/*` paths) is described with **OpenAPI**. **AI-oriented semantics** are primarily **`GET /mcp/actions`** and `POST /mcp` (`agentstack.execute`), plus 8DNA KV and Protein commands — see the main repo **[docs/API_CHANNELS_AND_PROTOCOLS.md](../../docs/API_CHANNELS_AND_PROTOCOLS.md)**.
+The AgentStack **REST compatibility** surface (many `/api/*` paths) is described with **OpenAPI**. **AI-oriented semantics** are primarily **`GET /mcp/actions`** and `POST /mcp` (`agentstack.execute`), plus 8DNA KV and Protein commands — see **[architecture/API_CHANNELS.md](architecture/API_CHANNELS.md)**.
 
-On **agentstack.tech**, Swagger is **not** at `/docs` on the site root — nginx exposes the backend Swagger UI at **`/swagger`** (see `deploy/vps/nginx.conf`: proxy to backend `/docs`).
+On **agentstack.tech**, interactive docs are at **`/swagger`** (Swagger UI) and **`/api-docs`** (grouped overview).
 
 ## Production (agentstack.tech)
 
@@ -22,4 +22,4 @@ In **Swagger**, tags are ordered with **unified access** first (**MCP**, **8DNA 
 
 ## Related docs
 
-[ACCESS_AND_FIELD_POLICY.md](ACCESS_AND_FIELD_POLICY.md) (FAP) · [SANDBOX_AND_ENVIRONMENTS.md](SANDBOX_AND_ENVIRONMENTS.md) (sandboxes) · [RAG_PLATFORM_GUIDE.md](RAG_PLATFORM_GUIDE.md) (RAG) · [ECOSYSTEM_API_IMPLEMENTATION.md](../../docs/archive/ECOSYSTEM_API_IMPLEMENTATION.md) (project/user data).
+[FIELD_ACCESS_POLICY.md](FIELD_ACCESS_POLICY.md) (FAP) · [SANDBOX_AND_ENVIRONMENTS.md](SANDBOX_AND_ENVIRONMENTS.md) (sandboxes) · [RAG_PLATFORM_GUIDE.md](RAG_PLATFORM_GUIDE.md) (RAG) · [ECOSYSTEM_API_IMPLEMENTATION.md](ECOSYSTEM_API_IMPLEMENTATION.md) (project/user data).
