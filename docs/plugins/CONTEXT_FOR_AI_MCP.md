@@ -2,6 +2,8 @@
 
 **Purpose:** MCP exposes one tool `agentstack.execute` at `https://agentstack.tech/mcp`. Use this map to choose the right **action** and step sequence for a user request. Full action list: `GET /mcp/actions`.
 
+**Broader context:** [MCP_AND_ECOSYSTEM.md](../MCP_AND_ECOSYSTEM.md) (all channels) · [CONTEXT_FOR_AI.md](CONTEXT_FOR_AI.md) (includes HTTP-only fallback: 8DNA + Protein).
+
 ---
 
 ## Request shape (agentstack.execute)
@@ -31,7 +33,8 @@
 | Get one project / project stats | Projects | `projects.get_project`, `projects.get_stats` | Need `project_id` (literal or from previous step). |
 | Give user a 7-day trial | Buffs | `buffs.apply_temporary_effect` | Params: project_id, user_id, effect id/code, duration. |
 | List active subscriptions / buffs | Buffs | `buffs.list_active_buffs`, `buffs.get_effective_limits` | project_id, optional user_id. |
-| Create payment / check status / refund | Payments | `payments.create_payment`, `payments.get_status`, `payments.refund` | Chain with `if` on status for next step. |
+| Create payment / check status / refund | Payments | `payments.create`, `payments.get`, `payments.refund` | Chain with `if` on `result.status` (e.g. `completed`). Balance: `payments.get_balance`. |
+| Marketplace / auction / exchange | REST (same Core) | `GET /mcp/actions` domain **`commerce_rest`** (path hints only) | Not valid `step.action` — use HTTP `/api/marketplace/*`, `/api/exchange/*`. See [MCP_OVERVIEW.md](../MCP_OVERVIEW.md). |
 | Login / register / get profile | Auth | `auth.quick_auth`, `auth.create_user`, `auth.get_profile`, `auth.update_profile` | Session/identity. |
 | Create rule / when-then logic | Rules / Logic | `logic.create`, `rules.create_rules`, `rules.list_rules` | Automation, triggers. |
 | Assets / inventory | Assets | `assets.create`, `assets.list` | project_id in params. |

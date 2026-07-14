@@ -1,6 +1,7 @@
 # Field-Level Access Policy
 
-**Version:** 1.0
+**Version:** 1.0  
+**Philosophy:** Creation over Conflict (v0.2.56) · Elegant Minimalism · 8DNA · Decomposition
 
 ---
 
@@ -89,7 +90,7 @@ Same pattern as `project.data.config.rbac` — no extra tables, no migrations.
 | Pattern | Loader pattern — cache handles miss → load → store atomically |
 | Invalidation | `invalidate_by_tag("project:{project_id}")` on every write |
 
-**Key insight:** Because RBAC cache and field_access cache share
+**Key insight (Elegant Minimalism):** Because RBAC cache and field_access cache share
 the same L1 "neural" layer, RBAC role-change invalidations (`project:{project_id}`)
 **automatically cascade** to field_access policy entries — no cross-service coupling.
 
@@ -590,7 +591,6 @@ Webhook / Notify / other processors
 
 ## Related Docs
 
-- [ACCESS_AND_FIELD_POLICY.md](ACCESS_AND_FIELD_POLICY.md) — L1–L3 summary
-- [logic/README.md](logic/README.md) — Rules Engine overview
-- [api/data-access-api.md](api/data-access-api.md) — REST DataAccess
-- [docs/MCP_TOOLS.md](MCP_TOOLS.md) — MCP tools reference (data_access.*)
+- [api/data-access.md](api/data-access.md) — field-level policy REST API
+- [MCP_CAPABILITY_MATRIX.md](MCP_CAPABILITY_MATRIX.md) — MCP actions for data access
+- [MCP_TOOLS.md](MCP_TOOLS.md) — MCP tools reference (data_access.*)

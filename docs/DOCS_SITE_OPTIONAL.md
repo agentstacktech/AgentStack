@@ -1,5 +1,33 @@
-# Optional docs site (future)
+# Optional docs site (Starlight)
 
-A VitePress (or similar) site may publish this folder with Pagefind search and embedded OpenAPI. **Canonical source today:** markdown in this repository on GitHub.
+The monorepo ships `docs-site/` — an Astro Starlight shell that mirrors `agentstack_repo/docs/` with Pagefind search and Diátaxis sidebar.
 
-Track status: [ROADMAP_INTEGRATOR.md](ROADMAP_INTEGRATOR.md)
+## Build
+
+```bash
+npm run build --prefix docs-site
+```
+
+`prebuild` automatically:
+
+1. Copies `agentstack_repo/docs/` → `docs-site/src/content/docs/` (injects frontmatter)
+2. Generates `reference/mcp/*.md` domain stubs from `CAPABILITY_MATRIX.md`
+
+Output: static site under `docs-site/dist/` (~180 pages including MCP domains).
+
+## Local dev
+
+```bash
+cd docs-site && npm install && npm run dev
+```
+
+## IA
+
+| Sidebar group | Mirror path |
+|---------------|-------------|
+| Tutorials | `tutorials/` |
+| How-to | `how-to/` |
+| Reference | `reference/` (+ generated `reference/mcp/`) |
+| Explanation | `explanation/` |
+
+Gene: `docs.public.site.gen1` · See [CONTRIBUTING_DOCS.md](CONTRIBUTING_DOCS.md) for the full publish pipeline.

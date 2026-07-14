@@ -2,6 +2,11 @@
 
 | Domain | REST (examples) | MCP prefix | SDK façade |
 |--------|-----------------|------------|------------|
+| CRM | `/api/projects/{id}/crm/*` | `crm.*` | `sdk.platform.api` |
+| AgentNet | `/api/agentnet/*` | `agentnet.*`, `agentnet.solana.*`, `agentnet.testnet.*` | `sdk.platform.economy` |
+| Discovery | `/api/discovery/*` | `discovery.*`, `guidance.*` | Compass UI + `sdk.platform.api` |
+| Storefront | `/api/commerce/storefront/*` | `commerce.storefront.*` | `sdk.commerce` |
+| SEO | `/api/seo/*` | `seo.*` | `sdk.platform.api` |
 | Projects | `GET /api/projects` | `projects.*` | `sdk.platform.api` |
 | 8DNA | `GET/POST /api/dna/data` | `commands.*`, DNA tools | `sdk.protocol`, `sdk.platform.dna` |
 | Messenger | `/api/social/*` | `social.*` | `sdk.messenger`, `sdk.social` |

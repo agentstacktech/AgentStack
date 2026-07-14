@@ -56,7 +56,7 @@
 - ✅ Validates `auth_key` from anonymous creation
 - ✅ Transfer ownership:
   - Updates `project.user_id`
-  - Creates records in `data_projects_user`
+  - Creates records in `data_projects_8dna`
   - Removes old anonymous key
   - Creates new key for the owner
 
@@ -77,7 +77,7 @@
 **Project user management** (`add_user`, `remove_user`) requires a **Professional subscription**.
 
 **Implementation:**
-- Check at API endpoint level on the server (subscription enforcement)
+- Check at API endpoint level (projects REST API — `GET /api/projects/...`)
 - Uses `SubscriptionService.get_user_subscription()`
 - Checks `plan_type` in ['pro', 'professional', 'enterprise']
 - Returns 403 Forbidden when subscription is missing
@@ -292,7 +292,7 @@ data: {"status": "completed", "result": {...}}
 - **Buffs**: 10 tools
 - **Assets**: 4 tools
 
-**Total: 1 tool (agentstack.execute), 332 catalog actions** — action list: `GET /mcp/actions` · [MCP_SCALE.md](MCP_SCALE.md)
+**Total: 1 tool (agentstack.execute), live actions** — action list: `GET /mcp/actions`
 
 ### Recent updates
 
@@ -321,3 +321,4 @@ All tools use existing endpoints, ensuring consistency and no code duplication.
 **Document version:** 1.0  
 **Last updated:** 2025-01-29  
 **Author:** AgentStack Development Team
+

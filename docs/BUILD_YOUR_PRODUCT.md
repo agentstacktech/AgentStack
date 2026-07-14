@@ -61,13 +61,23 @@ Prefer **`sdk.protocol`** for DNA commands and snapshot cache — [sdk/AGENT_PRO
 
 ## AI teams: genetic navigation
 
+The **Genetic System** (Navigation OS) gives agents stable addresses — genetic tags, a central map, local indexes — so they land in canonical files instead of repo-wide grep. Primary ROI is **labor calendar** (fewer wrong-tree edits); token savings follow when map → index prefixes stabilize.
+
+| Doc | Purpose |
+|-----|---------|
+| [genetic-system/GENETIC_SYSTEM_OVERVIEW.md](genetic-system/GENETIC_SYSTEM_OVERVIEW.md) | What it is, five-step workflow, agents-in-2026 context |
+| [genetic-system/AI_MODEL_ECONOMICS.md](genetic-system/AI_MODEL_ECONOMICS.md) | Harness numbers, SDK leverage, honest caveats |
+| [genetic-ai-starter](https://github.com/agentstacktech/genetic-ai-starter) | Portable kit for **your** repo |
+
 For map-first Cursor rules and starter genes in **your** repo (not copied from this mirror):
 
 ```bash
 npx @agentstack/genetic-ai-starter init --profile standard --project-name "My SaaS" --domain app
 ```
 
-See [genetic-ai-starter](https://github.com/agentstacktech/genetic-ai-starter).
+AgentStack consumers: use profile **`agentstack-app`** — [AGENTSTACK_APP_GUIDE](https://github.com/agentstacktech/genetic-ai-starter/blob/main/meta/docs/AGENTSTACK_APP_GUIDE.md).
+
+Interactive explainer (monorepo, RU/EN/PT): [docs/genetic-system-site](https://github.com/agentstacktech/AgentStack/tree/master/docs/genetic-system-site).
 
 ## Honest limits
 

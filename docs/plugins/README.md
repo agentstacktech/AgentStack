@@ -1,52 +1,69 @@
 # AgentStack Plugins — Index
 
-Plugins for Cursor, Claude Code, GPT (OpenAI), and VS Code: one MCP endpoint, **332 catalog actions** ([MCP_SCALE.md](../MCP_SCALE.md), including **RAG**). Choose your platform and follow the Quick Start in each plugin repository.
+**Purpose:** Single entry point for AgentStack plugin documentation (Decomposition: one index; Elegant Minimalism: no duplication — details by link).
+
+**For AI agents:** Start with [CONTEXT_FOR_AI.md](CONTEXT_FOR_AI.md) and [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md). Plugin source repos: [agentstacktech/cursor-plugin](https://github.com/agentstacktech/cursor-plugin), [agentstacktech/claude-plugin](https://github.com/agentstacktech/claude-plugin), [agentstacktech/vscode-plugin](https://github.com/agentstacktech/vscode-plugin), [agentstacktech/gpt-plugin](https://github.com/agentstacktech/gpt-plugin).
+
+**Philosophy:** See [AGENTSTACK_PLUGIN_PHILOSOPHY.md](AGENTSTACK_PLUGIN_PHILOSOPHY.md).
 
 ---
 
 ## Plugins by platform
 
-| Platform | Repository | Description |
-|----------|------------|-------------|
-| **Cursor** | [agentstacktech/cursor-plugin](https://github.com/agentstacktech/cursor-plugin) | Skills, Rules (.mdc), MCP config. |
-| **Claude Code** | [agentstacktech/claude-plugin](https://github.com/agentstacktech/claude-plugin) | Skills, `claude mcp add --transport http`. |
-| **GPT (OpenAI)** | [agentstacktech/gpt-plugin](https://github.com/agentstacktech/gpt-plugin) | GPT Actions (OpenAPI + instructions), Custom GPT. |
-| **VS Code** | [agentstacktech/vscode-plugin](https://github.com/agentstacktech/vscode-plugin) | Extension: MCP + API key in SecretStorage. |
+All plugins are published as separate GitHub repositories (see table below). On GitHub the docs repo is [agentstacktech/AgentStack](https://github.com/agentstacktech/AgentStack).
+
+| Platform     | Folder | GitHub | Summary |
+|-------------|--------|--------|---------|
+| **Cursor**  | [cursor-plugin](https://github.com/agentstacktech/cursor-plugin) | [agentstacktech/cursor-plugin](https://github.com/agentstacktech/cursor-plugin) | **v0.4.14, gen3** — 5-layer plugin + catalog plane (rules + 24 domain skills + commands + agents + hooks), OAuth 2.1 Device Code, streamable-http MCP. Install via `/agentstack-init`. |
+| **Claude Code** | [claude-plugin](https://github.com/agentstacktech/claude-plugin) | [agentstacktech/claude-plugin](https://github.com/agentstacktech/claude-plugin) | Claude Code plugin: Skills, manifest `.claude-plugin/plugin.json`. MCP: `claude mcp add --transport http`. |
+| **GPT (OpenAI)** | [gpt-plugin](https://github.com/agentstacktech/gpt-plugin) | [agentstacktech/gpt-plugin](https://github.com/agentstacktech/gpt-plugin) | GPT Actions artifacts: OpenAPI 3.1 schema + instructions. Install = create Custom GPT per GPT_QUICKSTART. |
+| **VS Code** | [vscode-plugin](https://github.com/agentstacktech/vscode-plugin) | [agentstacktech/vscode-plugin](https://github.com/agentstacktech/vscode-plugin) | VS Code extension: MCP registered by extension; one-time API key entry (SecretStorage). |
 
 ---
 
 ## Getting started
 
-1. **Choose a plugin** for your environment (Cursor, Claude Code, VS Code, or GPT).
-2. **Get an API key** — create an anonymous project (no account) or from [AgentStack](https://agentstack.tech) project settings.
-3. **Follow the Quick Start** in the plugin repo (README, MCP_QUICKSTART, or GPT_QUICKSTART).
+**Flow:** create an anonymous project (no account) → get API key or OAuth Bearer → add it in the plugin → use `agentstack.execute` in chat with the live action catalog. Endpoint `GET /mcp/actions` is the current discovery source, and `projects.create_project_anonymous` works before full plugin configuration.
 
-**What you get:** one MCP endpoint (`https://agentstack.tech/mcp`), **332 catalog actions** across domains: projects, 8DNA data, Rules Engine, payments, Buffs, RBAC, auth, scheduler, analytics, **RAG**, integrations, agents, support, hosting, commerce, storage, and more. Full list: [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md).
+1. **Choose a plugin** for your environment: Cursor, Claude Code, VS Code, or GPT (Custom GPT in ChatGPT).
+2. **Get an API key** — no signup (anonymous project) or from [AgentStack](https://agentstack.tech) in project settings.
+3. **Follow Quick Start** for your plugin (links below) — connect in a few minutes.
 
-**RAG & sandboxes (REST):** [RAG_PLATFORM_GUIDE.md](../RAG_PLATFORM_GUIDE.md) · [SANDBOX_PLAYGROUND_GUIDE.md](../SANDBOX_PLAYGROUND_GUIDE.md).
+**What plugins provide:** one MCP endpoint (`https://agentstack.tech/mcp`) and **<!-- stats:total_actions -->463<!-- /stats:total_actions --> catalog actions** for projects, 8DNA data, Rules Engine, payments, Buffs, auth, agents, **hosted static sites** (`hosting.*`), **project files** (`storage.*`), support, messenger, and more. Scale facts: [PLATFORM_SCALE.md](../publication/PLATFORM_SCALE.md). Full list: [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md).
 
 ---
 
 ## Key documents
 
-| Document | Description |
-|----------|-------------|
-| [CONTEXT_FOR_AI.md](CONTEXT_FOR_AI.md) | When to use which tool (domain map for Projects, Payments, Rules, Buffs, RAG, Auth, etc.). |
-| [CLAUDE_VS_CURSOR_PLUGIN.md](CLAUDE_VS_CURSOR_PLUGIN.md) | Comparison of all four plugins: setup, MCP config, Skills. |
-| [SKILLS_AUTHORING_GUIDE.md](SKILLS_AUTHORING_GUIDE.md) | How to write and structure Skills for Cursor/Claude. |
-| [CONTEXT_FOR_AI_MCP.md](CONTEXT_FOR_AI_MCP.md) | MCP-oriented capability map for agents. |
+| Document | Content |
+|----------|---------|
+| [CONTEXT_FOR_AI.md](CONTEXT_FOR_AI.md) | AgentStack capability map for AI (domains, when to use which tool); for GPT, VS Code, etc. |
+| [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md) | Stable public link to the full MCP action catalogue (source: `GET /mcp/actions`). |
+| [CLAUDE_VS_CURSOR_PLUGIN.md](CLAUDE_VS_CURSOR_PLUGIN.md) | Comparison of all four plugins: manifest, install, MCP config, Skills/Rules. |
+| [AGENTSTACK_PLUGIN_PHILOSOPHY.md](AGENTSTACK_PLUGIN_PHILOSOPHY.md) | Plugin validation via PHILOSOPHY_INDEX (Creation over Conflict, Decomposition, Elegant Minimalism, 8DNA, Time) + v0.4.9 5-layer model. |
+| [../MCP_QUICKSTART.md](../MCP_QUICKSTART.md) | **Single hub** for MCP setup (API key, Cursor, debugging). Per-plugin stubs live in each GitHub repo. |
 
 ---
 
-## Quick links to plugin READMEs
+## Publisher copy
 
-- [Cursor plugin](https://github.com/agentstacktech/cursor-plugin#readme)
-- [Claude plugin](https://github.com/agentstacktech/claude-plugin#readme)
-- [GPT plugin](https://github.com/agentstacktech/gpt-plugin#readme)
-- [VS Code plugin](https://github.com/agentstacktech/vscode-plugin#readme)
+Ready-made titles, descriptions, and keywords for marketplaces live in each plugin repository README (Cursor, VS Code, Claude, GPT).
 
-Full MCP tool list: [MCP_SERVER_CAPABILITIES.md](../MCP_SERVER_CAPABILITIES.md).  
-Data store (project.data, user.data): [DNA_KEY_VALUE_API.md](../architecture/DNA_KEY_VALUE_API.md).
+## Post-release checklists (for maintainers)
+
+Checklists ship inside each plugin repo (`POST_RELEASE_CHECKLIST.md` or equivalent) — not duplicated in this public docs mirror.
+
+---
+
+## Quick links by plugin
+
+- **Cursor:** [cursor-plugin README](https://github.com/agentstacktech/cursor-plugin#readme) · [MCP quick start](https://github.com/agentstacktech/cursor-plugin/blob/main/MCP_QUICKSTART.md)
+- **Claude:** [claude-plugin README](https://github.com/agentstacktech/claude-plugin#readme) · [MCP quick start](https://github.com/agentstacktech/claude-plugin/blob/main/MCP_QUICKSTART.md)
+- **GPT:** [gpt-plugin README](https://github.com/agentstacktech/gpt-plugin#readme) · [GPT quick start](https://github.com/agentstacktech/gpt-plugin/blob/main/GPT_QUICKSTART.md)
+- **VS Code:** [vscode-plugin README](https://github.com/agentstacktech/vscode-plugin#readme) · [MCP quick start](https://github.com/agentstacktech/vscode-plugin/blob/main/MCP_QUICKSTART.md)
+
+Full MCP tools list: [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md).  
+Data store (how to use the “database”): [DNA_KEY_VALUE_API.md](../architecture/DNA_KEY_VALUE_API.md) (key-value API: project.data.*, user.data.*).
 
 ---
 
@@ -54,7 +71,18 @@ Data store (project.data, user.data): [DNA_KEY_VALUE_API.md](../architecture/DNA
 
 | Question | Answer |
 |----------|--------|
-| **Full list of tools and parameters?** | [MCP_SERVER_CAPABILITIES.md](../MCP_SERVER_CAPABILITIES.md) |
-| **Which tool for my task?** | [CONTEXT_FOR_AI.md](CONTEXT_FOR_AI.md) — domain map |
-| **How to store/read project or user data?** | [DNA_KEY_VALUE_API.md](../architecture/DNA_KEY_VALUE_API.md) |
-| **RAG collections and memory?** | [RAG_PLATFORM_GUIDE.md](../RAG_PLATFORM_GUIDE.md) · MCP `rag.*` actions |
+| **Where is the full tool list and parameters?** | [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md) |
+| **How do I know which tool to use for a task?** | [CONTEXT_FOR_AI.md](CONTEXT_FOR_AI.md) — domain map (Projects, Payments, Rules, Buffs, etc.) |
+| **How do I store and read project/user data?** | Key-value API: `project.data.*`, `user.data.*` — see [DNA_KEY_VALUE_API.md](../architecture/DNA_KEY_VALUE_API.md) |
+
+
+<!-- BEGIN:PLUGIN_INVENTORY -->
+| Artifact | Count |
+|----------|------:|
+| Cursor skills | 24 |
+| Cursor commands | 13 |
+| Cursor agents | 5 |
+| MCP catalog actions | 392 |
+| MCP domains | 39 |
+| Platform version | 0.4.14 |
+<!-- END:PLUGIN_INVENTORY -->

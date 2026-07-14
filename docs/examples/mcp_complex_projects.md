@@ -138,7 +138,7 @@ Demonstration of synergy between AgentStack systems via MCP tools. These example
 ```json
 [
   {
-    "tool": "scheduler.schedule_task",
+    "tool": "scheduler.create_task",
     "params": {
       "project_id": "<project_id>",
       "name": "Auto-renew subscriptions",
@@ -358,7 +358,7 @@ Demonstration of synergy between AgentStack systems via MCP tools. These example
     }
   },
   {
-    "tool": "scheduler.schedule_task",
+    "tool": "scheduler.create_task",
     "params": {
       "project_id": "<project_id>",
       "name": "Daily premium rewards",
@@ -708,7 +708,7 @@ Demonstration of synergy between AgentStack systems via MCP tools. These example
 ```json
 [
   {
-    "tool": "scheduler.schedule_task",
+    "tool": "scheduler.create_task",
     "params": {
       "project_id": "<project_id>",
       "name": "Weekly analytics report",

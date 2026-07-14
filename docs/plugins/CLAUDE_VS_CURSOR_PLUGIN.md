@@ -1,8 +1,9 @@
 # Plugins: Claude, Cursor, GPT, VS Code — Differences and choices
 
-**Version:** 0.3  
-**Date:** 2026-02-23  
-**Context:** AgentStack plugins for **Claude Code**, **Cursor**, **GPT (OpenAI)**, and **VS Code** — same MCP endpoint, different packaging. Plugin index: [docs/plugins/README.md](README.md).
+**Version:** 0.4  
+**Date:** 2026-06-28  
+**Platform:** 0.4.14 · MCP catalog via `GET /mcp/actions` (live discovery; see capability matrix in repo docs)
+**Context:** AgentStack plugins for **Claude Code**, **Cursor**, **GPT (OpenAI)**, and **VS Code**; alignment and philosophy. Plugin index: [docs/plugins/README.md](README.md).
 
 ---
 
@@ -38,7 +39,7 @@ One plugin — one artifact (Decomposition). Shared MCP endpoint and ecosystem; 
 | **Manifest** | `.cursor-plugin/plugin.json` | `.claude-plugin/plugin.json` | OpenAPI 3.1 schema + GPT_INSTRUCTIONS.md | `package.json` + `contributes.mcpServerDefinitionProviders` |
 | **Install** | Copy plugin + MCP config | Install plugin + `claude mcp add` | Create Custom GPT, paste schema and instructions | Marketplace/VSIX + one-time API key entry |
 | **MCP config** | `mcp.json` (HTTP: `type`, `baseUrl`, `headers`) | HTTP via user setup (see below) | API Key or OAuth in Action settings | HTTP via extension (auto-registration) |
-| **Skills** | `skills/*/SKILL.md` (8DNA, Projects, Rules Engine, Assets, RBAC, Buffs, Payments, Auth) | same format | No equivalent; context in Custom GPT instructions | No equivalent; context in MCP and README |
+| **Skills** | `skills/*/SKILL.md` — **24** domain routers (incl. CRM, AgentNet, storefront, wallet, guidance) | **11** synced skills + uplift path for messenger/rag/sdk gaps | No equivalent; context in Custom GPT instructions | No equivalent; context in MCP and README |
 | **Rules** | `rules/*.mdc` (Cursor-specific) | No equivalent; knowledge in Skills + doc links | No equivalent | No equivalent |
 
 ---
@@ -52,7 +53,7 @@ One plugin — one artifact (Decomposition). Shared MCP endpoint and ecosystem; 
   ```
   Or configures MCP in Claude Code UI (if available) per MCP_QUICKSTART.md.
 
-- **Summary:** we do not add `.mcp.json` with HTTP in `provided_plugins/claude-plugin/` (HTTP format in plugin bundle is not fixed); all MCP connection steps are described in `MCP_QUICKSTART.md` and README (minimal steps, one API key).
+- **Summary:** we do not add `.mcp.json` with HTTP in `provided_plugins/claude-plugin/` (HTTP format in plugin bundle is not fixed); all MCP connection steps are described in `MCP_QUICKSTART.md` and README (Elegant Minimalism: minimal steps, one API key).
 
 ### Claude and OAuth
 
@@ -61,21 +62,43 @@ One plugin — one artifact (Decomposition). Shared MCP endpoint and ecosystem; 
 
 ---
 
+## Cursor gen3 domain parity (2026-06)
+
+| Domain | Cursor skill | Claude (sync target) |
+|--------|--------------|----------------------|
+| Meta-router | `agentstack-backend` | Same pattern |
+| Data / 8DNA | `agentstack-data` | `agentstack-data` |
+| CRM | `agentstack-crm` | `agentstack-crm` (stub) |
+| AgentNet economy | `agentstack-agentnet` | `agentstack-agentnet` (stub) |
+| Storefront studio | `agentstack-storefront-studio` | `agentstack-storefront-studio` (stub) |
+| Project wallet | `agentstack-project-wallet` | `agentstack-project-wallet` (stub) |
+| Platform guidance | `agentstack-guidance` | `agentstack-guidance` (stub) |
+| Hosting | `agentstack-hosting` | Add or merge in claude-plugin |
+| Support | `agentstack-support` | Add or merge |
+| Storage | `agentstack-storage` | Add or merge |
+| Auth/RBAC | `agentstack-auth-rbac` | Existing claude skills |
+| Logic / Commerce / RAG / Signals / Projects | matching `agentstack-*` | Partial parity today |
+| Messenger / Integrations / Discovery | gen3 only on Cursor | Optional claude sync (11 WARN gaps without `--strict`) |
+
+Hooks and Device Code install are **Cursor-only**. Claude uses `claude mcp add` per [MCP_QUICKSTART](https://github.com/agentstacktech/claude-plugin/blob/master/MCP_QUICKSTART.md).
+
+---
+
 ## What is reused
 
-- **Skills** text and structure (8DNA, Projects, Rules Engine, **Assets**, **RBAC**, **Buffs**, **Payments**, **Auth**) — we copy and adapt frontmatter if needed; replace "Cursor" with "Claude Code" in instructions.
-- **GPT:** same MCP endpoint and API key; key acquisition text reused from MCP_QUICKSTART; Custom GPT instructions reference MCP_SERVER_CAPABILITIES.
+- **Skills** text and structure — copy from `provided_plugins/cursor-plugin/skills/` (gen3 decision-first names: `agentstack-data`, `agentstack-logic`, …); replace "Cursor" with "Claude Code" in instructions.
+- **GPT:** same MCP endpoint and API key; key acquisition text reused from MCP_QUICKSTART; Custom GPT instructions reference MCP_CAPABILITY_MATRIX.
 - Production MCP URL: `https://agentstack.tech/mcp`.
-- Documentation: links to MCP_SERVER_CAPABILITIES, 8DNA, ecosystem without duplication.
+- Documentation: links to MCP_CAPABILITY_MATRIX, 8DNA, ecosystem without duplication.
 
 ---
 
 ## Skills: syncing Cursor and Claude
 
-- **Source of truth:** edits go in `provided_plugins/cursor-plugin/skills/`. On release or skill update, copy content to `provided_plugins/claude-plugin/skills/` (folders: agentstack-8dna, agentstack-projects, agentstack-rules-engine, agentstack-assets, agentstack-rbac, agentstack-buffs, agentstack-payments, agentstack-auth).
+- **Source of truth:** `provided_plugins/cursor-plugin/skills/` (gen3). Copy to `provided_plugins/claude-plugin/skills/` on release; retire gen1 folder names (`agentstack-8dna`, etc.).
 - **Claude adaptation:** in copied SKILL.md replace "Cursor" with "Claude Code" in the body (e.g. "add MCP in Cursor" → "add MCP in Claude Code"). Frontmatter (name, description) unchanged.
-- **Links in Claude version:** References to MCP_QUICKSTART and README point to artifacts in claude-plugin root (MCP_QUICKSTART.md, README.md — same plugin). Links to **MCP_SERVER_CAPABILITIES** and other files under **docs/** stay shared from this repository.
-- **Versioning:** when changing skills, update CHANGELOG in both plugins. See also [SKILLS_AUTHORING_GUIDE.md](SKILLS_AUTHORING_GUIDE.md).
+- **Links in Claude version:** References to MCP_QUICKSTART and README point to artifacts in claude-plugin root (MCP_QUICKSTART.md, README.md — same plugin). Repo links (MCP_CAPABILITY_MATRIX, philosophy) stay shared.
+- **Versioning:** when changing skills, update CHANGELOG in both plugins (Time Processes Philosophy). See also [SKILLS_AUTHORING_GUIDE.md](SKILLS_AUTHORING_GUIDE.md).
 
 ---
 

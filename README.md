@@ -1,7 +1,7 @@
 # AgentStack — Documentation
 
-[![platform](https://img.shields.io/badge/platform-v0.4.13-blue)](https://agentstack.tech)
-[![MCP actions](https://img.shields.io/badge/MCP-332%20actions-8B5CF6)](https://agentstack.tech/mcp/actions)
+[![platform](https://img.shields.io/badge/platform-v0.4.14-blue)](https://agentstack.tech)
+[![MCP actions](https://img.shields.io/badge/MCP-391%20actions-8B5CF6)](https://agentstack.tech/mcp/actions)
 
 This repository contains the **public** documentation for **AgentStack** (English, user- and integrator-facing): web product, MCP, plugins, REST APIs, **RAG**, sandboxes, subscriptions, and examples.
 
@@ -9,7 +9,9 @@ This repository contains the **public** documentation for **AgentStack** (Englis
 
 **If you build your own product (app, site, client):** [docs/BUILD_YOUR_PRODUCT.md](docs/BUILD_YOUR_PRODUCT.md) — golden paths, `@agentstack/sdk`, optional [genetic-ai-starter](https://github.com/agentstacktech/genetic-ai-starter).
 
-**If you integrate AI or automate:** [docs/MCP_AND_ECOSYSTEM.md](docs/MCP_AND_ECOSYSTEM.md) — MCP (**332** catalog actions — [docs/MCP_SCALE.md](docs/MCP_SCALE.md)), REST, plugins, SDK.
+**If you run AI agents on a large codebase:** [docs/genetic-system/](docs/genetic-system/) — Navigation OS overview, economics (labor vs tokens), link to the portable kit.
+
+**If you integrate AI or automate:** [docs/MCP_AND_ECOSYSTEM.md](docs/MCP_AND_ECOSYSTEM.md) — MCP (**391** catalog actions — [docs/MCP_SCALE.md](docs/MCP_SCALE.md)), REST, plugins, SDK.
 
 **REST / OpenAPI:** [docs/OPENAPI.md](docs/OPENAPI.md) — [Swagger UI](https://agentstack.tech/swagger) · [openapi.json](https://agentstack.tech/openapi.json) · [API overview](https://agentstack.tech/api-docs).
 
@@ -23,7 +25,7 @@ This repository contains the **public** documentation for **AgentStack** (Englis
 
 | Repo | Branch | Notes |
 |------|--------|--------|
-| [genetic-ai-starter](https://github.com/agentstacktech/genetic-ai-starter) | `main` | Map-first install: `npx @agentstack/genetic-ai-starter init` — philosophy, `AI_NAVIGATION_MAP`, Cursor rules. SoT lives in [AgentStack](https://github.com/agentstacktech/AgentStack) `/genetic-ai-starter/`. |
+| [genetic-ai-starter](https://github.com/agentstacktech/genetic-ai-starter) | `main` | Map-first install: `npx @agentstack/genetic-ai-starter init` — philosophy, `AI_NAVIGATION_MAP`, Cursor rules. Docs: [GENETIC_SYSTEM_ECONOMICS](https://github.com/agentstacktech/genetic-ai-starter/blob/main/meta/docs/GENETIC_SYSTEM_ECONOMICS.md). SoT lives in [AgentStack](https://github.com/agentstacktech/AgentStack) `/genetic-ai-starter/`. |
 
 ---
 

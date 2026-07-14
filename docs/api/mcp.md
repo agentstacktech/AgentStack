@@ -1,5 +1,7 @@
 # MCP Documentation
 
+**Channel map:** [architecture/API_CHANNELS.md](../architecture/API_CHANNELS.md) — MCP is the **primary** surface for agents; HTTP-only clients can mirror execution via **Protein** (`POST /api/commands/*`) and data via **8DNA** (`/api/dna/data`).
+
 ## 🤖 Model Context Protocol for AI agents
 
 AgentStack provides a full-featured MCP (Model Context Protocol) server for integration with AI agents. MCP lets AI agents interact with the platform securely via a standardized protocol.
@@ -70,7 +72,7 @@ Content-Type: application/json
 }
 ```
 
-- `action` is the name of an MCP action, e.g. `projects.get_project`, `buffs.apply_temporary_effect`, `payments.create_payment` (full list via `GET /mcp/actions`).
+- `action` is the name of an MCP action, e.g. `projects.get_project`, `buffs.apply_temporary_effect`, `payments.create` (full list via `GET /mcp/actions`; domain `commerce_rest` lists REST-only path hints).
 - `params` is the parameter object for that tool.
 - References to previous steps and context use `{ "from": "stepId.result.field" }` or `{ "from": "context.project_id" }`.
 - Conditional execution uses the `if` field with simple JSON conditions (`equals`, `greater_than`, `and`, `or`, `exists`, etc.).
@@ -79,17 +81,20 @@ Content-Type: application/json
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/mcp/actions` | List all available `action` values by domain (projects, buffs, auth, payments, logic, assets, scheduler, analytics, api_keys, rules, webhooks, notifications, wallets). |
+| GET | `/mcp/actions` | List all available `action` values by domain (includes **commerce_rest**: REST-only hints for `/api/marketplace` and `/api/exchange`, not valid `step.action`). |
 | GET | `/mcp/discovery` | Discovery: protocol info and the single tool schema for `agentstack.execute`. |
 
 The VS Code AgentStack plugin uses base URL `https://agentstack.tech/mcp` for Chat MCP and sidebar.
 
 ## 🛠️ Available tools
 
+> **Note:** This section mixes **historical** examples (per-tool HTTP paths like `/mcp/tools/create_payment`) with the **current** single-tool model: one MCP tool `agentstack.execute` whose steps use canonical ids `payments.create`, `payments.get`, etc. Authoritative list: **`GET /mcp/actions`**. Economy overview: [economy/AGENTNET_INTEGRATOR_GUIDE.md](../economy/AGENTNET_INTEGRATOR_GUIDE.md) · commerce: [commerce/README.md](../commerce/README.md).
+
 ### 💳 Payment tools
 
-#### `create_payment`
-Create a new payment
+#### `create_payment` (legacy name in older clients)
+
+**Current canonical action:** `payments.create`. Create a new payment.
 
 **Parameters**:
 ```json
@@ -291,8 +296,8 @@ Create a new project (requires auth)
 
 ### ⏰ Scheduler
 
-#### `schedule_task`
-Schedule a task
+#### `scheduler.create_task`
+Schedule a task (MCP action `scheduler.create_task`)
 
 **Parameters**:
 ```json
@@ -816,7 +821,7 @@ Create a SaaS platform with automatic trials for new users, auto-renew subscript
 **How it works:**
 - AI agent uses MCP Logic Engine tools (`create_logic_rule`, `update_logic_rule`)
 - Configure webhooks via MCP webhook tools
-- Task scheduler via MCP Scheduler tools (`schedule_task`)
+- Task scheduler via MCP Scheduler tools (`scheduler.create_task`)
 
 **Example Cursor/Claude request:**
 ```

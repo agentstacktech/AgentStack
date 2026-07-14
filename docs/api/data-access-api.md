@@ -11,6 +11,7 @@ Declarative per-field access: policies live in `project.data.config.field_access
 | Policy format, ecosystem masking, MCP | [FIELD_ACCESS_POLICY.md](../FIELD_ACCESS_POLICY.md) |
 | Overview (L1/L2/L3) | [ACCESS_AND_FIELD_POLICY.md](../ACCESS_AND_FIELD_POLICY.md) |
 | Try requests in the browser | [Swagger UI](https://agentstack.tech/swagger) — tag **DataAccess** |
+| Cache invalidation | Invalidate client caches after policy writes (platform convention) |
 
 ## Authentication and authorization layers
 

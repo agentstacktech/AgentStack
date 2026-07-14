@@ -1,13 +1,13 @@
 # DNA Key-Value API (sdk.db.get / sdk.db.set)
 
 **Version:** 0.1  
-**Related:** 8DNA project and user data model (AgentStack).
+**Related:** 8DNA, PHILOSOPHY_INDEX
 
 ---
 
 ## Overview
 
-The DNA API exposes a key-value interface for built apps: keys of the form `project.data.<path>` or `user.data.<path>` map to JSON stored in 8DNA tables `data_projects_project` and `data_projects_user` respectively. This corresponds to SDK usage: `sdk.db.get(key)` and `sdk.db.set(key, value)`.
+The DNA API exposes a key-value interface for built apps: keys of the form `project.data.<path>` or `user.data.<path>` map to JSON stored in 8DNA tables `data_projects_8dna` and `data_projects_8dna` respectively. This corresponds to SDK usage: `sdk.db.get(key)` and `sdk.db.set(key, value)`.
 
 ## Endpoints
 
@@ -30,24 +30,11 @@ DNA API base path: **`/api/dna`** (no version in paths).
 
 ## Source of truth
 
-- Project key-value: `data_projects_project.data` (one row per project).
-- User key-value: `data_projects_user.data` (per project_id + user_id). Missing row is created on first set for user.data.
+- Project key-value: `data_projects_8dna.data` (one row per project).
+- User key-value: `data_projects_8dna.data` (per project_id + user_id). Missing row is created on first set for user.data.
 
-## Design principles
+## Philosophy
 
 - **8DNA:** Single API for all project/user data; one source of truth per entity.
-- **Modularity:** Key-value access is separate from other DNA endpoints; permissions are enforced at the API boundary.
+- **Decomposition:** Key-value module is separate from other DNA endpoints; permissions checked at API boundary.
 
-## Project slice (`user_id = 0`)
-
-The **project slice** row (`user_id = 0`) holds project-wide configuration and shared data. User-specific rows use `user_id > 0` in the same project. Integrators should not treat personal user rows as the project config row.
-
-## Anti-patterns
-
-| Avoid | Prefer |
-|-------|--------|
-| One giant `project.data.app` blob for everything | Namespaced keys: `project.data.billing.plan`, `project.data.game.level` |
-| Storing secrets in DNA JSON visible to many roles | Environment secrets + integration connections; FAP hide sensitive fields |
-| Cross-project keys without `project_id` | Always pass `project_id` for `project.data.*` |
-
-**Robot agents:** [ROBOT_READY_8DNA.md](ROBOT_READY_8DNA.md)

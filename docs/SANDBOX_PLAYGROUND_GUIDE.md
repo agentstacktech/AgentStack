@@ -2,9 +2,9 @@
 
 **Environments · Checkpoints · A/B Tests · Canary Rollouts · Promotion Workflow · Targeting Segments**
 
-> **Core idea:** **Environments are generations.** A sandbox is not a full clone of production — it is a derived line of changes on top of a parent state. Production is generation `0`; each new environment is the next generation in that line.
+> Philosophy: **Environments are generations.** A sandbox is never a copy of production — it is a biological evolution: a diff-child that accumulates changes on top of its parent DNA. Production is generation 0. Every new environment is a next generation.
 
-See also: [SANDBOX_AND_ENVIRONMENTS.md](SANDBOX_AND_ENVIRONMENTS.md). **Web users:** [USER_FEATURES_GUIDE.md](USER_FEATURES_GUIDE.md).
+See also: [SANDBOX_AND_ENVIRONMENTS.md](SANDBOX_AND_ENVIRONMENTS.md) · [VERSIONING.md](VERSIONING.md). **Web users:** [USER_FEATURES_GUIDE.md](USER_FEATURES_GUIDE.md).
 
 ---
 
@@ -36,7 +36,7 @@ See also: [SANDBOX_AND_ENVIRONMENTS.md](SANDBOX_AND_ENVIRONMENTS.md). **Web user
 | **parent_uuid** | UUID pointer to the parent entity from which a diff was created. Forms the lineage chain. |
 | **Diff entity** | A sandbox entity that stores only *changed* fields (not the full snapshot). |
 | **Checkpoint** | A fully materialised merge of the entire ancestor chain — a snapshot frozen in time. |
-| **Environment Anchor** | A `data_projects_project` entity with `entity_type=environment_anchor` that controls an environment. |
+| **Environment Anchor** | A `data_projects_8dna` entity with `entity_type=environment_anchor` that controls an environment. |
 | **Head pointer** | `data.config.head_uuid` — always points to the latest diff in the environment. |
 | **Pinned pointer** | `data.config.pinned_uuid` — immutable snapshot UUID used for share / review links. |
 
@@ -62,9 +62,9 @@ draft → validating → ready → rolling_out → live → archived
 The sandbox system requires **no new database tables**. All state lives inside existing 8DNA entities:
 
 ```
-data_projects_project    ← environment anchors (entity_type=environment_anchor)
+data_projects_8dna    ← environment anchors (entity_type=environment_anchor)
 data_projects_backup     ← A/B test records + PromotionRequest entities
-data_projects_user       ← forked user entities for segment-based tests
+data_projects_8dna       ← forked user entities for segment-based tests
 ```
 
 ### data.config fields on an environment anchor
@@ -100,7 +100,7 @@ Checkpoint (generation=2, is_checkpoint=true — full merged data)
 ```python
 resolved = await generation_resolver.resolve(
     target_uuid="<env_uuid>",
-    table="data_projects_project",
+    table="data_projects_8dna",
     project_id=42,
 )
 ```
@@ -164,6 +164,8 @@ Response:
   "status": "draft"
 }
 ```
+
+The public SPA route **`/platform-try`** (see `frontend.public.sdk_demo.gen1`, SDK demo module) can call the same fork with the signed-in user JWT for integrator demos; handle **402/403** as plan or billing limits.
 
 ### Checkpoints
 
@@ -235,7 +237,7 @@ If any check fails, promotion is blocked and the response contains `checks` with
 #### GET /api/sandbox/diff
 
 ```
-GET /api/sandbox/diff?uuid_a=<prod_uuid>&uuid_b=<env_uuid>&table=data_projects_project&project_id=42
+GET /api/sandbox/diff?uuid_a=<prod_uuid>&uuid_b=<env_uuid>&table=data_projects_8dna&project_id=42
 ```
 
 Response:
@@ -359,7 +361,7 @@ from services.generation_resolver import generation_resolver, invalidate_generat
 # Resolve full merged state
 data = await generation_resolver.resolve(
     target_uuid="<uuid>",
-    table="data_projects_project",
+    table="data_projects_8dna",
     project_id=42,
     use_cache=True,
 )
@@ -524,7 +526,7 @@ from shared.middleware.shadow_write import shadow_writer
 # After successful production write
 await shadow_writer.mirror_write(
     entity_uuid=entity.uuid,
-    table="data_projects_project",
+    table="data_projects_8dna",
     diff_data={"some_field": new_value},
     project_id=42,
 )
@@ -561,6 +563,23 @@ The secret never leaves the server. The response only confirms whether the provi
 2. Server reads the protected field from the nearest ancestor (GenerationResolver)
 3. Server compares `sha256(stored_value) == sha256(provided_value)`
 4. Returns `{match: bool}` only
+
+---
+
+## Generation REST API & webhook events
+
+REST prefix: **`/api/generations/{project_id}`** — queue, settings, gate runs, timeline, manual notify. See OpenAPI tag **generations**.
+
+Configured project webhooks receive **generation lifecycle** deliveries (alongside rows in `execution_ecosystem_logs` with `service_name`: `generation_flow`). Typical payload fields: `env_uuid`, `project_id`, `env_name`, `calver_label`, `generation`, plus event-specific keys.
+
+| Event type | When |
+|------------|------|
+| `generation.created` | After a sandbox generation fork (including auto-fork for mutations when policy applies) |
+| `generation.gates_passed` | Every validator returned `pass` for a gate run |
+| `generation.gates_failed` | At least one validator returned `fail` |
+| `generation.promoted` | Promotion completed (`live` path) |
+| `generation.rolled_back` | Rollback applied to an environment chain |
+| `generation.notify_manual` | Operator called `POST /api/generations/{project_id}/notify` |
 
 ---
 
@@ -655,3 +674,4 @@ A: `cleanup_expired_environments()` is run periodically. Expired environments ar
 
 **Q: What does the canary `traffic_weight` actually control?**  
 A: It's an advisory weight stored in the env anchor's config. Your routing layer (API gateway, EnvironmentRouter middleware, or your own code) reads `traffic_weight` from the `SandboxContext` to decide what percentage of users should see the new version.
+

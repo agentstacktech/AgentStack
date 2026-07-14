@@ -395,7 +395,7 @@ Examples of using MCP tools to apply persistent effects (subscriptions, one-time
    ```
 
 4. **Automate renewal** via scheduler:
-   - Use `scheduler.schedule_task` for automatic renewal
+   - Use `scheduler.create_task` for automatic renewal
    - Check `expires_at` before expiry
 
 5. **Combine buffs** for cumulative effects:
@@ -471,4 +471,4 @@ The final limit will be the sum of all buffs.
 ]
 ```
 
-Use `scheduler.schedule_task` to auto-renew via `buffs.extend_buff` every 30 days.
+Use `scheduler.create_task` to auto-renew via `buffs.extend_buff` every 30 days.

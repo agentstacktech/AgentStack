@@ -1,6 +1,6 @@
 # MCP Server — Capabilities Overview
 
-Single index for MCP (Model Context Protocol) documentation for AgentStack. MCP is available in the cloud at **[agentstack.tech](https://agentstack.tech)** — one tool **agentstack.execute** with batched steps and **332 catalog actions** ([MCP_SCALE.md](MCP_SCALE.md)). Base URL: `https://agentstack.tech/mcp`. See [MCP_CAPABILITY_MAP.md](MCP_CAPABILITY_MAP.md) for a short index; [MCP_FLOWS_AND_SYNERGIES.md](MCP_FLOWS_AND_SYNERGIES.md) for all flows and step-by-step synergies.
+Single index for MCP (Model Context Protocol) documentation for AgentStack. MCP is available in the cloud at **[agentstack.tech](https://agentstack.tech)** — one tool **agentstack.execute** with batched steps and <!-- stats:total_actions -->463<!-- /stats:total_actions --> catalog actions ([MCP_SCALE.md](MCP_SCALE.md)). Base URL: `https://agentstack.tech/mcp`. See [MCP_CAPABILITY_MAP.md](MCP_CAPABILITY_MAP.md) for a short index; [MCP_FLOWS_AND_SYNERGIES.md](MCP_FLOWS_AND_SYNERGIES.md) for all flows and step-by-step synergies.
 
 ---
 

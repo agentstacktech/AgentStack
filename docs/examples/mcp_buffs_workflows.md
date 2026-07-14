@@ -415,7 +415,7 @@ Ready-made workflows and MCP tool combinations for managing buffs.
 **Step 3: Configure auto-renewal (via scheduler)**
 ```json
 {
-  "tool": "scheduler.schedule_task",
+  "tool": "scheduler.create_task",
   "params": {
     "project_id": 1,
     "name": "Auto-renew subscription",
@@ -592,7 +592,7 @@ Auto-renew subscriptions:
 
 ```json
 {
-  "tool": "scheduler.schedule_task",
+  "tool": "scheduler.create_task",
   "params": {
     "name": "Renew subscription",
     "schedule": "0 0 1 * *",

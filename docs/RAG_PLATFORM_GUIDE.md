@@ -1,6 +1,8 @@
 # RAG Platform Service — Developer Guide
 
-**TurboQuant · Zero new tables · RAG platform (release track v0.4.3)**
+**Canonical doc:** this file is the **single long-form** guide for RAG on AgentStack. Adjacent notes (metrics drafts, journal summaries) should **link here** rather than duplicating sections.
+
+**TurboQuant Powered · Zero New Tables · Philosophy v0.4.3 (RAG); platform patch 0.4.5**
 
 > **Using RAG in the browser?** Start with **[USER_FEATURES_GUIDE.md](USER_FEATURES_GUIDE.md)** (collections, search, memory — user-oriented). This document covers architecture, REST, MCP, and limits for builders and automations.
 
@@ -36,7 +38,7 @@ semantically searchable memory. It is accessible three ways:
 
 **Key properties:**
 
-- **Zero new tables** — uses existing `data_projects_project` and
+- **Zero new tables** — uses existing `data_projects_8dna` and
   `data_projects_backup` with `entity_type` tags.
 - **TurboQuant compression** — ~8× memory reduction on embeddings with
   near-zero accuracy loss (FWHT + outlier-aware scalar quantization + QJL residual).
@@ -71,7 +73,7 @@ semantically searchable memory. It is accessible three ways:
    ▼                                                                   ▼
 ┌──────────────────────────────────┐  ┌────────────────────────────────┐
 │  TurboQuantizer  (L0)            │  │  CollectionManager             │
-│  TextChunker     (L1)            │  │  → data_projects_project       │
+│  TextChunker     (L1)            │  │  → data_projects_8dna       │
 │  EmbedderService (L1)            │  │  DocumentRepository            │
 │  TQVectorStore   (L2)            │  │  → data_projects_backup        │
 │  MemoryStore     (L4)            │  │  MemoryRepository              │
@@ -85,38 +87,97 @@ semantically searchable memory. It is accessible three ways:
 
 ---
 
-## Indexing pipeline (conceptual)
+## Layer-by-Layer Description
 
-The RAG service is a layered pipeline on project **8DNA** rows (collections, document chunks, optional session memory). You integrate via REST `/api/rag/*`, MCP `rag.*` actions, or the dashboard **RAG** module.
+### L0 — TurboQuantizer (`shared/rag/turbo_quant.py`)
 
-### L0 — Quantization
+Implements Google's TurboQuant compression in pure NumPy:
 
-Vector compression for fast approximate search (TurboQuant-style): rotation, outlier-aware quantisation, and residual sketching so inner-product scores stay useful at lower memory.
+1. **Fast Walsh-Hadamard Transform** — randomised rotation of the vector
+   space (O(n log n), pure NumPy, no GPU required).
+2. **Outlier-aware scalar quantisation** — detects the top `outlier_ratio`
+   dimensions by absolute magnitude; these get 2-bit dedicated channels while
+   the rest are quantised to `bits` precision.
+3. **QJL 1-bit residual** — a Johnson-Lindenstrauss sketched residual vector
+   preserves the unbiased inner-product estimate for ANN search.
 
-### L1 — Chunking and embeddings
-
-- **Chunking** — default ~512 tokens with overlap; sentence-boundary aware; content hashes skip unchanged sections on re-ingest.
-- **Embeddings** — provider-agnostic (`openai`, `gemini`, `mock` for tests); cached compressed vectors with TTL.
-
-### L2 — Vector index
-
-Per collection: dense (compressed dot product), sparse (BM25), **hybrid RRF**, optional **MMR** diversity. Indexes can be serialised for persistence where enabled.
-
-### L3 — Collections and documents
-
-Collections and chunks live on unified project data — no separate “RAG-only” SQL schema required for integrators. Hierarchy: project → collection → document chunks.
-
-### L4 — Session memory
-
-Hot recent turns plus colder semantic history; durable rows on project backup data so restarts can hydrate search.
-
-### L5 — Engine entry
-
-Single orchestrator used by REST and MCP. Initialise with your embedding provider API key (project or platform configuration).
+API:
 
 ```python
-# Illustrative — use REST or MCP in production integrations
-# POST /api/rag/collections, POST /api/rag/documents, POST /api/rag/search
+tq = TurboQuantizer(bits=4, outlier_ratio=0.05)
+codebook = tq.compress(vectors)          # (n, dim) float32 → QuantizationCodebook
+approx   = tq.decompress(codebook)       # QuantizationCodebook → (n, dim) float32
+scores   = tq.inner_product(query, cb)   # (n,) float32 relevance scores
+raw      = TurboQuantizer.serialize(cb)  # bytes
+cb2      = TurboQuantizer.deserialize(raw)
+```
+
+### L1 — TextChunker (`shared/rag/chunker.py`)
+
+Splits documents into overlapping chunks:
+
+- Default: 512 tokens / 64 token overlap.
+- Sentence-boundary aware (never cuts mid-sentence).
+- Each chunk carries a `content_hash` (SHA-256[:16]) for progressive indexing.
+
+### L1 — EmbedderService (`shared/rag/embedder.py`)
+
+Provider-agnostic embedding wrapper:
+
+| Provider | Model | Dimensions |
+|----------|-------|-----------|
+| `openai` | `text-embedding-3-small` | 1536 |
+| `gemini` | `text-embedding-004` | 768 |
+| `mock` | deterministic hash-based | 128 |
+
+Cache strategy: tries `VectorCacheEntry` (TQ-compressed, ~8× smaller) in
+`NeuralCacheEngine.memory_pool`; falls back to `cache.set()` with a plain list.
+Cache TTL is 24 h — embeddings are deterministic per model.
+
+### L2 — TQVectorStore (`shared/rag/vector_store.py`)
+
+In-memory vector index per collection:
+
+- **Dense search** — TQ inner product (compressed dot product).
+- **Sparse search** — BM25 via `rank_bm25`.
+- **Hybrid** — RRF merges dense + sparse ranked lists.
+- **MMR** — Maximal Marginal Relevance for result diversity.
+- **Serialization** — `to_base64()` / `from_base64()` for optional JSONB storage.
+
+### L3 — CollectionManager / DocumentRepository (`shared/rag/collection_manager.py`)
+
+8DNA CRUD without new tables:
+
+| Class | Table | `entity_type` | Hierarchy |
+|-------|-------|--------------|-----------|
+| `CollectionManager` | `data_projects_8dna` | `rag_collection` | project → collection |
+| `DocumentRepository` | `data_projects_backup` | `rag_document` | collection → chunk |
+| `MemoryRepository` | `data_projects_backup` | `rag_memory` | project → turn |
+
+Progressive indexing: `save_chunk()` computes `content_hash`; unchanged chunks
+are skipped — re-ingesting a document only processes modified sections.
+
+### L4 — MemoryStore (`shared/rag/memory_store.py`)
+
+Two-tier conversation memory:
+
+| Tier | Store | Capacity | Retrieval |
+|------|-------|---------|-----------|
+| Hot | NeuralCacheEngine `rag:mem:{session_id}` | Last 20 turns | O(1) |
+| Cold | In-process TQVectorStore per session | Up to 1 000 turns | TQ semantic search |
+| Persist | 8DNA `data_projects_backup` | Unlimited | On cold start |
+
+After a cold start, `search()` calls `_hydrate_cold_from_dna()` which
+decompresses stored TQ bytes to reconstruct float32 vectors — semantic search
+works correctly across server restarts.
+
+### L5 — RAGEngine (`shared/rag/rag_engine.py`)
+
+Central singleton orchestrating all layers.
+
+```python
+engine = get_rag_engine()
+await engine.initialize(embedding_provider="openai", api_key="sk-...")
 ```
 
 Public methods:
@@ -134,7 +195,7 @@ Public methods:
 
 ## Data Model — 8DNA (Zero New Tables)
 
-### Collection (`data_projects_project`)
+### Collection (`data_projects_8dna`)
 
 ```json
 {
@@ -197,8 +258,8 @@ app lifespan (core_app.py)
   │     ├── EmbedderService(...)
   │     └── MemoryStore(tq, cache, persist=True)
   │
-  ├── asyncio.create_task(_index_platform_reference_kb())
-  │     └── ingest curated platform markdown → collection `system:philosophy` (legacy id)
+  ├── asyncio.create_task(_index_philosophy_kb())
+  │     └── ingest philosophy/ + docs/ → collection "system:philosophy"
   │
   └── (on first GET /mcp/discovery)
         └── asyncio.ensure_future(_index_mcp_tools_rag())
@@ -506,7 +567,7 @@ Two system collections are auto-indexed at startup:
 
 | Collection ID | Source | Purpose |
 |--------------|--------|---------|
-| `system:philosophy` | Curated platform markdown (internal sources) | Semantic search over bundled reference text (legacy collection id) |
+| `system:philosophy` | `philosophy/` + `docs/` markdown files | Philosophy and documentation search |
 | `system:mcp_tools` | All `@mcp_tool` descriptions | Semantic tool discovery |
 
 ---
@@ -544,4 +605,5 @@ Two system collections are auto-indexed at startup:
 
 ---
 
-*Platform RAG guide — partner release notes: [WHATS_NEW.md](WHATS_NEW.md).*
+*RAG feature set introduced in v0.4.3 (2026-03-27). Platform **0.4.4** (2026-04-07) unified Core `version` strings, runs public KB indexing as a **managed organism** cell when available, and matures **in-process neural routing** (`ScopedSignalRouter` + bridges). **0.4.5** (2026-04-09) adds AgentProtocol docs, social/stream relay engineering corpus, and organism **settings** resolver + admin API — see [VERSIONING.md](VERSIONING.md) and [MCP_CAPABILITY_MATRIX.md](MCP_CAPABILITY_MATRIX.md).*
+

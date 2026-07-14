@@ -1,11 +1,16 @@
 # What's new (partner summary)
 
-**Platform line:** 0.4.7 → **0.4.13** (see [VERSIONING.md](VERSIONING.md))
+**Platform line:** 0.4.7 → **0.4.14** (see [VERSIONING.md](VERSIONING.md))
 
 Highlights for integrators and dashboard users:
 
+- **Genetic System docs** — Navigation OS overview + AI model economics for agent teams — [genetic-system/](genetic-system/)
 - **Unified 8DNA** data plane for project and user rows
-- **MCP scale:** **332** catalog actions, **31** domains — [MCP_SCALE.md](MCP_SCALE.md)
+- **MCP scale:** <!-- stats:total_actions -->463<!-- /stats:total_actions --> catalog actions — [MCP_SCALE.md](MCP_SCALE.md)
+- **CRM** — project-scoped contacts and pipelines — [crm/README.md](crm/README.md)
+- **Storefront Studio** — merchant workspace — [commerce/STOREFRONT_STUDIO.md](commerce/STOREFRONT_STUDIO.md)
+- **Public docs site** — Starlight build from this mirror — [DOCS_SITE_OPTIONAL.md](DOCS_SITE_OPTIONAL.md)
+- **Synergy cookbook** — cross-system recipes — [explanation/synergies/SYNERGY_COOKBOOK.md](explanation/synergies/SYNERGY_COOKBOOK.md)
 - **Dual-shell SPA:** `/user/*`, `/dev/*`, `/platform/*` — [dual-shell/README.md](dual-shell/README.md)
 - **Agents Fleet** — project-scoped agents — [agents/](agents/)
 - **Project support** on messenger plane — [support/](support/)

@@ -13,13 +13,14 @@
 | **Product builders** | [BUILD_YOUR_PRODUCT.md](BUILD_YOUR_PRODUCT.md) | 15 min (hosting tutorial) |
 | **Dashboard users** | [USER_FEATURES_GUIDE.md](USER_FEATURES_GUIDE.md) | 5 min (UI) |
 | **Integrators & automations** | [MCP_AND_ECOSYSTEM.md](MCP_AND_ECOSYSTEM.md) | 10 min (MCP curl) |
+| **AI agents on large repos** | [genetic-system/README.md](genetic-system/README.md) | 10 min (Navigation OS) |
 | **REST overview** | [OPENAPI.md](OPENAPI.md) | 5 min (Swagger) |
 
 ---
 
 ## What's new (Mar–May 2026)
 
-Themes shipped across **0.4.7 → 0.4.13**: unified **8DNA** data plane, **resilience / RAG** hardening, **offline-friendly messenger** (delta sync, consistent ordering, background workers where supported), **dual-shell + triple-shell** SPA audiences (`/user/*`, `/dev/*`, `/platform/*`), **Agents Fleet** as first-class project DNA, **project support** on the messenger plane, **SDK media v2** (capture denoise + photo ladder), **Web Push** reliability for DMs, **support search** for staff flows, and **MCP scale** — **332** catalog actions / **31** domains via one `agentstack.execute` entry ([MCP_SCALE.md](MCP_SCALE.md), [capability matrix](MCP_CAPABILITY_MATRIX.md)).
+Themes shipped through **0.4.14**: unified **8DNA** data plane, **resilience / RAG** hardening, **offline-friendly messenger** (delta sync, consistent ordering, background workers where supported), **dual-shell + triple-shell** SPA audiences (`/user/*`, `/dev/*`, `/platform/*`), **Agents Fleet** as first-class project DNA, **project support** on the messenger plane, **SDK media v2** (capture denoise + photo ladder), **Web Push** reliability for DMs, **support search** for staff flows, and **MCP scale** — <!-- stats:total_actions -->463<!-- /stats:total_actions --> catalog actions / <!-- stats:mcp_domains -->40<!-- /stats:mcp_domains --> domains via one `agentstack.execute` entry ([MCP_SCALE.md](MCP_SCALE.md), [capability matrix](MCP_CAPABILITY_MATRIX.md)).
 
 **Narrative (monorepo journal):** see the evolution note linked from the main repo `docs/EVOLUTION_AND_RELEASE_2026-05.md` on GitHub (`master` branch).
 
@@ -51,6 +52,7 @@ Themes shipped across **0.4.7 → 0.4.13**: unified **8DNA** data plane, **resil
 | **[security/](security/)** | Trust, webhook verification |
 | **[tutorials/](tutorials/)** | Golden paths 01–08 |
 | **[ai-builder/](ai-builder/)** | UAM manifest |
+| **Genetic System** | [genetic-system/README.md](genetic-system/README.md) · [overview](genetic-system/GENETIC_SYSTEM_OVERVIEW.md) · [economics](genetic-system/AI_MODEL_ECONOMICS.md) |
 | **Build hub** | [BUILD_YOUR_PRODUCT.md](BUILD_YOUR_PRODUCT.md) · [PARITY_MATRIX.md](PARITY_MATRIX.md) · [JOURNEY_MAP.md](JOURNEY_MAP.md) |
 | **Maintainers** | [CONTRIBUTING_DOCS.md](CONTRIBUTING_DOCS.md) · [operations-public/PRE_PUBLISH_CHECKLIST.md](operations-public/PRE_PUBLISH_CHECKLIST.md) |
 
@@ -63,4 +65,4 @@ Themes shipped across **0.4.7 → 0.4.13**: unified **8DNA** data plane, **resil
 - [gpt-plugin](https://github.com/agentstacktech/gpt-plugin)
 - [vscode-plugin](https://github.com/agentstacktech/vscode-plugin)
 
-**Cursor plugin v0.4.9+:** five-layer bundle (rules, skills, commands, agents, hooks) plus **OAuth 2.1 device code** activation — see each repo’s README.
+**Cursor plugin v0.4.14 (gen3):** five-layer bundle (rules, skills, commands, agents, hooks) plus **OAuth 2.1 device code** activation — see [plugins/README.md](plugins/README.md).

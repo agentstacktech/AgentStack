@@ -1,6 +1,6 @@
 # Agents — ownership & scopes
 
-**Platform line:** 0.4.13 — scoped REST only (no flat global agents list).
+**Platform line:** <!-- stats:platform_version -->0.4.14<!-- /stats:platform_version --> — scoped REST only (no flat global agents list).
 
 ## Project agents
 

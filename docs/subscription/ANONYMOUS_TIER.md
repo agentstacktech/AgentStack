@@ -234,6 +234,6 @@ Limits are enforced at multiple levels:
 ## Related Documentation
 
 - [Subscription Tiers](./SUBSCRIPTION_TIERS.md) - Complete list of all subscription tiers
-- [API topic index](../api/README.md) — REST topic index
-- [Authentication](../auth/README.md) — API keys and login
+- [API Documentation](../api/README.md) - API endpoint documentation
+- [Authentication Guide](../architecture/AUTHENTICATION.md) - Authentication and authorization
 
