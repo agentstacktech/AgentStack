@@ -1,9 +1,11 @@
 # AgentStack platform scale (public facts)
 
-**As of:** 2026-05-28 · **Core line:** 0.4.13  
-**Use for:** LinkedIn, marketplace listings, investor one-liners, plugin copy — **do not hand-edit counts**; refresh this file after major MCP waves.
+**As of:** 2026-07-22 · **Core line:** <!-- stats:platform_version -->0.4.15<!-- /stats:platform_version -->  
+**Use for:** LinkedIn, marketplace listings, investor one-liners, plugin copy — **do not hand-edit counts**; refresh via the platform stats codegen chain (`docs.freshness.living.gen1`).
 
-**Russian edition:** maintained in the monorepo (not mirrored here).
+**Russian edition:** [PLATFORM_SCALE_RU.md](PLATFORM_SCALE_RU.md)
+
+**Maintainers (monorepo SoT):** `docs/publication/platform-stats.snapshot.json` on the default branch.
 
 ---
 
@@ -11,35 +13,34 @@
 
 | Metric | Value | Notes |
 |--------|------:|-------|
-| **MCP tools registered** | **311** | Server registry (`MCP_TOOLS_REGISTRY`) at startup |
-| **MCP catalog actions** | **332** | `GET /mcp/actions` — includes commerce REST hints and catalog aliases |
-| **Action domains** | **31** | Top-level prefix before `.` in action ids |
+| **MCP catalog actions** | **<!-- stats:total_actions -->494<!-- /stats:total_actions -->** | `GET /mcp/actions` / `MCP_CAPABILITY_MATRIX.md` Total actions |
+| **Action domains** | **<!-- stats:mcp_domains -->45<!-- /stats:mcp_domains -->** | Domain sections in capability matrix (codegen) |
+| **MCP tools registered** | **311** | Server registry at startup (`MCP_TOOLS_REGISTERED`) — not the same as catalog actions |
 | **IDE entry tool** | **1** | `agentstack.execute` — batch steps, discovery via `/mcp/actions` |
 | **Plugin surfaces** | **4** | Cursor, Claude Code, GPT, VS Code |
 
-**Marketing shorthand (accurate):** *300+ MCP tools* · *330+ agent actions* · *one protocol for humans and AI*.
+**Marketing shorthand (accurate):** *450+ agent actions* · *40+ domains* · *one protocol for humans and AI*.
 
 ---
 
-## Top domains (by action count, May 2026)
+## Top domains (by action count, Jul 2026)
 
 | Domain | Actions | Typical use |
 |--------|--------:|-------------|
 | `social` | 83 | Messenger, feeds, channels, presence |
-| `agentnet` | 27 | AgentCoin ledger, bridge, checkpoints, BNB rail |
-| `integrations` | 22 | Integration Hub, webhooks, recipes |
-| `agents` | 21 | Agents Fleet CRUD, runs, policy |
+| `integrations` | 48 | Integration Hub, webhooks, recipes |
+| `agentnet` | 43 | AgentCoin ledger, bridge, checkpoints, rails |
+| `commerce_rest` | 39 | Marketplace / commerce REST catalog hints |
+| `agents` | 25 | Agents Fleet CRUD, runs, policy |
 | `logic` | 19 | Logic Engine rules and execution |
-| `hosting` | 15 | Sites, publish pipeline, buckets |
+| `commerce` | 18 | Commerce kit MCP actions |
+| `hosting` | 18 | Sites, publish pipeline, buckets |
+| `bots` | 17 | Bots Fleet |
+| `crm` | 17 | CRM tissue |
 | `projects` | 14 | Project lifecycle, users, stats |
 | `scheduler` | 12 | Tasks, pools, cron-style jobs |
-| `buffs` | 10 | Trials, subscriptions, limits |
-| `rag` | 10 | Collections, ingest, hybrid search |
-| `storage` | 5 | Project files, quotas, hub summary (pairs with hosting) |
 
-**Hosting + files:** 15 `hosting.*` actions (quick-start, ZIP deploy, releases) + 5 `storage.*` — sites at `/s/{projectId}/{bucketName}/`, SPAs at `/a/...`. Public funnel: https://agentstack.tech/host-site
-
-Full matrix: [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md).
+Full matrix: [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md) (public mirror; redacted).
 
 ---
 
@@ -50,15 +51,17 @@ GET https://agentstack.tech/mcp/health
 GET https://agentstack.tech/mcp/actions
 ```
 
-Expect `tools_count` / domain totals consistent with this sheet after deploy. Strict startup (`AGENTSTACK_STRICT_STARTUP=1`) fails if registered tools fall below `AGENTSTACK_MCP_TOOLS_MIN` (default **280**).
+Expect catalog totals consistent with this sheet after deploy.
 
 ---
 
 ## Refresh checklist (maintainers)
 
-1. Regenerate capability matrix from the platform release tooling (`gen_capability_matrix.py`).
-2. Update counts in this file and the Russian companion (monorepo).
-3. Sync [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md).
-4. Sweep publisher copy and showcase briefs (monorepo `docs/publication/`).
+1. Regenerate the MCP capability matrix via the platform stats codegen chain (internal freshness runbook on the default branch).
+2. `node scripts/codegen-platform-stats.mjs`
+3. Align `shared/constants.py` `MCP_CATALOG_ACTIONS` / `MCP_ACTION_DOMAINS`
+4. Update this file + `PLATFORM_SCALE_RU.md`
+5. `node scripts/patch-public-doc-stats.mjs`
+6. `npm run audit:stats-plane-parity`
 
-**Genetic tag:** `docs.publication.platform_scale.gen1`
+**Genetic tag:** `docs.publication.platform_scale.gen1` · Living Plane: `docs.freshness.living.gen1`

@@ -14,13 +14,16 @@
     { "id": "step1", "action": "projects.get_projects", "params": {} },
     { "id": "step2", "action": "projects.get_project", "params": { "project_id": { "from": "step1.result.projects[0].id" } } }
   ],
+  "context": { "project_id": 2048 },
   "options": { "stopOnError": true }
 }
 ```
 
+- **Working project (OAuth / user key):** Device-code Bearer usually binds to ecosystem `project_id=1`. Set top-level **`context.project_id`** (or `arguments.context` in `tools/call`) to the tenant project before session-scoped actions (`logic.*`, list/write paths that read `current_user.project_id`). Resource-targeted actions may still pass `params.project_id`.
 - **Reference previous step:** In `params`, use `{ "from": "stepId.result.path.to.field" }` (e.g. `"p1.result.project_id"`).
 - **Reference context:** Use `{ "from": "context.project_id" }` for request context (project_id, user_id, etc.).
 - **Conditional step:** Add `"if": { "equals": [ { "from": "pay.result.status" }, "success" ] }` to run a step only when the condition holds.
+- **Project-bound API keys** cannot change `context.project_id` without `cross_project` (or `admin`).
 
 ---
 

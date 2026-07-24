@@ -7,8 +7,9 @@ This document summarizes the **`social`** category from the capability matrix. *
 | Prefix | Typical use |
 |--------|-------------|
 | `social.chat.*` | Delta stream, CRDT updates, channel history |
-| `social.admin.*` | Ecosystem-operator diagnostics (privileged caps) |
 | `social.support.*` | Project support threads (see [support/](../support/)) |
+
+Platform-operator messenger diagnostics are **not** in the public integrator catalog.
 
 As of the published matrix snapshot, **`social`** lists **79** actions — largest category in the catalog.
 

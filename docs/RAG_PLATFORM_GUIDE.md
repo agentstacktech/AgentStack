@@ -32,7 +32,7 @@ semantically searchable memory. It is accessible three ways:
 | Client | Entry Point | Auth |
 |--------|------------|------|
 | HTTP clients, frontend | `POST /api/rag/...` | `require_authentication` |
-| **Web dashboard** | `/dashboard/:projectId?module=rag` — collections, ingest, search, session memory (`RAGDashboardWidget`) | same session / project as app |
+| **Web dual-shell** | Project RAG surface under `/user|dev/…` (see [dual-shell/README.md](dual-shell/README.md)); legacy `/dashboard/:projectId?module=rag` may redirect | same session / project as app |
 | Any AI agent | `agentstack.execute` MCP (`rag.*` actions) | project-scoped session |
 | AI Builder internally | `RAGEngine.get_context_for_prompt()` | project_id from stage |
 
@@ -577,6 +577,8 @@ Two system collections are auto-indexed at startup:
 1. **Cold start re-embedding** — when `vector_compressed` is missing from a
    stored chunk (legacy data), `_lazy_load_collection` re-embeds the text.
    This costs API calls proportional to the number of affected chunks.
+   **Mitigation:** run the platform **RAG re-embed backfill** maintenance job before
+   scaling workers or after bulk legacy imports (see §Known Limitations item 5).
 
 2. **`_get_tier` integration stub** — when `shared.subscription` is not
    importable the engine defaults to `"starter"` limits. Production deployments
@@ -598,6 +600,15 @@ Two system collections are auto-indexed at startup:
    per-process in-memory. In a multi-worker deployment (e.g. `gunicorn -w 4`),
    each worker has its own store. Searches work correctly (lazy load from 8DNA
    on each worker), but memory usage is multiplied by the worker count.
+
+   **Multi-worker strategy (v0.4.7):**
+
+   | Layer | Behaviour |
+   |-------|-----------|
+   | **Vectors** | Each worker lazy-loads from 8DNA on first search per collection (`_lazy_load_collection`). Prefer **pre-backfill** so chunks already carry `vector_compressed` (no API re-embed on cold start). |
+   | **Backfill job** | Platform maintenance backfill scans legacy `rag_document` rows missing `vector_compressed`, embeds in batches, and writes TurboQuant base64. Run after legacy imports or before scaling workers. |
+   | **Collection resolver** | `CollectionManager.get()` uses L1 `rag_collection` + **`cell_store_neg`** (600 s) for missing collection UUIDs — avoids stampedes when many workers resolve the same bad id. |
+   | **Future** | Shared index (pgvector) or worker-affinity routing remain optional; document operational cost as `workers × collection_chunk_count × vector_bytes`. |
 
 6. **Max MCP result payload** — MCP tools return full chunk texts. For large
    documents with many chunks, `rag.document_list` may return a payload

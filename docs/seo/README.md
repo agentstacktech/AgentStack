@@ -17,9 +17,9 @@ AgentStack publishes machine-readable SEO surfaces for search and AI crawlers.
 - https://agentstack.tech/for-developers — MCP, SDK, benchmarks
 - https://agentstack.tech/host-site — static hosting at `/s/`
 
-## Scale (platform <!-- stats:platform_version -->0.4.14<!-- /stats:platform_version -->)
+## Scale (platform <!-- stats:platform_version -->0.4.15<!-- /stats:platform_version -->)
 
-- <!-- stats:total_actions -->463<!-- /stats:total_actions --> catalog actions · <!-- stats:mcp_domains -->40<!-- /stats:mcp_domains --> domains — [MCP_SCALE.md](../MCP_SCALE.md)
+- <!-- stats:total_actions -->494<!-- /stats:total_actions --> catalog actions · <!-- stats:mcp_domains -->45<!-- /stats:mcp_domains --> domains — [MCP_SCALE.md](../MCP_SCALE.md)
 - Live list: `GET https://agentstack.tech/mcp/actions`
 
 ## Hosting

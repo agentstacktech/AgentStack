@@ -1,31 +1,23 @@
 # AgentStack MCP Capability Matrix
 
-> **Integrator reference.** Action IDs match `GET https://agentstack.tech/mcp/actions`. Regenerated with platform releases; do not edit descriptions by hand — run the monorepo redact step after refresh.
+> **Integrator reference.** Action IDs match `GET https://agentstack.tech/mcp/actions`. Tenant-facing catalog only; platform-operator actions are omitted.
 
+- Source: in-process `mcp.routes._build_mcp_actions_catalog_payload`
+- Generated: 2026-07-24 21:03 UTC
+- Audience: **public (tenant only)**
+- Total actions: **447**
+- Gene: `repo.plugins.capability_routing.gen1` · `docs.public.classification.gen1`
 
-## admin (3)
+<!-- BEGIN:AUTOGEN-CAPABILITY-MATRIX -->
+
+## agentnet (36)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
-| `admin.data.dna_list` | `—` | Paginated DNA list with unified_8dna_role filters for admin Data hub. |
-| `admin.data.health` | `—` | Cheap counts for platform admin data plane (projects/users DNA slices). |
-| `admin.data.people` | `—` | Admin people bundle: projects (list shape) + users for a project. |
-
-## agentnet (43)
-
-| Action | Required cap | Summary |
-|--------|--------------|---------|
-| `agentnet.admin.grant_metrics` | `—` | Weekly grant metrics slice from ecosystem 8DNA (read-only). |
-| `agentnet.admin.launch_readiness` | `—` | Grant Readiness Score (GRS v2), blockers, and submit_ready flag. |
-| `agentnet.admin.schema_status` | `—` | Substrate M+ schema snapshot (required / deprecated / packed_in_8dna tiers). |
 | `agentnet.arb.proof_bundle_for_run` | `—` | Build ERC-8004 proof-to-task bundle for a Fleet run (Arbitrum narrative). |
 | `agentnet.arb.status` | `—` | Arbitrum Sepolia rail status (RPC ping, registries). |
 | `agentnet.balance` | `—` | Read AGNT ledger balance from the L0 PostgreSQL ledger for a project slice. |
 | `agentnet.batch_proof` | `—` | Merkle inclusion paths for a posted AGNT batch (read-only). |
-| `agentnet.bnb.apex_jobs_list` | `—` | List agent runs with completed BNB APEX jobs (L0 events). |
-| `agentnet.bnb.proof_bundle_for_run` | `—` | L0 proof-to-task bundle for an agent run (read-only). |
-| `agentnet.bnb.register_identity` | `—` | Register Fleet agent on BSC ERC-8004 via BNBAgent SDK. |
-| `agentnet.bnb.status` | `—` | BSC testnet rail status (RPC ping, registries). |
 | `agentnet.bridge.create_intent` | `—` | Create bridge intent (in\|out). REST: POST /api/agentnet/{project_id}/bridge/intents |
 | `agentnet.bridge.events` | `—` | List normalized bridge chain events (relay idempotency log). |
 | `agentnet.bridge.intents` | `—` | List bridge settlement intents for a project slice. |
@@ -59,7 +51,7 @@
 | `agentnet.vault.deposit_confirm` | `—` | Credit L0 agUSD shares after ERC-4626 deposit (operator/indexer). |
 | `agentnet.vault.nav` | `—` | ERC-4626 vault NAV (totalAssets, totalSupply). REST: GET /api/agentnet/{project_id}/vault/nav |
 
-## agents (25)
+## agents (26)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
@@ -70,6 +62,7 @@
 | `agents.fork` | `agents_admin` | Fork an agent to a new generation (DNA row). |
 | `agents.gates` | `agents_run` | Evaluate promotion gates for an agent. |
 | `agents.get` | `agents_run` | Get a single agent by UUID (default owner=project; personal rows need owner=user). |
+| `agents.health` | `—` | Fleet ECS index health for a project (agents/bots organelle diagnostics). |
 | `agents.kill` | `agents_admin` | Set agent lifecycle state to killed (hard stop for new runs). |
 | `agents.list` | `agents_run` | List Agents Fleet rows for a project (8DNA entity_type=agent). |
 | `agents.list_pending_approvals` | `—` | List runs waiting for approval across project or personal agent scope. |
@@ -86,7 +79,7 @@
 | `agents.templates_list` | `agents_run` | List built-in Agent Fleet templates (canonical Python catalog). |
 | `agents.timeline` | `agents_run` | List recent runs for an agent (uuid + status + timestamps). |
 | `agents.traces` | `agents_run` | Return stored run events (trace buffer) for a run. |
-| `agents.update` | `agents_admin` | Replace AgentSpec for an agent (full document). |
+| `agents.update` | `agents_admin` | Update an agent — PathAtom section patches via protein DELTA when `path_updates` or `section`+`section_value` is set; otherwise full AgentSpec. |
 | `agents.version_timeline` | `—` | List agent version lineage (generation tree — REST GET /timeline parity). |
 
 ## ai_builder (3)
@@ -123,11 +116,13 @@
 | `assets.list_presets` | `—` | List deterministic asset wizard presets for the project. |
 | `assets.update` | `assets_write` | Update an existing asset. |
 
-## auth (4)
+## auth (6)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
 | `auth.get_profile` | `—` | Get user profile information. |
+| `auth.identity.conflicts` | `—` | List project member emails that diverge from ecosystem canonical auth email. |
+| `auth.identity.resolve` | `—` | Resolve canonical vs display email for a user (support / debug). |
 | `auth.login` | `—` | Login to the system. |
 | `auth.register` | `—` | Register a new user. |
 | `auth.update_profile` | `—` | Update user profile. |
@@ -183,7 +178,7 @@
 | `commands.execute` | `logic_write|mcp.execute` | Execute a single Protein Command via universal API. |
 | `commands.execute_batch` | `logic_write|mcp.execute` | Execute multiple Protein Commands in batch. |
 
-## commerce (18)
+## commerce (19)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
@@ -193,28 +188,24 @@
 | `commerce.coupon.delete` | `—` | Delete a project promo code. Mirrors DELETE /api/commerce/merchant/coupons/{code}. |
 | `commerce.coupon.list` | `—` | List project-scoped promo codes from 8DNA commerce.coupon_registry. Mirrors GET /api/commerce/merchant/coupons. |
 | `commerce.coupon.update` | `—` | Update a project promo code. Mirrors PUT /api/commerce/merchant/coupons/{code}. |
-| `commerce.reconcile` | `—` | Ops: find marketplace deals stuck after confirm without transfer. Example: {"dry_run": true, "project_id": 1} |
 | `commerce.refund.manual_complete` | `—` | Ecosystem admin: mark fiat/manual refund compensated — revoke entitlements, set order refunded. Mirrors POST /api/admin/commerce/manual-refunds/complete. |
 | `commerce.refund.manual_list` | `—` | Ecosystem admin: list refund_requested orders awaiting manual compensation for a buyer commerce slice. Mirrors GET /api/admin/commerce/manual-refunds. |
 | `commerce.refund.status` | `—` | Poll refund request + compensation for an order. Mirrors GET /api/commerce/orders/{order_id}/refund-request. |
 | `commerce.sell.activate` | `—` | One-shot seller activation: earnings wallet, product seed, public policy, storefront index upsert, optional hosted vitrine. Mirrors POST /api/commerce/sell/activate. |
+| `commerce.storefront.health` | `—` | Storefront index + ECS organelle health (admin diagnostics slice). |
 | `commerce.storefront.hosted_manifest` | `—` | Read hosted vitrine manifest (bucket, hosted_dirty, merchandising). Mirrors GET /api/commerce/storefront/hosted/manifest. |
 | `commerce.storefront.hosted_publish` | `—` | Publish hosted vitrine static bundle + tenant boot JSON when dist is on server. Mirrors POST /api/commerce/storefront/hosted/publish. |
+| `commerce.storefront.list` | `—` | List storefront listings via StorefrontReadFacade (ECS organelle). Mirrors GET /api/commerce/storefront/listings. |
 | `commerce.storefront.one_click_fill` | `—` | Create listings for eligible catalog assets without active listings. Mirrors POST /api/commerce/storefront/seed/one-click-fill. |
 | `commerce.storefront.seed_apply` | `—` | Apply a Storefront Studio seed plan (asset upsert → listing → index). Mirrors POST /api/commerce/storefront/seed/apply. |
 | `commerce.storefront.seed_ingest` | `—` | Parse bulk source (csv/json/ai_batch/magic/clone) into ProductSpec rows. Mirrors POST /api/commerce/storefront/seed/ingest. |
 | `commerce.storefront.seed_plan` | `—` | Dry-run Storefront Studio seed — compose asset/listing drafts and guidance hints. Mirrors POST /api/commerce/storefront/seed/plan. |
 | `commerce.storefront.seed_undo` | `—` | Undo a prior seed run — cancel listings and remove from storefront index. Mirrors POST /api/commerce/storefront/seed/undo. |
 
-## commerce_rest (39)
+## commerce_rest (33)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
-| `rest.admin.commerce.manual_refunds_complete` | `—` | Ops: mark fiat/manual refund compensated — revoke entitlements, set order refunded. |
-| `rest.admin.commerce.manual_refunds_list` | `—` | Ops: list refund_requested orders awaiting manual compensation for a buyer slice. |
-| `rest.admin.commerce.metrics_scrape` | `—` | Prometheus scrape for commerce funnel gauges (header X-Metrics-Token, env COMMERCE_METRICS_SCRAPE_TOKEN). |
-| `rest.admin.commerce.refund_sse_health` | `—` | Ops: in-process refund SSE subscriber counts on this worker (connection_count, pg_bus_enabled). |
-| `rest.admin.commerce.settlement_funnel` | `—` | Ops: stuck escrow scan + checkout funnel OpTrace + refund_sse_health snapshot. |
 | `rest.commerce.cart.apply_coupon` | `—` | Apply or clear coupon on authenticated cart (listing scope enforced). |
 | `rest.commerce.cart.checkout` | `—` | Create checkout session from cart (wallet_internal or payments_fiat rail). |
 | `rest.commerce.checkout.confirm_session` | `—` | Confirm checkout session (wallet_internal or payments_fiat rail). 402 insufficient_balance, 409 partial_failure — use Idempotency-Key. |
@@ -241,7 +232,6 @@
 | `rest.commerce.orders.refund_status` | `—` | Poll refund request status and compensation snapshot for an order. |
 | `rest.commerce.participant.grant_holding` | `—` | Operator grant inventory to project member (requires write). |
 | `rest.commerce.participant.holdings` | `—` | User holdings in a project (participant plane, not catalog). |
-| `rest.commerce.reconcile_escrow` | `—` | Ops: find deals confirmed without completed transfer (nightly gate). |
 | `rest.exchange.execute` | `—` | Execute cross-project currency/asset exchange. |
 | `rest.exchange.quote` | `—` | Cross-project exchange quote (not protein command_type exchange). |
 | `rest.marketplace.accept_listing` | `—` | Accept deal / settle listing (may trigger internal payment flow). |
@@ -256,10 +246,11 @@
 |--------|--------------|---------|
 | `context.get` | `rag.read` | Unified Context Fabric gather for agents, logic, and MCP callers. |
 
-## crm (17)
+## crm (19)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
+| `crm.create_company` | `—` | Create a CRM company for a project. |
 | `crm.create_deal` | `—` | Create a CRM deal in the default pipeline. |
 | `crm.erase_contact` | `—` | Anonymize/erase a CRM contact (GDPR). |
 | `crm.export_contact` | `—` | Export GDPR bundle for a CRM contact. |
@@ -268,6 +259,7 @@
 | `crm.get_deal_timeline` | `—` | Activity timeline for a CRM deal (notes, tasks linked to deal_id). |
 | `crm.import_contacts` | `—` | Batch import CRM contacts with email dedupe. |
 | `crm.list_board` | `—` | Pipeline kanban board with stage columns and deals. |
+| `crm.list_companies` | `—` | List CRM companies for a project. |
 | `crm.list_contacts` | `—` | List CRM contacts for a project (paginated BFF). |
 | `crm.log_activity` | `—` | Log a CRM activity (note, call, task, etc.). |
 | `crm.magic_fill` | `—` | AI/heuristic autofill for quick-create (dry-run, no write). |
@@ -292,12 +284,34 @@
 | `data_access.set_triggers` | `data_access_admin` | Upsert ``field_triggers`` for one resource. **triggers** is a map ``field_pattern → [trigger_def, …]`` (patterns like ``status``, ``config.**``, ``*``). |
 | `data_access.test_mask` | `—` | Preview what fields a given role can read/write in a resource. |
 
+## diagnostics (3)
+
+| Action | Required cap | Summary |
+|--------|--------------|---------|
+| `diagnostics.gene_token_query` | `—` | GTPI bool query against process-local gene token lexicon. |
+| `diagnostics.neural_graph` | `—` | Neural Visualizer Gen2 snapshot: topology, heat planes (protein/api/dna_query/gene), composition edges, hot_region_hints. Process-local heat; Tier F redacted. |
+| `diagnostics.promote_hot_gene` | `—` | Promote a genetic tag's path prefixes into HotProteinRegion for an entity. Modes: warm, pin, prefetch_only. Tier F materialize blocked. |
+
 ## discovery (2)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
 | `discovery.get_platform_surfaces` | `—` | List canonical platform routes from generated platform-surface-audit.json. |
 | `discovery.list` | `—` | List all MCP actions (alias for GET /mcp/actions catalog). |
+
+## dna (2)
+
+| Action | Required cap | Summary |
+|--------|--------------|---------|
+| `dna.lineage.get_ancestors` | `—` | Walk ancestor chain for an 8DNA row (materialized path or scoped CTE fallback). |
+| `dna.lineage.get_descendants` | `—` | List descendant rows under a parent UUID within project scope. |
+
+## docs_nav (2)
+
+| Action | Required cap | Summary |
+|--------|--------------|---------|
+| `docs_nav.resolve` | `—` | Resolve a genetic navigation tag to AI_INDEX path(s) from TAG_CATALOG. For code/docs navigation only — for runtime MCP tools use discover/by_intent. |
+| `docs_nav.search` | `—` | BM25-lite search over AI navigation catalog (map/index triggers). Returns genetic tags + AI_INDEX paths. Not for selecting runtime MCP tools. |
 
 ## finance (7)
 
@@ -311,13 +325,6 @@
 | `finance.project.fund` | `payments|project_admin` | Fund a project via ecosystem USD transfer. |
 | `finance.project.portfolio` | `payments|agentcoin` | Project business portfolio (operating + treasury + AGNT). |
 
-## fundraising (2)
-
-| Action | Required cap | Summary |
-|--------|--------------|---------|
-| `fundraising.narrative.lint` | `—` | Scan text for forbidden fundraising phrases from NARRATIVE_REGISTRY.yaml. |
-| `fundraising.packet.compose` | `—` | List attachment paths for a grant program packet (registry + evidence). |
-
 ## generation (6)
 
 | Action | Required cap | Summary |
@@ -329,28 +336,33 @@
 | `generation.promote` | `—` | Promote a sandbox environment to production (runs promotion checks first). |
 | `generation.timeline` | `—` | Recent completed promotion requests for a project (newest first). |
 
-## guidance (5)
+## guidance (9)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
+| `guidance.complete_step` | `—` | Mark a guidance step complete with optional artifact after server verify gates. Agent parity with SPA completePathStep. |
 | `guidance.funnel_stats` | `—` | O(1) in-process Compass funnel counters for messaging-channel-bot: path_started, per-task completions, channel mix, dual_channel_attach. No database scan. |
+| `guidance.get_session` | `—` | Get one guidance session by id for the authenticated user. |
+| `guidance.list_active_sessions` | `—` | List active guidance sessions for the authenticated user in a project. |
 | `guidance.list_capability_tasks` | `—` | List Platform Task Capability (PTC) atoms from platform fixture catalog Use before Compass playbooks with kind=capability or agentstack.execute task hints. |
 | `guidance.match_playbook` | `—` | Match natural-language goal text to a Platform Compass playbook id using bundled intent patterns + RU/EN synonyms. Returns verifyKinds for bot/commerce paths. |
 | `guidance.path_status` | `—` | Snapshot Compass verify gates for a project: botExists, botLive, botChannelAttached, hostedVitrinePublished. Use after playbook steps or before go-live checks. |
+| `guidance.record_step` | `—` | Patch an active guidance session state (answers, currentNodeId, completedNodeIds, percent). Agent parity with SPA pathServerSync step PATCH. |
 | `guidance.start_session` | `—` | Start a Platform Compass guidance session on the server (8DNA data.guidance). Use with messaging-channel-bot for cross-device resume. |
 
-## hosting (18)
+## hosting (19)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
 | `hosting.bucket.file.get` | `—` | Read a single bucket file (text or base64, max 2MB). |
 | `hosting.bucket.file.rename` | `—` | Rename or move a file within a bucket. |
 | `hosting.bucket.files.bulk_delete` | `—` | Delete multiple files by path list or prefix. |
-| `hosting.bucket.files.list` | `—` | List files in a hosting bucket (optional prefix, cursor pagination). |
+| `hosting.bucket.files.list` | `—` | List files in a hosting bucket (optional prefix, cursor pagination, optional q path substring filter). |
 | `hosting.demo.status` | `—` | Public demo hosting pool status (enabled, depth, sandbox project id). |
 | `hosting.demo_store.status` | `—` | Golden promo demo-store vitrine: catalog row count on sandbox, published build id, manifest bucket (`frontend.commerce.hosted_storefront.gen1`). |
 | `hosting.deploy_files` | `—` | Batch-upload files to a bucket and optionally publish (max 50 files per call). |
 | `hosting.files.put` | `—` | Upload or replace a file in a hosting bucket. |
+| `hosting.project.set_primary_site` | `—` | Set the project's primary public site URL when multiple sites exist (PH-18). |
 | `hosting.project.status` | `—` | Project hosting plane: Host/Sell/Scale ladder, sites summary, next_actions. |
 | `hosting.release.clone_site` | `—` | Clone a new site from a release snapshot. |
 | `hosting.release.delete` | `—` | Delete an unpinned hosting release (optional bucket purge). |
@@ -362,7 +374,7 @@
 | `hosting.site.resolve` | `—` | Resolve hosting bucket_name to bucket_id and public URL hints. |
 | `hosting.storage.import_folder` | `—` | Import a project storage folder into a hosting bucket. |
 
-## integrations (48)
+## integrations (49)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
@@ -379,7 +391,6 @@
 | `integrations.get_app` | `—` | Get a single integration app definition by provider id. |
 | `integrations.get_diagnostics` | `mcp_read` | Integration Hub diagnostics rollup and worker flags. |
 | `integrations.get_hubspot_relay_stats` | `—` | HubSpot platform relay rollup (7d success/denied/no-connection/missing portal). |
-| `integrations.get_platform_diagnostics` | `—` | Cross-tenant Integration Hub rollup (platform admin ops). |
 | `integrations.hydrate_triggers` | `—` | Hydrate integration trigger registry from connection DNA (cold start recovery). |
 | `integrations.import_connection` | `project_admin` | Import connection from export JSON (optionally with secrets). |
 | `integrations.import_make_preview` | `mcp_read` | Dry-run preview: map Make scenario JSON to recipe + logic block draft. |
@@ -411,8 +422,10 @@
 | `integrations.replay_delivery_url` | `mcp_read` | Replay outbound POST to an explicit target_url (same as REST deliveries/replay query). |
 | `integrations.replay_inbox` | `—` | Replay a durable inbox event through the test-hook intake path. |
 | `integrations.rotate_secret` | `project_admin` | Rotate a protected secret key for a connection. |
+| `integrations.save_scenario_draft` | `—` | Save scenario draft (spec and/or logic patch). Parity with REST POST /scenarios/{id}/draft. |
 | `integrations.test_hook` | `mcp_read` | Dry-run inbound hook verify + normalize (sync dispatch to logic). |
 | `integrations.test_scenario_step` | `—` | Dry-run a scenario step via logic simulation. |
+| `integrations.unpublish_scenario` | `—` | Unpublish scenario (pause) and disable backing logic. Parity with REST unpublish. |
 | `integrations.update_connection` | `—` | Patch integration connection metadata (label, status, config, direction). |
 
 ## logic (19)
@@ -450,6 +463,12 @@
 | `notifications.send_push` | `—` | Enqueue OS web push for a user (self or admin). |
 | `notifications.subscribe_push` | `—` | Returns VAPID status; browser must still call PushManager.subscribe. |
 | `notifications.update_prefs` | `—` | Patch messenger prefs (subset allowed by MessengerPrefsPatch). |
+
+## organelle (1)
+
+| Action | Required cap | Summary |
+|--------|--------------|---------|
+| `organelle.execute` | `—` | Invoke a registered organelle op via dispatch (ring_pool / cell_store today; storage & work_queue via related tools). |
 
 ## payments (5)
 
@@ -512,7 +531,7 @@
 | `rbac.get_roles` | `—` | Get list of roles for a project (system + custom). Returns id, name, permissions_bitmap, permissions, is_system. |
 | `rbac.revoke_role` | `—` | Revoke a role from a user in a project. User will get default viewer role. Requires manage_users or owner. Cannot revoke owner. |
 
-## scheduler (12)
+## scheduler (11)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
@@ -521,7 +540,6 @@
 | `scheduler.create_task` | `scheduler` | Create a new scheduled task for automated execution. |
 | `scheduler.delete_pool_task` | `scheduler` | Remove a specific task from the execution pool (does not delete from database). |
 | `scheduler.execute_task` | `scheduler` | Execute a scheduled task immediately, bypassing the cron schedule. |
-| `scheduler.get_all_db_tasks` | `scheduler` | Get all scheduler and standalone tasks from the database (heavy operation). |
 | `scheduler.get_pool_task_details` | `scheduler` | Get detailed information about a specific task from the execution pool. |
 | `scheduler.get_pool_tasks` | `scheduler` | Get all tasks from the execution pool (in-memory task queue). |
 | `scheduler.get_task` | `scheduler` | Get detailed information about a scheduled task by ID. |
@@ -537,27 +555,10 @@
 | `seo.health.check` | `—` | SEO registry version, indexable path count, and hosting funnel readiness. |
 | `seo.meta.get` | `—` | Fetch dynamic meta tags for a public marketing path (title, description, OG, JSON-LD). |
 
-## social (83)
+## social (66)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
-| `social.admin.channel_search` | `social_read` | Operator: search channel metadata on a home_project_id by substring (id/title). |
-| `social.admin.chat_index_page` | `social_read` | Operator: paginated messenger chat index for a user (cursor/limit). |
-| `social.admin.chat_sweep` | `social_read` | Run one chat history prune batch. Requires ecosystem owner/admin on project 1. |
-| `social.admin.directory_search` | `social_read` | Operator: unified typeahead — users (8DNA) + channels for a home_project_id. |
-| `social.admin.dm_thread_meta` | `social_read` | Operator: DM thread metadata (counts, participants) for support; audited. |
-| `social.admin.force_close_channel` | `social_read` | Operator: delete channel metadata from project data_channels (ecosystem owner). |
-| `social.admin.force_delete_message` | `social_read` | Operator: delete a chat message by id from DNA ring (ecosystem owner). Use dry_run first. |
-| `social.admin.graph_edges` | `social_read` | Operator: list friend and blocked edges for a user (capped). |
-| `social.admin.messenger_client_cache_get` | `social_read` | Operator: read messenger client cache limits (defaults, stored overrides, merged effective). |
-| `social.admin.messenger_client_cache_set` | `social_read` | Operator: replace data.ecosystem.messenger_client_cache on ecosystem project (media/IDB/OPFS caps). |
-| `social.admin.messenger_policy_get` | `social_read` | Operator: read messenger retention defaults, stored overrides, and merged effective policy. |
-| `social.admin.messenger_policy_set` | `social_read` | Operator: replace messenger_operator_policy on ecosystem project (tiers, temp TTL, sweep ceiling). |
-| `social.admin.public_index_status` | `social_read` | Operator: public index page or reconcile maps (set reconcile=true). |
-| `social.admin.relay_hints` | `social_read` | Operator: static hints for stream relay room naming and diagnostics paths. |
-| `social.admin.reset_messenger_prefs` | `social_read` | Operator: clear messenger_prefs for a user (reason required). |
-| `social.admin.revoke_federation` | `social_read` | Operator: remove a federation pointer from consumer to source channel. |
-| `social.admin.user_summary` | `social_read` | Operator: aggregate friend/request/block counts and messenger prefs summary for a user_id. |
 | `social.channel_invites.accept` | `social_read` | Accept a channel invite from inbox. |
 | `social.channel_invites.decline` | `social_read` | Decline a channel invite. |
 | `social.channel_invites.direct` | `social_read` | Create direct channel invite to a user (owner). |
@@ -658,12 +659,7 @@
 
 <!-- END:AUTOGEN-CAPABILITY-MATRIX -->
 
-## Why auto-generated?
-
-Skills and commands must not duplicate action lists. Drift between docs and code (a real bug class of the gen1 plugin layout) is eliminated by regenerating this file from `GET /mcp/actions` on every release.
-
 ## References
 
 - `docs/plugins/CONTEXT_FOR_AI.md` — intent routing by domain.
-- `docs/API_KEY_SERVICE_CAPS.md` — cap catalog.
-- `provided_plugins/cursor-plugin/skills/` — decision-first skills.
+- `docs/adr/PUBLIC_DOCS_CLASSIFICATION.md` — audience policy.

@@ -14,7 +14,7 @@ All plugins are published as separate GitHub repositories (see table below). On 
 
 | Platform     | Folder | GitHub | Summary |
 |-------------|--------|--------|---------|
-| **Cursor**  | [cursor-plugin](https://github.com/agentstacktech/cursor-plugin) | [agentstacktech/cursor-plugin](https://github.com/agentstacktech/cursor-plugin) | **v0.4.14, gen3** — 5-layer plugin + catalog plane (rules + 24 domain skills + commands + agents + hooks), OAuth 2.1 Device Code, streamable-http MCP. Install via `/agentstack-init`. |
+| **Cursor**  | [cursor-plugin](https://github.com/agentstacktech/cursor-plugin) | [agentstacktech/cursor-plugin](https://github.com/agentstacktech/cursor-plugin) | **v0.4.15, gen3** — 5-layer plugin + catalog plane (rules + 24 domain skills + commands + agents + hooks), OAuth 2.1 Device Code, streamable-http MCP. Install via `/agentstack-init`. |
 | **Claude Code** | [claude-plugin](https://github.com/agentstacktech/claude-plugin) | [agentstacktech/claude-plugin](https://github.com/agentstacktech/claude-plugin) | Claude Code plugin: Skills, manifest `.claude-plugin/plugin.json`. MCP: `claude mcp add --transport http`. |
 | **GPT (OpenAI)** | [gpt-plugin](https://github.com/agentstacktech/gpt-plugin) | [agentstacktech/gpt-plugin](https://github.com/agentstacktech/gpt-plugin) | GPT Actions artifacts: OpenAPI 3.1 schema + instructions. Install = create Custom GPT per GPT_QUICKSTART. |
 | **VS Code** | [vscode-plugin](https://github.com/agentstacktech/vscode-plugin) | [agentstacktech/vscode-plugin](https://github.com/agentstacktech/vscode-plugin) | VS Code extension: MCP registered by extension; one-time API key entry (SecretStorage). |
@@ -29,7 +29,7 @@ All plugins are published as separate GitHub repositories (see table below). On 
 2. **Get an API key** — no signup (anonymous project) or from [AgentStack](https://agentstack.tech) in project settings.
 3. **Follow Quick Start** for your plugin (links below) — connect in a few minutes.
 
-**What plugins provide:** one MCP endpoint (`https://agentstack.tech/mcp`) and **<!-- stats:total_actions -->463<!-- /stats:total_actions --> catalog actions** for projects, 8DNA data, Rules Engine, payments, Buffs, auth, agents, **hosted static sites** (`hosting.*`), **project files** (`storage.*`), support, messenger, and more. Scale facts: [PLATFORM_SCALE.md](../publication/PLATFORM_SCALE.md). Full list: [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md).
+**What plugins provide:** one MCP endpoint (`https://agentstack.tech/mcp`) and **<!-- stats:total_actions -->494<!-- /stats:total_actions --> catalog actions** for projects, 8DNA data, Rules Engine, payments, Buffs, auth, agents, **hosted static sites** (`hosting.*`), **project files** (`storage.*`), support, messenger, and more. Scale facts: [PLATFORM_SCALE.md](../publication/PLATFORM_SCALE.md). Full list: [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md).
 
 ---
 
@@ -37,6 +37,7 @@ All plugins are published as separate GitHub repositories (see table below). On 
 
 | Document | Content |
 |----------|---------|
+| [Cursor plugin audit (maintainers)](https://github.com/agentstacktech/agentstack/blob/main/docs/plugins/CURSOR_PLUGIN_AUDIT_2026-07.md) | Cursor marketplace ship audit (P0–P2 gap register) |
 | [CONTEXT_FOR_AI.md](CONTEXT_FOR_AI.md) | AgentStack capability map for AI (domains, when to use which tool); for GPT, VS Code, etc. |
 | [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md) | Stable public link to the full MCP action catalogue (source: `GET /mcp/actions`). |
 | [CLAUDE_VS_CURSOR_PLUGIN.md](CLAUDE_VS_CURSOR_PLUGIN.md) | Comparison of all four plugins: manifest, install, MCP config, Skills/Rules. |
@@ -79,10 +80,10 @@ Data store (how to use the “database”): [DNA_KEY_VALUE_API.md](../architectu
 <!-- BEGIN:PLUGIN_INVENTORY -->
 | Artifact | Count |
 |----------|------:|
-| Cursor skills | 24 |
+| Cursor skills | 25 |
 | Cursor commands | 13 |
 | Cursor agents | 5 |
-| MCP catalog actions | 392 |
-| MCP domains | 39 |
-| Platform version | 0.4.14 |
+| MCP catalog actions | 494 |
+| MCP domains | 45 |
+| Platform version | 0.4.15 |
 <!-- END:PLUGIN_INVENTORY -->

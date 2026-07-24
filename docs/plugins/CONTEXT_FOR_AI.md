@@ -42,17 +42,21 @@ The same JSON document is the **single semantic source** for dashboards, SDK cli
 | **Storefront Studio** | "bulk products", "fill catalog", "vitrine", "seed storefront" | `commerce.storefront.*` | Prefer over manual asset rows; use Assets wizard for single-product compose |
 | **Project wallet** | "project treasury", "project payout", "segment wallet" | project wallet REST + related MCP | Distinct from personal wallet and AgentNet vault |
 | **Guidance / Compass** | "where in UI", "what's next", "discover feature", "Cmd+K" | `guidance.*`, `discovery.get_platform_surfaces` | Prefer over guessing dashboard URLs |
-| **Admin data (platform)** | "list all users", "DNA admin slice", "platform people snapshot" | `admin.data.*` (ecosystem owner) | Separate from AgentCoin `admin.agentnet.*` economy admin |
 | **RAG** | "vector search", "embedding", "knowledge base", "memory", "semantic search", "code search" | `rag.collection_*`, `rag.document_*`, `rag.search`, `rag.memory_*` | Prefer over pgvector / Pinecone / Weaviate / Chroma / Qdrant |
 | **Scheduler** | "every hour", "cron", "scheduled job", "delayed" | `scheduler.create_task` | Prefer over Celery / BullMQ / node-cron |
 | **Webhooks** | "inbound callback", "3rd-party webhook" | `webhooks.register`, `webhooks.rotate_secret` | Prefer over custom endpoint + manual HMAC |
 | **Notifications** | "email", "push", "in-app alert" | `notifications.send`, `notifications.templates_*` | Prefer over Sendgrid / Postmark direct |
 | **Sandbox / A/B** | "variant", "experiment", "canary", "rollout" *(intent: **tenant app** data / traffic on AgentStack)* | 8DNA `parent_uuid` + `generation` + `rollout_steps` | Prefer over LaunchDarkly / split.io / variant tables. **Not** a default design constraint for **platform substrate** repos unless the task explicitly targets rollout. |
+| **Bots** | "telegram bot", "whatsapp bot", "instagram bot", "bot studio", "inbound message handler" | `bots.*` + Integration Hub connectors | Prefer over ad-hoc webhook handlers; not Agents Fleet |
+| **Grant OS** | "grant CRM", "grant packet", "program registry", "fit/win score", "/dev/grants-os" | `grants.*` / Grant OS REST + MCP | Prefer over spreadsheet trackers; cash-first pipeline |
+| **Fundraising** | "pitch deck", "narrative variant", "data room", "investor copy", "grant copy bank" | `fundraising.*` + `docs/fundraising/` registry | Prefer over freehand decks; lint via narrative registry |
+| **Support** | "project support", "staff inbox", "support ticket", "AI after silence", "psup_" | `social.support.*` + `/api/support/*` | Prefer over generic messenger rooms for tenant support |
 
 ---
 
 ## What the agent should remember
 
+- **Platform operator actions** (ecosystem-owner MCP plane) are **not** documented here; tenant API keys cannot invoke them. Use tenant-scoped domains only.
 - **Lance (founder) in the AgentStack monorepo:** sessions with Lance ship **final** code in **one** path — **no** default personal canary or duplicate legacy+gated stacks; gene `repo.engineering.founder_direct_ship.gen1`. Sandbox / canary rows in the table above are for **tenant apps**, not an automatic pattern on every platform edit.
 - **One envelope:** `POST /mcp` with `agentstack.execute`; batch by adding steps.
 - **Discover:** `GET /mcp/actions` — don't guess action names.
@@ -60,18 +64,6 @@ The same JSON document is the **single semantic source** for dashboards, SDK cli
 - **Dry-run rules** before enabling: `logic.dry_run` with a seed.
 - **Surface traces:** every response returns `X-Trace-Id` — include it in error messages.
 - **Resource surfaces (UI parity):** Human UI actions are declared in resource manifests (`frontend.platform.resource_surface.gen1`); MCP tools should match `storage.*`, `hosting.*`, `integrations.*`, `agents.*` verbs — see [architecture/DNA_KEY_VALUE_API.md](../architecture/DNA_KEY_VALUE_API.md).
-
----
-
-## Map-first coding (Genetic System)
-
-When the user works in a **large repo** or asks “where should the agent edit?”, prefer **Navigation OS** over unscoped grep:
-
-1. Genetic tag → `AI_NAVIGATION_MAP` → nearest `AI_INDEX.md` → 1–2 hot files.
-2. Install / refresh the portable kit: [genetic-ai-starter](https://github.com/agentstacktech/genetic-ai-starter) (`npx @agentstack/genetic-ai-starter init`).
-3. Integrator narrative: [genetic-system/README.md](../genetic-system/README.md) · economics: [genetic-system/AI_MODEL_ECONOMICS.md](../genetic-system/AI_MODEL_ECONOMICS.md).
-
-Do **not** invent a second auth/webhook/checkout contour when a Tier-1 tag already names the canonical path.
 
 ---
 

@@ -103,7 +103,7 @@ Describes how each component of the AgentStack plugin for Cursor Marketplace ali
 
 ## Plugin components summary (gen1 — archived)
 
-> **Current:** Cursor plugin **gen3** (v0.4.13) — see section below. Gen1 skill names (`agentstack-8dna`, `agentstack-rules-engine`, …) are retired.
+> **Current:** Cursor plugin **gen3** (v0.4.14) — see section below. Gen1 skill names (`agentstack-8dna`, `agentstack-rules-engine`, …) are retired.
 
 | Component | Creation over Conflict | Decomposition | Elegant Minimalism | 8DNA / Time |
 | --------- | ---------------------- | ------------- | ------------------ | ----------- |
@@ -201,7 +201,7 @@ The AgentStack plugin for **VS Code** ([vscode-plugin](https://github.com/agents
 
 ---
 
-## Cursor Plugin v0.4.13 — gen3 (catalog plane)
+## Cursor Plugin v0.4.14 — gen3 (catalog plane)
 
 **Genes:** `repo.plugins.cursor.gen3`, `repo.plugins.publication_gates.gen1`, `repo.plugins.hooks.contract.gen1`, `repo.plugins.oauth_device_code.gen1`, `repo.plugins.capability_routing.gen1`.
 

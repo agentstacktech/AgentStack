@@ -20,7 +20,7 @@ Every project is one **notebook** of typed pages: contacts, deals, assets, logic
 
 ### 3. Universal remote (MCP + Compass)
 
-**MCP** is the integrator remote: <!-- stats:total_actions -->463<!-- /stats:total_actions --> catalog actions, one `agentstack.execute` transport. **Compass** is the human remote: same capabilities as playbooks and comfort tasks.
+**MCP** is the integrator remote: <!-- stats:total_actions -->494<!-- /stats:total_actions --> catalog actions, one `agentstack.execute` transport. **Compass** is the human remote: same capabilities as playbooks and comfort tasks.
 
 **Benefit:** Agents and operators stay aligned on action names and routes.
 

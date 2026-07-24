@@ -1,32 +1,40 @@
 # Using AgentStack — Platform features (for account holders)
 
-This guide is for **people using AgentStack through the website** ([agentstack.tech](https://agentstack.tech)): sign in, pick a project, and work in the **dashboard**. It summarizes **recent capabilities** (RAG, sandboxes, access control) in plain language and points to deeper docs when you need API or automation details.
+This guide is for **people using AgentStack through the website** ([agentstack.tech](https://agentstack.tech)): sign in, pick a project, and work in the **dual-shell SPA** (`/user/*` for operators, `/dev/*` for builders). It summarizes **recent capabilities** (RAG, CRM, Storefront Studio, sandboxes, access control) in plain language and points to deeper docs when you need API or automation details.
 
-**Language:** This public documentation is **English only**.
+**Language:** This public documentation is **English only**.  
+**Canonical routes:** [dual-shell/README.md](dual-shell/README.md) (user vs dev hub) · Living Plane: `docs.freshness.living.gen1`
 
 ---
 
-## 1. Dashboard (web)
+## 1. Dual-shell workspace (web)
 
-After you log in, open **Dashboard** and select a **project**. Modules you may see include:
+After you log in, open **User** or **Dev** shell and select a **project**. Surfaces you may see include:
 
+| Surface | What you use it for |
+|---------|---------------------|
+| **Overview / Discover** | Project snapshot; capability map at `/user/discover` or `/dev/discover` |
+| **Project settings** | Name, type, and project-level options |
+| **CRM** | Contacts, companies, deals on the project (`/user|dev/projects/:id/crm`) |
+| **Assets / Storefront Studio** | Catalog and studio seed (`?mode=studio` on assets) |
+| **Integrations / iPaaS** | App Directory, OAuth connections, draft/live scenarios, DataMapper, runs |
+| **Agents / Bots** | Fleet AI and bot studio |
+| **Support** | Project support threads (staff/user) |
+| **RAG** | Knowledge collections, ingest, semantic search, session memory |
+| **Storage / Sites** | Files and hosted sites publish (`/s/...`) |
+| **Logic** | Rules, triggers, flow editor |
+| **RBAC / Field access** | Roles and response field masking |
+| **Docs cookbook** | How-to hubs at `/dev/docs/{build,scale,secure,operate,extend}` |
 
-| Module                                 | What you use it for                                                                                                                        |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Overview**                           | Project snapshot and entry to other areas.                                                                                                 |
-| **Project settings**                   | Name, type, and project-level options.                                                                                                     |
-| **Sessions**                           | Active sessions tied to your project.                                                                                                      |
-| **RBAC**                               | Roles and permissions for people on the project.                                                                                           |
-| **Field access**                       | Who can see which fields in API responses (masking / hiding sensitive data).                                                               |
-| **RAG**                                | Knowledge collections, document ingest, semantic search, and optional **session memory** for AI context.                                   |
-| **Buffs**                              | Trials, subscriptions, and promotional entitlements when enabled for your project.                                                         |
-| **Ecosystem** (under project settings) | Publish **channels** so other AgentStack projects can subscribe to your events or field updates—with controlled access and visible fields. |
+Exact labels depend on your **subscription** and permissions.
 
+**Engineering passport (full shipped catalog for AI/investors):** [WHATS_NEW.md](WHATS_NEW.md) · [monorepo FEATURES_SHIPPED](https://github.com/agentstacktech/agentstack/blob/main/docs/project-profile/FEATURES_SHIPPED.md)
 
-Exact labels depend on your **subscription** and permissions. If a module is missing, your role or plan may not include it.
+**URL patterns (examples):**
 
-**URL pattern (examples):**  
-`https://agentstack.tech/dashboard/<projectId>?module=rag` — opens the dashboard with the **RAG** module selected (when available).
+- `https://agentstack.tech/dev/projects/<projectId>/crm` — CRM workspace  
+- `https://agentstack.tech/dev/discover` — capability discovery  
+- Legacy `/dashboard/<projectId>?module=…` may still redirect; **prefer dual-shell paths** above.
 
 ---
 
@@ -36,7 +44,7 @@ Exact labels depend on your **subscription** and permissions. If a module is mis
 
 **Typical workflow in the UI**
 
-1. Open **Dashboard → RAG** for your project.
+1. Open the project in **Dev/User shell** and go to the **RAG** surface (or Discover → RAG).
 2. Create a **collection** (a bucket for related documents).
 3. **Add documents** (text is chunked and indexed automatically).
 4. Run **semantic search** inside a collection.
@@ -76,6 +84,41 @@ As a project owner or admin, you may configure **field access** in the dashboard
 
 **Readable overview:** [ACCESS_AND_FIELD_POLICY.md](ACCESS_AND_FIELD_POLICY.md)  
 **Full policy format:** [FIELD_ACCESS_POLICY.md](FIELD_ACCESS_POLICY.md)
+
+---
+
+## 5b. CRM and Storefront (Sell & Operate)
+
+**CRM** keeps **contacts, companies, and deals** on the active project. Open `/user|dev/projects/<id>/crm`. Automations can create contacts from webhooks or from **checkout → CRM** when an order completes.
+
+**Storefront Studio** fills a product catalog / vitrine with low input (`?mode=studio` on assets): plan → apply → undo. Pair with **Sites** hosting for a public `/s/...` storefront.
+
+Deeper: [crm/README.md](crm/README.md) · [how-to/crm/INTEGRATION_QUICKSTART.md](how-to/crm/INTEGRATION_QUICKSTART.md)
+
+---
+
+## 5c. Integrations (Connect & Automate)
+
+The **Integration Hub** (iPaaS) lets you:
+
+1. Browse the **App Directory** and install a starter  
+2. Connect via **OAuth** (or API credentials where applicable)  
+3. Author a **scenario** (draft → live) on the Logic canvas  
+4. Map fields with **DataMapper**, run a **dry test-step**, then inspect **runs**
+
+Natural-language “copilot” suggestions may appear as a **preview** — treat them as assistive, not a guaranteed LLM product.
+
+Deeper: [how-to/crm/INTEGRATION_QUICKSTART.md](how-to/crm/INTEGRATION_QUICKSTART.md) · [support/INTEGRATION_QUICKSTART.md](support/INTEGRATION_QUICKSTART.md) (integrations hub)
+
+---
+
+## 5d. Project hosting (Sites)
+
+Publish static files or a ZIP to a live URL under `/s/{project}/{bucket}/`. Use **Storage → Sites**, the **host-site** public funnel, or MCP `hosting.*` from an IDE agent. The project **hosting plane** suggests next steps on the Host → Sell → Scale ladder.
+
+Custom domains and guest publish-without-login are **not** general-availability marketing promises — see the capabilities matrix.
+
+Deeper: [hosting/HOSTING_GOLDEN_PATHS.md](hosting/HOSTING_GOLDEN_PATHS.md)
 
 ---
 
@@ -125,6 +168,7 @@ When you run **more than one project** (or work with **partners** who have their
 | Topic                              | Document                                                                       |
 | ---------------------------------- | ------------------------------------------------------------------------------ |
 | Full doc index                     | [README.md](README.md)                                                         |
+| Shipped features (detailed)        | [WHATS_NEW.md](WHATS_NEW.md) · [FEATURES_SHIPPED (monorepo)](https://github.com/agentstacktech/agentstack/blob/main/docs/project-profile/FEATURES_SHIPPED.md) |
 | Ecosystem networks (cross-project) | [ECOSYSTEM_API_IMPLEMENTATION.md](ECOSYSTEM_API_IMPLEMENTATION.md) |
 | MCP + ecosystem index              | [MCP_AND_ECOSYSTEM.md](MCP_AND_ECOSYSTEM.md)                                   |
 | OpenAPI / Swagger                  | [OPENAPI.md](OPENAPI.md)                                                       |

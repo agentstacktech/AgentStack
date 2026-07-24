@@ -54,6 +54,10 @@ Authorization runs in three ordered layers before any field value is returned:
 
 Request body for **PUT `/defaults-template`** includes a **Schema example** (Swagger “Example Value”) for `project_payload`, `orders`, dotted globals.
 
+## Pagination convention
+
+List-style Data Access / DNA responses should prefer the shared **`PaginatedResponse`** envelope (cursor-first) documented in OpenAPI `components.schemas.PaginatedResponse`. Legacy offset/limit lists remain valid but should be marked explicitly. See [OPENAPI.md](../OPENAPI.md) (pagination + ProblemDetails).
+
 ## Related MCP tools
 
 `data_access.get_defaults_template`, `data_access.set_defaults_template`, `data_access.apply_defaults_template`, `data_access.get_triggers`, `data_access.set_triggers` — see [MCP_TOOLS.md](../MCP_TOOLS.md).

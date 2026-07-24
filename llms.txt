@@ -1,0 +1,27 @@
+# AgentStack
+
+> AgentStack platform documentation for AI agents and integrators. Platform line 0.4.15.
+
+## Core navigation
+
+- [AGENTS.md](https://github.com/agentstacktech/agentstack/blob/main/AGENTS.md): Thin agent entry — map first
+- [AI Navigation Map](https://github.com/agentstacktech/agentstack/blob/main/docs/AI_NAVIGATION_MAP.md): Genetic tag → subsystem indexes
+- [Philosophy Index](https://github.com/agentstacktech/agentstack/blob/main/philosophy/PHILOSOPHY_INDEX.md): Principles and release themes
+- [Intent Router](https://github.com/agentstacktech/agentstack/blob/main/docs/AI_AGENT_INTENT_ROUTER.md): Docs-nav vs MCP discovery
+
+## Ship status
+
+- [CHANGELOG 0.4.15](https://github.com/agentstacktech/agentstack/blob/main/CHANGELOG.md): Authoritative patch facts
+- [Platform Capabilities](https://github.com/agentstacktech/agentstack/blob/main/docs/PLATFORM_CAPABILITIES_AND_READINESS.md): Shipped vs partial vs roadmap
+- [Evolution July 2026](https://github.com/agentstacktech/agentstack/blob/main/docs/EVOLUTION_AND_RELEASE_2026-07.md): Narrative arc 0.4.12–0.4.15
+
+## Integration
+
+- [Agent Protocol Quickstart](https://github.com/agentstacktech/agentstack/blob/main/docs/AGENT_PROTOCOL_QUICKSTART.md): sdk.protocol entry
+- [SDK AI Surface](https://github.com/agentstacktech/agentstack/blob/main/docs/SDK_AI_SURFACE.md): Stable API slice for AI
+- [MCP Hub](https://github.com/agentstacktech/agentstack/blob/main/docs/MCP_HUB.md): agentstack.execute routing
+
+## Docs platform
+
+- [Docs Freshness Runbook](https://github.com/agentstacktech/agentstack/blob/main/docs/operations/DOCS_FRESHNESS_RUNBOOK.md): Validation ladder
+- [Docs Platform Architecture](https://github.com/agentstacktech/agentstack/blob/main/docs/operations/DOCS_PLATFORM_ARCHITECTURE.md): Three products, graph, RAG, llms.txt
