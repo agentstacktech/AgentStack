@@ -2,7 +2,7 @@
 
 > **Living SoT for agents:** [docs/plugins/CONTEXT_FOR_AI_MCP.md](plugins/CONTEXT_FOR_AI_MCP.md) (English, hot-path table, catalog hints).  
 > **Action list:** `GET /mcp/actions` — counts and names are authoritative at runtime, not in this file.  
-> **ADR:** [CAPABILITY_FIXTURE_TAXONOMY.md](adr/CAPABILITY_FIXTURE_TAXONOMY.md) · chronicle [MCP_SELF_DESCRIPTION_CHRONICLE.md](operations/MCP_SELF_DESCRIPTION_CHRONICLE.md).
+> **Self-description:** fixture overlays join live `GET /mcp/actions` — see [plugins/CONTEXT_FOR_AI_MCP.md](plugins/CONTEXT_FOR_AI_MCP.md).
 
 ## Полное управление (Full management)
 
@@ -53,10 +53,10 @@
 
 | Что нужно | Где |
 |-----------|-----|
-| Action count / domains | `GET /mcp/actions` или `docs/_generated/mcp_capability_coverage_snapshot.json` |
-| Coverage % / sources | `GET /mcp/actions` + generated coverage snapshot in platform release |
-| Latency / payload size (maintainer) | Platform CI metrics collection (maintainer runbook) |
-| CI пороги | MCP integration tests in platform CI (see release notes) |
+| Action count / domains | `GET /mcp/actions` или публичный snapshot в mirror `docs/_generated/mcp_capability_coverage_snapshot.json` (если опубликован) |
+| Coverage % / sources | Maintainer tooling — не дублируйте в интеграторских доках; опирайтесь на live `GET /mcp/actions` |
+| Latency / payload size | Замеряйте из вашего MCP-клиента (p95 tools/list); пороги ниже — ориентир платформы |
+| CI пороги | Платформенные regression gates (см. таблицу ниже) — не требуют локального clone Core |
 
 ### Пороги из тестов (актуальны в CI)
 

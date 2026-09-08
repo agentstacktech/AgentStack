@@ -2,7 +2,7 @@
 
 > **Living SoT для агентов (EN):** [plugins/CONTEXT_FOR_AI_MCP.md](plugins/CONTEXT_FOR_AI_MCP.md) — hot-path table, catalog hints.  
 > **Каталог действий:** `GET /mcp/actions` — имена и счётчики только из live API.  
-> **ADR:** [adr/CAPABILITY_FIXTURE_TAXONOMY.md](adr/CAPABILITY_FIXTURE_TAXONOMY.md) · [operations/MCP_SELF_DESCRIPTION_CHRONICLE.md](operations/MCP_SELF_DESCRIPTION_CHRONICLE.md).
+> **Self-description:** live catalog + curated overlays — [plugins/CONTEXT_FOR_AI_MCP.md](plugins/CONTEXT_FOR_AI_MCP.md).
 
 Единый справочник по возможностям MCP, сочетанию инструментов и рекомендуемым сценариям.
 

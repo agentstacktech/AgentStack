@@ -80,4 +80,4 @@ await sdk.sandbox.promoteHostingRelease(projectId, { site_id });
 }
 ```
 
-Ladder: Free 0 · Starter 1 · Basic 3 · Pro 5 — [SANDBOX_GENERATION_LIMITS_DECOMPOSITION.md](../plans/SANDBOX_GENERATION_LIMITS_DECOMPOSITION.md).
+Ladder: Free 0 · Starter 1 · Basic 3 · Pro 5 — see [SANDBOX_AND_ENVIRONMENTS.md](../SANDBOX_AND_ENVIRONMENTS.md).

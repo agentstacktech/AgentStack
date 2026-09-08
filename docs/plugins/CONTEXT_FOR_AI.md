@@ -12,7 +12,7 @@
 4. **Universal command bus** — `POST /api/commands/execute` (same stack as MCP `commands.execute`).
 5. **Avoid** inventing a new REST resource path when an MCP action, DNA key, or command already fits — prefer [MCP_QUICKSTART.md](../MCP_QUICKSTART.md) routing guidance.
 
-**New platform domain:** add `tools_*.py` (auto-imported) + `@organ_descriptor` beside the code — link capability matrix ids; do not copy param tables into organ metadata ([ORGAN_DESCRIPTOR_PROTOCOL.md](../adr/ORGAN_DESCRIPTOR_PROTOCOL.md)).
+**New platform domain:** register MCP tools + organ self-description beside the code — link capability matrix ids; do not copy param tables into organ metadata (see [CONTEXT_FOR_AI_MCP.md](CONTEXT_FOR_AI_MCP.md) catalog hints).
 
 ## Write modes (do not wipe lists or documents)
 

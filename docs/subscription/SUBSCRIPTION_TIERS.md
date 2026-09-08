@@ -43,7 +43,7 @@ AgentStack offers multiple subscription tiers to meet different user needs, from
 | **Sandbox generation depth** | 0 | 0 | 1 | 3 | 5 | 25 | Unlimited |
 | **Sandbox shadow writes** | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
 
-> Sandbox SoT: `shared/subscription/subscription_tiers.py`. Open-status quota — see [SANDBOX_GENERATION_LIMITS_DECOMPOSITION.md](../plans/SANDBOX_GENERATION_LIMITS_DECOMPOSITION.md).
+> Sandbox SoT: subscription tier ladder. Open-status quota — see [SANDBOX_AND_ENVIRONMENTS.md](../SANDBOX_AND_ENVIRONMENTS.md).
 
 ## Overage Pricing (Pay-as-you-go)
 
