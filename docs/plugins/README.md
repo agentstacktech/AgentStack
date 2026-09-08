@@ -87,6 +87,8 @@ Data store (how to use the “database”): [DNA_KEY_VALUE_API.md](../architectu
 | Artifact | Count |
 |----------|------:|
 | Cursor skills | 27 |
+| Claude skills (gen3 mirror) | 25 |
+| VS Code skills (gen3 mirror) | 26 |
 | Cursor commands | 15 |
 | Cursor agents | 3 |
 | MCP catalog actions | 568 |

@@ -15,7 +15,7 @@
 |--------|------:|-------|
 | **MCP catalog actions** | **<!-- stats:total_actions -->568<!-- /stats:total_actions -->** | `GET /mcp/actions` / `MCP_CAPABILITY_MATRIX.md` Total actions |
 | **Action domains** | **<!-- stats:mcp_domains -->48<!-- /stats:mcp_domains -->** | Domain sections in capability matrix (codegen) |
-| **MCP tools registered** | **<!-- stats:registry_tools -->591<!-- /stats:registry_tools -->** | `MCP_TOOLS_REGISTERED` = `len(MCP_TOOLS_REGISTRY)` at codegen — not catalog actions |
+| **MCP tools registered** | **<!-- stats:registry_tools -->593<!-- /stats:registry_tools -->** | `MCP_TOOLS_REGISTERED` = `len(MCP_TOOLS_REGISTRY)` at codegen — not catalog actions |
 | **IDE entry tool** | **1** | `agentstack.execute` — batch steps, discovery via `/mcp/actions` |
 | **Plugin surfaces** | **4** | Cursor, Claude Code, GPT, VS Code |
 
@@ -29,7 +29,7 @@
 |--------|--------:|-----|
 | **Catalog actions (public)** | <!-- stats:total_actions -->568<!-- /stats:total_actions --> | Marketing, `GET /mcp/actions`, `MCP_CATALOG_ACTIONS` |
 | **Registry tools (runtime)** | ~568 | `GET /mcp/health` → `tools_count`; startup log `mcp_registry_tools` |
-| **MCP tools registered (constant)** | <!-- stats:registry_tools -->591<!-- /stats:registry_tools --> | `MCP_TOOLS_REGISTERED` — synced at codegen; **not** catalog actions |
+| **MCP tools registered (constant)** | <!-- stats:registry_tools -->593<!-- /stats:registry_tools --> | `MCP_TOOLS_REGISTERED` — synced at codegen; **not** catalog actions |
 
 Never rewrite SEO copy from `tools_count` alone (MET-01).
 

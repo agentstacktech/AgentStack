@@ -6,6 +6,8 @@
 
 **Broader context:** [MCP_AND_ECOSYSTEM.md](../MCP_AND_ECOSYSTEM.md) (all channels) · [CONTEXT_FOR_AI.md](CONTEXT_FOR_AI.md) (includes HTTP-only fallback: 8DNA + Protein).
 
+**Session bootstrap (default for agents):** `GET /mcp/ai_prompt?mode=contract` once per session → `POST /mcp/discover/by_intent` when intent is ambiguous → `GET /mcp/actions?schemas=hot` for unfamiliar mutations. Full prompt: `?mode=full` · examples: `/mcp/ai_prompt/examples`.
+
 ---
 
 ## Request shape (agentstack.execute)

@@ -48,7 +48,7 @@ One plugin — one artifact (Decomposition). Shared MCP endpoint and ecosystem; 
 | **Manifest** | `.cursor-plugin/plugin.json` | `.claude-plugin/plugin.json` | OpenAPI 3.1 schema + GPT_INSTRUCTIONS.md | `package.json` + `contributes.mcpServerDefinitionProviders` |
 | **Install** | Copy plugin + MCP config | Install plugin + `claude mcp add` | Create Custom GPT, paste schema and instructions | Marketplace/VSIX + one-time API key entry |
 | **MCP config** | `mcp.json` (HTTP: `type`, `baseUrl`, `headers`) | HTTP via user setup (see below) | API Key or OAuth in Action settings | HTTP via extension (auto-registration) |
-| **Skills** | `skills/*/SKILL.md` — **24** domain routers (incl. CRM, AgentNet, storefront, wallet, guidance) | **11** synced skills + uplift path for messenger/rag/sdk gaps | No equivalent; context in Custom GPT instructions | No equivalent; context in MCP and README |
+| **Skills** | `plugins/agentstack/skills/*/SKILL.md` — **27** domain routers (25 mirrored to Claude/VS Code; `backend` + `solana` Cursor-only) | **25** gen3 mirrors via `sync-claude-skill-stubs.mjs` | No skill tree; `GPT_INSTRUCTIONS.md` from `agentstack-backend` router (`sync-gpt-instructions.mjs`) | **25** gen3 mirrors via `sync-vscode-skill-stubs.mjs` |
 | **Rules** | `rules/*.mdc` (Cursor-specific) | No equivalent; knowledge in Skills + doc links | No equivalent | No equivalent |
 
 ---
@@ -71,23 +71,16 @@ One plugin — one artifact (Decomposition). Shared MCP endpoint and ecosystem; 
 
 ---
 
-## Cursor gen3 domain parity (2026-06)
+## Cursor gen3 domain parity (0.4.18)
 
-| Domain | Cursor skill | Claude (sync target) |
-|--------|--------------|----------------------|
-| Meta-router | `agentstack-backend` | Same pattern |
-| Data / 8DNA | `agentstack-data` | `agentstack-data` |
-| CRM | `agentstack-crm` | `agentstack-crm` (stub) |
-| AgentNet economy | `agentstack-agentnet` | `agentstack-agentnet` (stub) |
-| Storefront studio | `agentstack-storefront-studio` | `agentstack-storefront-studio` (stub) |
-| Project wallet | `agentstack-project-wallet` | `agentstack-project-wallet` (stub) |
-| Platform guidance | `agentstack-guidance` | `agentstack-guidance` (stub) |
-| Hosting | `agentstack-hosting` | Add or merge in claude-plugin |
-| Support | `agentstack-support` | Add or merge |
-| Storage | `agentstack-storage` | Add or merge |
-| Auth/RBAC | `agentstack-auth-rbac` | Existing claude skills |
-| Logic / Commerce / RAG / Signals / Projects | matching `agentstack-*` | Partial parity today |
-| Messenger / Integrations / Discovery | gen3 only on Cursor | Optional claude sync (11 WARN gaps without `--strict`) |
+| Layer | Cursor (SoT) | Claude | VS Code | GPT / Gemini |
+|-------|--------------|--------|---------|--------------|
+| Skills | `provided_plugins/cursor-plugin/plugins/agentstack/skills/` | `claude-plugin/skills/` | `vscode-plugin/skills/` | Instructions only (`gpt-plugin/instructions/`) |
+| Sync | — | `sync-claude-skill-stubs.mjs` | `sync-vscode-skill-stubs.mjs` | `sync-gpt-instructions.mjs` |
+| Parity gate | `audit-cursor-plugin` | `check-claude-skills-parity` + stub `--check` | `check-vscode-skills-parity` + stub `--check` | OpenAPI + instructions drift |
+| Skip mirror | `agentstack-backend`, `solana` | same | same | backend router feeds GPT autogen block |
+
+All **25** mirrored gen3 domains (data, logic, auth-rbac, commerce, CRM, agentnet, hosting, support, messenger, …) are synced with canonical folder names. Legacy gen1 folders (`agentstack-8dna`, `agentstack-payments`, …) are **retired** — `sync-*-skill-stubs.mjs` prunes them when canonical stubs exist.
 
 Hooks and Device Code install are **Cursor-only**. Claude uses `claude mcp add` per [MCP_QUICKSTART](https://github.com/agentstacktech/claude-plugin/blob/master/MCP_QUICKSTART.md).
 
@@ -95,19 +88,23 @@ Hooks and Device Code install are **Cursor-only**. Claude uses `claude mcp add` 
 
 ## What is reused
 
-- **Skills** text and structure — copy from `provided_plugins/cursor-plugin/skills/` (gen3 decision-first names: `agentstack-data`, `agentstack-logic`, …); replace "Cursor" with "Claude Code" in instructions.
+- **Skills** text and structure — sync via `sync-claude-skill-stubs.mjs` / `sync-vscode-skill-stubs.mjs` from `provided_plugins/cursor-plugin/plugins/agentstack/skills/` (gen3 decision-first names).
 - **GPT:** same MCP endpoint and API key; key acquisition text reused from MCP_QUICKSTART; Custom GPT instructions reference MCP_CAPABILITY_MATRIX.
 - Production MCP URL: `https://agentstack.tech/mcp`.
 - Documentation: links to MCP_CAPABILITY_MATRIX, 8DNA, ecosystem without duplication.
 
 ---
 
-## Skills: syncing Cursor and Claude
+## Skills: syncing Cursor, Claude, and VS Code
 
-- **Source of truth:** `provided_plugins/cursor-plugin/skills/` (gen3). Copy to `provided_plugins/claude-plugin/skills/` on release; retire gen1 folder names (`agentstack-8dna`, etc.).
-- **Claude adaptation:** in copied SKILL.md replace "Cursor" with "Claude Code" in the body (e.g. "add MCP in Cursor" → "add MCP in Claude Code"). Frontmatter (name, description) unchanged.
-- **Links in Claude version:** References to MCP_QUICKSTART and README point to artifacts in claude-plugin root (MCP_QUICKSTART.md, README.md — same plugin). Repo links (MCP_CAPABILITY_MATRIX, philosophy) stay shared.
-- **Versioning:** when changing skills, update CHANGELOG in both plugins (Time Processes Philosophy). See also [SKILLS_AUTHORING_GUIDE.md](SKILLS_AUTHORING_GUIDE.md).
+- **Source of truth:** `provided_plugins/cursor-plugin/plugins/agentstack/skills/` (gen3).
+- **Claude:** `node provided_plugins/scripts/sync-claude-skill-stubs.mjs` → `claude-plugin/skills/`; replace "Cursor" with "Claude Code" (automated).
+- **VS Code:** `node provided_plugins/scripts/sync-vscode-skill-stubs.mjs` → `vscode-plugin/skills/`; replace "Cursor" with "VS Code" (automated).
+- **GPT:** no skill tree — `sync-gpt-instructions.mjs` extracts router table from `agentstack-backend/SKILL.md`.
+- **Prune:** sync scripts remove legacy gen1 alias folders when canonical gen3 stubs exist (`--prune-legacy` on demand).
+- **CI:** `npm run audit:agentstack-dx-plane` runs stub `--check` for Claude + VS Code; `validate-all-plugins.mjs` asserts full gen3 mirror set.
+- **Links:** References to MCP_QUICKSTART and README point to each plugin root. Repo links (capability matrix, philosophy) stay shared.
+- **Versioning:** when changing skills, update CHANGELOG in affected plugins. See [SKILLS_AUTHORING_GUIDE.md](SKILLS_AUTHORING_GUIDE.md) and [CLAUDE_SKILLS_SYNC_CHECKLIST.md](CLAUDE_SKILLS_SYNC_CHECKLIST.md).
 
 ---
 

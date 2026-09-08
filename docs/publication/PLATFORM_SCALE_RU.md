@@ -15,7 +15,7 @@
 |------------|--------:|-----------|
 | **Действий в каталоге** | **<!-- stats:total_actions -->568<!-- /stats:total_actions -->** | `GET /mcp/actions` / Total actions в capability matrix |
 | **Доменов действий** | **<!-- stats:mcp_domains -->48<!-- /stats:mcp_domains -->** | Секции доменов в matrix (codegen) |
-| **Инструментов в реестре** | **<!-- stats:registry_tools -->591<!-- /stats:registry_tools -->** | `MCP_TOOLS_REGISTERED` = `len(MCP_TOOLS_REGISTRY)`; не catalog actions |
+| **Инструментов в реестре** | **<!-- stats:registry_tools -->593<!-- /stats:registry_tools -->** | `MCP_TOOLS_REGISTERED` = `len(MCP_TOOLS_REGISTRY)`; не catalog actions |
 | **Точка входа для IDE** | **1** | `agentstack.execute` — батч шагов, discovery через `/mcp/actions` |
 | **Поверхности плагинов** | **4** | Cursor, Claude Code, GPT, VS Code |
 
@@ -29,7 +29,7 @@
 |---------|--------:|------------|
 | **Действия каталога (public)** | <!-- stats:total_actions -->568<!-- /stats:total_actions --> | Маркетинг, `GET /mcp/actions` |
 | **Инструменты реестра (runtime)** | ~568 | `GET /mcp/health` → `tools_count` |
-| **MCP tools registered (константа)** | <!-- stats:registry_tools -->591<!-- /stats:registry_tools --> | `MCP_TOOLS_REGISTERED` при codegen |
+| **MCP tools registered (константа)** | <!-- stats:registry_tools -->593<!-- /stats:registry_tools --> | `MCP_TOOLS_REGISTERED` при codegen |
 
 Не обновлять SEO по `tools_count` без сверки с catalog (MET-01).
 
