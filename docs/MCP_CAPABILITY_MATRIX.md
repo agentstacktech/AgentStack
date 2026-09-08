@@ -3,7 +3,7 @@
 > **Integrator reference.** Action IDs match `GET https://agentstack.tech/mcp/actions`. Tenant-facing catalog only; platform-operator actions are omitted.
 
 - Source: in-process `mcp.routes._build_mcp_actions_catalog_payload`
-- Generated: 2026-09-08 21:40 UTC
+- Generated: 2026-09-08 22:01 UTC
 - Audience: **public (tenant only)**
 - Total actions: **568**
 - Gene: `repo.plugins.capability_routing.gen1` · `docs.public.classification.gen1`
