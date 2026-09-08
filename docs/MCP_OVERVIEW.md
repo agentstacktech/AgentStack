@@ -83,7 +83,7 @@ mcp/
 
 ## Execute and discovery
 
-A single tool **agentstack.execute** with batched steps and **<!-- stats:total_actions -->494<!-- /stats:total_actions --> catalog actions** (see [MCP_SCALE.md](MCP_SCALE.md), [MCP_CAPABILITY_MATRIX.md](MCP_CAPABILITY_MATRIX.md)). One API, async jobs and streaming.
+A single tool **agentstack.execute** with batched steps and **<!-- stats:total_actions -->568<!-- /stats:total_actions --> catalog actions** (see [MCP_SCALE.md](MCP_SCALE.md), [MCP_CAPABILITY_MATRIX.md](MCP_CAPABILITY_MATRIX.md)). One API, async jobs and streaming.
 
 - **Base URL:** `https://agentstack.tech/mcp`
 - **Execute (sync):** `POST /mcp` — body: `{ "steps": [ { "id": "p1", "action": "projects.create_project_anonymous", "params": { "name": "My app" } } ], "options": { "stopOnError": true } }`

@@ -39,6 +39,11 @@ AgentStack offers multiple subscription tiers to meet different user needs, from
 | **Analytics Exports** | 1 | 1 | 5 | 5 | 20 | 100 | Unlimited |
 | **Support** | Community | Community | Email | Email | Priority | Priority | Dedicated |
 | **Uptime SLA** | 99.0% | 99.0% | 99.5% | 99.5% | 99.9% | 99.95% | 99.99% |
+| **Sandbox generations (open)** | 0 | 0 | 1 | 3 | 5 | 25 | Unlimited |
+| **Sandbox generation depth** | 0 | 0 | 1 | 3 | 5 | 25 | Unlimited |
+| **Sandbox shadow writes** | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
+
+> Sandbox SoT: `shared/subscription/subscription_tiers.py`. Open-status quota — see [SANDBOX_GENERATION_LIMITS_DECOMPOSITION.md](../plans/SANDBOX_GENERATION_LIMITS_DECOMPOSITION.md).
 
 ## Overage Pricing (Pay-as-you-go)
 

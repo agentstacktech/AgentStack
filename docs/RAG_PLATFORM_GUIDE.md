@@ -38,8 +38,7 @@ semantically searchable memory. It is accessible three ways:
 
 **Key properties:**
 
-- **Zero new tables** — uses existing `data_projects_8dna` and
-  `data_projects_backup` with `entity_type` tags.
+- **Zero new PG tables** — manifest on unified 8DNA cell; heavy chunks in **Storage sqlite** (`rag_sqlite_v1`). Legacy `data_projects_backup` only when `RAG_PERSISTENCE_MODE=backup|dual_read`.
 - **TurboQuant compression** — ~8× memory reduction on embeddings with
   near-zero accuracy loss (FWHT + outlier-aware scalar quantization + QJL residual).
 - **Hybrid search** — BM25 sparse + dense TQ inner product, fused with
@@ -51,39 +50,40 @@ semantically searchable memory. It is accessible three ways:
 
 ## Architecture
 
+**A+ storage (default `RAG_PERSISTENCE_MODE=cell_sqlite`):** thin manifest on unified 8DNA cell
+`data.ecosystem.rag`; heavy chunks in per-collection Storage sqlite (`rag_sqlite_v1`).
+Legacy `data_projects_backup` rows are used only when mode is `backup` or `dual_read`.
+
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                              CLIENTS                                 │
-│  REST /api/rag/*    MCP agentstack.execute    AI Builder Stage       │
+│  REST /api/rag/* · sdk.rag · MCP rag.* · AI Builder RAGContext     │
 └──────────┬──────────────────┬────────────────────────┬──────────────┘
            │                  │                        │
            ▼                  ▼                        ▼
 ┌──────────────────────────────────────────────────────────────────────┐
 │                           API LAYER                                  │
 │  rag_endpoints.py       tools_rag.py          RAGContextSelector     │
-│  (Auth + Ownership)    (11 @mcp_tool)         (Context Optimizer v2) │
+│  (Auth + Ownership)    (MCP actions)          (Context Optimizer v2) │
 └──────────────────────────────────┬───────────────────────────────────┘
                                    │
                                    ▼
 ┌──────────────────────────────────────────────────────────────────────┐
 │                        RAGEngine (singleton)                         │
-│   ingest()   search()   memory_add/get/search()   get_context_for_prompt()│
-└──┬──────────────────────────────────────────────────────────────────┬┘
-   │  Core Layer                                    Persistence Layer  │
-   ▼                                                                   ▼
-┌──────────────────────────────────┐  ┌────────────────────────────────┐
-│  TurboQuantizer  (L0)            │  │  CollectionManager             │
-│  TextChunker     (L1)            │  │  → data_projects_8dna       │
-│  EmbedderService (L1)            │  │  DocumentRepository            │
-│  TQVectorStore   (L2)            │  │  → data_projects_backup        │
-│  MemoryStore     (L4)            │  │  MemoryRepository              │
-│                                  │  │  → data_projects_backup        │
-└──────────────────────────────────┘  └────────────────────────────────┘
-                                                         │
-                          NeuralCacheEngine ─────────────┘
-                          L1: MemoryTurn deque
-                          L2: VectorCacheEntry (TQ-compressed embeddings)
+│   ingest() · search() · memory_* · get_context_for_prompt()          │
+└──┬───────────────────────────────┬─────────────────────────────────┬┘
+   │ Hot (per process)               │ Persistence (A+)              │
+   ▼                                 ▼                               │
+┌──────────────────────┐   ┌──────────────────────────────────────────┴──┐
+│ TQVectorStore L1     │   │ CollectionManager                            │
+│ NeuroCache L1/L2     │   │  → RagCellManifestOrganelle (8DNA manifest) │
+│ MemoryStore hot tier │   │  → RagStorageIndexOrganelle (index.sqlite)  │
+└──────────────────────┘   │  → StorageOrganelle (hidden rag_index card) │
+                           │ work_queue rag_ingest (batch ≥12 docs)      │
+                           └─────────────────────────────────────────────┘
 ```
+
+**SDK:** `@agentstack/sdk/rag` (`AgentRag` on `getSDKInstance().rag`).
 
 ---
 
@@ -144,18 +144,21 @@ In-memory vector index per collection:
 - **MMR** — Maximal Marginal Relevance for result diversity.
 - **Serialization** — `to_base64()` / `from_base64()` for optional JSONB storage.
 
-### L3 — CollectionManager / DocumentRepository (`shared/rag/collection_manager.py`)
+### L3 — CollectionManager (`shared/rag/collection_manager.py`)
 
-8DNA CRUD without new tables:
+**A+ (default):** manifest on 8DNA cell + sqlite index in Storage.
 
-| Class | Table | `entity_type` | Hierarchy |
-|-------|-------|--------------|-----------|
-| `CollectionManager` | `data_projects_8dna` | `rag_collection` | project → collection |
-| `DocumentRepository` | `data_projects_backup` | `rag_document` | collection → chunk |
-| `MemoryRepository` | `data_projects_backup` | `rag_memory` | project → turn |
+| Layer | Location | Content |
+|-------|----------|---------|
+| Manifest | `data.ecosystem.rag` on `(project_id, dna_user_id)` | `collections.{uuid}` stats, config, `storage_ref` |
+| Index | `storage/.../ecosystem/rag/{id}/index.sqlite` | chunks FTS + `vector_compressed` BLOB |
+| Scope `project` | cell `(project_id, 0)` | Shared project KB |
+| Scope `user` | cell `(ECOSYSTEM_PROJECT_ID, user_id)` | Personal KB |
 
-Progressive indexing: `save_chunk()` computes `content_hash`; unchanged chunks
-are skipped — re-ingesting a document only processes modified sections.
+**Legacy (`backup` / `dual_read`):** `DocumentRepository` / `MemoryRepository` on
+`data_projects_backup` (`entity_type` `rag_document`, `rag_memory`).
+
+Progressive indexing: `content_hash` skip on unchanged chunks (sqlite upsert).
 
 ### L4 — MemoryStore (`shared/rag/memory_store.py`)
 

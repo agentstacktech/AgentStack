@@ -14,7 +14,7 @@
 | **REST** | `GET /mcp/tools/list` | То же что tools/list — один tool + actions_url |
 | **REST** | `POST /mcp` | Батч execute (steps[], context, options) — полный результат по всем шагам |
 | **REST** | `POST /mcp/stream` | Стриминг выполнения (SSE) |
-| **REST** | `GET /mcp/jobs/{job_id}` | Статус асинхронного job (при options.async: true) |
+| **REST** | `GET /mcp/jobs/{job_id}` | Статус асинхронного job (при options.async: true). MCP: `discovery.job_status`. Sync execute: не больше одного тяжёлого LLM-шага (60s mcp_batch). |
 | **SSE** | `GET /mcp/resources/notifications` | Подписка на уведомления об изменении ресурсов (connection_id) |
 | **REST** | `GET /mcp/health` | Healthcheck + pointers to discovery/actions (`discovery_url`, `actions_url`) |
 
@@ -272,7 +272,7 @@ Step 3.  Выполнить шаги из промпта через agentstack.e
 
 ## 9. Чеклист для агента (полный набор steps)
 
-1. **Нужен проект** → steps: projects.create_project_anonymous (или create_project); сохранить project_id, user_api_key.
+1. **Нужен проект** → steps: `projects.create_project_anonymous` (или `projects.create`); `project_id` + neutral `bootstrap` для заголовков клиента (не память модели). **Cursor plugin:** OAuth Device Code.
 2. **Нужны валюты** → steps: assets.create (type: currency) для каждой валюты; assets.list для списка.
 3. **Кошельки** → wallets.create → wallets.deposit / wallets.transfer; баланс — payments.get_balance.
 4. **Триалы/подписки** → buffs.create_buff + logic.create (триггер) + buffs.apply_buff / apply_temporary_effect.

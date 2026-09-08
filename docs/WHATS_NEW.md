@@ -1,12 +1,13 @@
 # What's new (partner summary)
 
-**Platform line:** 0.4.7 → **0.4.14** (see [VERSIONING.md](VERSIONING.md))
+**Platform line:** **0.4.18** (see [VERSIONING.md](VERSIONING.md))
 
 Highlights for integrators and dashboard users:
 
-- **Genetic System docs** — Navigation OS overview + AI model economics for agent teams — [genetic-system/](genetic-system/)
+- **Docs Living Plane (0.4.18):** plugin/SDK/public mirror alignment — unified MCP stats SoT and regenerated capability matrix
+- **Cursor plugin gen3:** Plugin MCP Connect + Device Code at platform **0.4.18**
 - **Unified 8DNA** data plane for project and user rows
-- **MCP scale:** <!-- stats:total_actions -->494<!-- /stats:total_actions --> catalog actions — [MCP_SCALE.md](MCP_SCALE.md)
+- **MCP scale:** <!-- stats:total_actions -->568<!-- /stats:total_actions --> catalog actions — [MCP_SCALE.md](MCP_SCALE.md)
 - **CRM** — project-scoped contacts and pipelines — [crm/README.md](crm/README.md)
 - **Storefront Studio** — merchant workspace — [commerce/STOREFRONT_STUDIO.md](commerce/STOREFRONT_STUDIO.md)
 - **Public docs site** — Starlight build from this mirror — [DOCS_SITE_OPTIONAL.md](DOCS_SITE_OPTIONAL.md)

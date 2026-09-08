@@ -18,4 +18,4 @@ Canonical terms for integrator-facing documentation. Vale enforces these in CI.
 | **Capability task (PTC)** | Comfort task ≤3 actions, Compass + MCP aligned | ad-hoc UI flows |
 | **Storefront Studio** | Merchant workspace `?mode=studio` | duplicate catalog editor |
 
-**Version line:** <!-- stats:platform_version -->0.4.15<!-- /stats:platform_version --> (`AGENTSTACK_CORE_VERSION`).
+**Version line:** <!-- stats:platform_version -->0.4.18<!-- /stats:platform_version --> (`AGENTSTACK_CORE_VERSION`).

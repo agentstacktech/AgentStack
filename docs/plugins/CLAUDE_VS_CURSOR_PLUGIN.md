@@ -20,15 +20,24 @@ One plugin — one artifact (Decomposition). Shared MCP endpoint and ecosystem; 
 
 ---
 
-## GPT (OpenAI) — GPT Actions
+## GPT (OpenAI) — GPT Actions + MCP Connector
 
-- **Integration model:** not a "plugin package" but artifacts for **GPT Actions**. The user creates a **Custom GPT** in ChatGPT and attaches the OpenAPI 3.1 schema + instructions.
+- **Integration model A (Custom GPT):** artifacts for **GPT Actions**. User creates a **Custom GPT** and attaches OpenAPI 3.1 schema + instructions.
+- **Integration model B (Developer Mode):** native **MCP Connector** in ChatGPT — URL `https://agentstack.tech/mcp`, OAuth well-known or API key. Template: `provided_plugins/gpt-plugin/templates/chatgpt-mcp-connector.template.json`. Map: [MCP_CHATGPT_GEMINI_GUIDE_RU.md](MCP_CHATGPT_GEMINI_GUIDE_RU.md).
 - **Manifest:** OpenAPI 3.1 schema (`provided_plugins/gpt-plugin/openapi/agentstack-mcp.yaml`) + reference instructions (`GPT_INSTRUCTIONS.md`). Install = create Custom GPT per `GPT_QUICKSTART.md`.
 - **MCP:** same endpoint `https://agentstack.tech/mcp`; auth — API Key in header `X-API-Key` (set in Custom GPT → Action → Authentication).
 - **OAuth (optional):** Custom GPT can use OAuth2 (Authorization Code) with AgentStack as IdP:
   - Authorization URL: `https://agentstack.tech/api/oauth2/authorize`
   - Token URL: `https://agentstack.tech/api/oauth2/token`
 - **More:** artifact layout in `provided_plugins/gpt-plugin/ARTIFACTS.md`; quick start in `provided_plugins/gpt-plugin/GPT_QUICKSTART.md`.
+
+## Gemini CLI — remote MCP client
+
+- **Integration model:** Gemini CLI is an MCP **host** (not a marketplace plugin). User runs `gemini mcp add --transport http https://agentstack.tech/mcp`.
+- **Manifest:** docs-only folder `provided_plugins/gemini-cli/` with `GEMINI_QUICKSTART.md`.
+- **MCP:** same endpoint; auth — `X-API-Key` header or `/mcp auth` OAuth flow.
+- **Gemini API:** Managed Agents accept `mcp_server` tool in Interactions API — see [MCP_CHATGPT_GEMINI_GUIDE_RU.md](MCP_CHATGPT_GEMINI_GUIDE_RU.md) §5.2.
+- **No Gemini web chat connector** (as of 2026-08) — use CLI or API.
 
 ---
 

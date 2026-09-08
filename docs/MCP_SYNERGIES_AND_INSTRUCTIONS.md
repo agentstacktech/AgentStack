@@ -1,5 +1,9 @@
 # MCP: синергии, пробелы и инструкции
 
+> **Living SoT для агентов (EN):** [plugins/CONTEXT_FOR_AI_MCP.md](plugins/CONTEXT_FOR_AI_MCP.md) — hot-path table, catalog hints.  
+> **Каталог действий:** `GET /mcp/actions` — имена и счётчики только из live API.  
+> **ADR:** [adr/CAPABILITY_FIXTURE_TAXONOMY.md](adr/CAPABILITY_FIXTURE_TAXONOMY.md) · [operations/MCP_SELF_DESCRIPTION_CHRONICLE.md](operations/MCP_SELF_DESCRIPTION_CHRONICLE.md).
+
 Единый справочник по возможностям MCP, сочетанию инструментов и рекомендуемым сценариям.
 
 **Полный набор флоу и steps:** см. [MCP_FLOWS_AND_SYNERGIES.md](MCP_FLOWS_AND_SYNERGIES.md) — все JSON-RPC методы, ресурсы (list → subscribe → SSE → read), комбинации инструментов с пошаговыми таблицами и цепочки (TOOL_CHAINS).
@@ -41,9 +45,9 @@
 
 | Область                | Статус                                                 | Как обойти                                            |
 | ---------------------- | ------------------------------------------------------ | ----------------------------------------------------- |
-| **Webhooks**           | В API есть, в MCP нет отдельных tools                  | Через commands.execute или будущие webhooks.*         |
-| **Уведомления (send)** | В примерах упоминается notifications.send_notification | Пока использовать logic + внешние вызовы или commands |
-| **Экспорт аналитики**  | analytics.export_data в примерах                       | Использовать analytics.get_metrics, get_usage         |
+| **Webhooks**           | Нет отдельного домена `webhooks.*`                     | `integrations.install_recipe`, `integrations.list_connections`, `logic.create` |
+| **Уведомления (push)** | Каноническое имя `notifications.send_push`             | `notifications.send` — deprecated shim (ошибка в каталоге); не `send_notification` |
+| **Экспорт аналитики**  | analytics.export_data в старых примерах (без MCP action) | `analytics.get_metrics`, `analytics.get_usage`                    |
 
 
 ### Commerce: маркетплейс, аукционы, межпроектный обмен
@@ -53,7 +57,7 @@
 | --------------------------------------------- | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | Листинг, ставки, аукцион, принятие сделки     | **REST** `/api/marketplace/...`                                   | Нет отдельных `marketplace.*` в `agentstack.execute`. Подсказки путей: `**GET /mcp/actions`** → домен `**commerce_rest**`.   |
 | Котировка и исполнение обмена между проектами | **REST** `POST /api/exchange/quote`, `POST /api/exchange/execute` | Не то же самое, что protein `commands.execute` с `command_type: exchange`.                                                   |
-| Платежи, баланс, кошельки, ассеты             | **MCP** `payments.*`, `wallets.*`, `assets.*`                     | Канонические имена: `payments.create`, `payments.get`, `payments.get_balance` (не `create_payment` / `wallets.get_balance`). |
+| Платежи, баланс, кошельки, ассеты             | **MCP** `payments.*`, `wallets.*`, `assets.*`                     | Канонические имена: `payments.create`, `payments.get`, `payments.get_balance` (не legacy `create_payment` / wallets.get_balance). |
 
 
 **Типичная цепочка (маркетплейс + фиат):** `assets.create` (если нужен торгуемый актив) → HTTP создание листинга → ставки/accept по REST → при необходимости MCP `payments.create` для отдельного списания.
@@ -68,7 +72,7 @@
 
 - **Проект → экономика**  
 `projects.create_project_anonymous` → `assets.create` (type: currency) → `wallets.create` → `wallets.deposit`  
-Сначала проект, потом валюты как ассеты, затем кошельки и пополнение.
+Сначала проект (credentials на верхнем уровне + neutral `bootstrap` — настроить заголовки MCP-клиента один раз), потом валюты как ассеты, затем кошельки и пополнение.
 - **Проект → участники**  
 `projects.get_users` → `projects.add_user` / `projects.update_user_role` / `projects.remove_user`  
 Управление составом при наличии прав (owner / manage_users, Professional для add/remove).
@@ -120,7 +124,7 @@
 
 ### Новый проект с экономикой
 
-1. `projects.create_project_anonymous` (или create_project) — сохранить project_id и user_api_key.
+1. `projects.create_project_anonymous` (или `projects.create`) — использовать `project_id`; для anonymous: `user_api_key` / `session_token` + neutral `bootstrap` (настроить заголовки клиента, не память модели). **Cursor plugin:** `/agentstack-authorize` вместо anonymous.
 2. `assets.create` с type=currency для каждой валюты (GOLD, GEM и т.д.).
 3. `wallets.create` (project_id, при необходимости user_id для экосистемы).
 4. `wallets.deposit` для начального пополнения.
@@ -189,7 +193,7 @@
 
 ## 5. Краткий чеклист для агента
 
-- Нужен проект → `projects.create_project_anonymous` / `create_project`; сохранить `user_api_key` и `project_id`.
+- Нужен проект → `projects.create_project_anonymous` / `create_project`; `project_id` + настроить заголовки из top-level credentials (`user_api_key` / `session_token`, neutral `bootstrap`). **Cursor:** Connect / `/agentstack-authorize`.
 - Нужны валюты → `assets.create` с `type=currency`; список — `assets.list`.
 - Нужны кошельки → `wallets.create`; пополнение — `wallets.deposit`; переводы — `wallets.transfer`; баланс — `payments.get_balance`.
 - Нужны триалы/подписки → `buffs.create_buff` + `logic.create` (триггер) + `buffs.apply_buff` / `apply_temporary_effect`.

@@ -113,16 +113,16 @@ Results are cached in `NeuralCacheEngine` (namespace `generation:resolve:project
 
 | Limit | Free | Starter | Basic | Pro | Premium | Enterprise |
 |-------|------|---------|-------|-----|---------|------------|
-| Environments | 0 | 1 | 3 | 10 | 30 | Unlimited |
-| Generation depth | 0 | 3 | 5 | 10 | 20 | Unlimited |
-| Checkpoints | 0 | 1 | 3 | 10 | 30 | Unlimited |
+| Environments (generations) | 0 | 1 | 3 | 5 | 25 | Unlimited |
+| Generation depth | 0 | 1 | 3 | 5 | 25 | Unlimited |
+| Checkpoints | 0 | 2 | 5 | 20 | 50 | Unlimited |
 | A/B tests | 0 | 0 | 1 | 5 | 20 | Unlimited |
 | Shadow writes | ✗ | ✗ | ✗ | ✓ | ✓ | ✓ |
-| Env TTL (days) | 0 | 7 | 14 | 30 | 90 | No expiry |
+| Env TTL (days) | 0 | 7 | 30 | 90 | 365 | No expiry |
 
 > **Free plan:** Backup and rollback of production entities only. No sandbox environments.
 >
-> **Starter plan:** 1 sandbox environment, 3 generations deep. Suitable for solo devs testing a feature branch.
+> **Starter plan:** 1 sandbox generation — accumulate changes, test, then promote. **Basic:** 3. **Pro:** 5.
 
 ---
 
@@ -585,10 +585,17 @@ Configured project webhooks receive **generation lifecycle** deliveries (alongsi
 
 ## Frontend Components
 
-All components are under `src/components/sandbox/`:
+**Generation review hub** (gene `frontend.generation.hub.gen1`): Dev shell **Generations** workspace — promotion queue, timeline, PTC tasks. In-app guide: Secure cookbook recipe **Generations lifecycle** (`/dev/docs/secure/generations-lifecycle`).
+
+All sandbox tab components are under `src/components/sandbox/`:
 
 | Component | Description |
 |-----------|-------------|
+| `PromotionQueueWidget` | Pending generations, gates, promote, diff modal (`useGenerationDiffSurface`) |
+| `GenerationTimeline` | Promotion history; canary `traffic_weight` badge; live poll while `rolling_out` |
+| `CanaryRolloutStrip` | Active canary advance/abort (pairs with `useGenerationStatus` poll) |
+| `GenerationDiffSection` | Ecosystem filter + `DiffViewer` (preview drawer, sandbox diff tab) |
+| `GenerationDiffModalHost` | Modal wiring for queue/timeline |
 | `EnvironmentSwitcher.tsx` | Header dropdown — switch between active environments |
 | `GenerationTree.tsx` | Git-graph style tree: checkpoints, diffs, status pills, action buttons |
 | `DiffViewer.tsx` | JSON diff display with added/modified/removed highlighting |

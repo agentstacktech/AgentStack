@@ -122,6 +122,38 @@ Deeper: [hosting/HOSTING_GOLDEN_PATHS.md](hosting/HOSTING_GOLDEN_PATHS.md)
 
 ---
 
+## 5e. Business organism (command center)
+
+**Business organism** lets you model a project as a **head** with attachable **organs** (child projects, treasury, sharing rules). Open `/user|dev/projects/<id>/business` or follow the in-app cookbook recipe **Business organism setup** (`/dev/docs/operate/business-organism-setup`).
+
+Typical workflow:
+
+1. Create or select a **business head** project.
+2. Use **Create composite** to attach organs (CRM, bots, hosting, etc.).
+3. Review treasury and sharing from the command center.
+
+Honesty: federation and list-for-sale flows are **builder surfaces** — see cookbook recipe **Business organism setup** (`/dev/docs/operate/business-organism-setup`).
+
+---
+
+## 5f. Knowledge platform (policy + mentor)
+
+**Knowledge ops** applies **policy templates** (grounding, abstain rules) and smoke-tests the knowledge playground. Surfaces are primarily in the **Dev shell** (`/dev/projects/<id>/knowledge-ops`). Operators in User shell can open **Discover → Guides** for the same recipe highlight.
+
+GetCourse import and crisis editor tooling are **operator-only** — not marketed as self-serve for all tenants.
+
+Cookbook: `/dev/docs/operate/knowledge-policy-launch` · Compass playbook `launch-knowledge-assistant`.
+
+---
+
+## 5g. LLM energy and BYOK
+
+Project **LLM energy** covers prepaid compute credits and optional **bring-your-own-key (BYOK)** routing for agent runs. Configure under **Project settings → LLM** or the Secure cookbook recipe **LLM energy & BYOK** (`/dev/docs/secure/llm-energy-byok`).
+
+Usage limits and pricing tiers are on [agentstack.tech/pricing](https://agentstack.tech/pricing) — counts come from the live capability matrix, not hardcoded docs.
+
+---
+
 ## 5. Subscriptions and limits
 
 Plans differ by projects, members, API usage, storage, RAG, sandbox features, support, and more.

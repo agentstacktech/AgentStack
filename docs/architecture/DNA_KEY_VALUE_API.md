@@ -16,7 +16,7 @@ DNA API base path: **`/api/dna`** (no version in paths).
 | Method | Full path   | Description |
 |--------|-------------|-------------|
 | GET    | `GET /api/dna/data` | Get value at key. Query: `key` (required), `project_id` (required for `project.data.*`). |
-| POST   | `POST /api/dna/data` | Set value at key. Body: `{ "key": "...", "value": <any>, "project_id": <optional> }`. |
+| POST   | `POST /api/dna/data` | Set value at key (leaf `jsonb_set`, same as `PATCH /api/projects/{id}/data`). Body: `{ "key": "...", "value": <any>, "project_id": <optional> }`. Prefer MCP `projects.patch_data` when the client speaks MCP. |
 
 ## Key format
 

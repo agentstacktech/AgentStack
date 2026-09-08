@@ -1,6 +1,6 @@
 # AgentStack
 
-> AgentStack platform documentation for AI agents and integrators. Platform line 0.4.15.
+> AgentStack platform documentation for AI agents and integrators. Platform line 0.4.18.
 
 ## Core navigation
 

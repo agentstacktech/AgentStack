@@ -21,6 +21,11 @@
 10. [Event-driven Marketing Campaign](#10-event-driven-marketing-campaign)
 11. [Usage-based Billing with Auto-throttling](#11-usage-based-billing-with-auto-throttling)
 12. [Player Matchmaking & Seasonal Events](#12-player-matchmaking--seasonal-events)
+13. [Read-only session bootstrap](#13-read-only-session-bootstrap)
+14. [Seller one-click](#14-seller-one-click)
+15. [Generation safe mutation + canary promote](#15-generation-safe-mutation--canary-promote)
+16. [Business composite bootstrap](#16-business-composite-bootstrap)
+17. [Services inquiry + downstream MCP](#17-services-inquiry--downstream-mcp)
 
 ---
 
@@ -1353,6 +1358,35 @@ apikeys.create (service_caps: ["payments"]) → use returned api_key for payment
 logic.create (counter) → scheduler.create_task (monthly reset) + buffs.create_buff (limit template)
 ```
 
+### Pattern G — Safe sandbox mutation
+
+```
+generation.fork → projects.patch_data (sandbox only) → generation.diff → generation.gates → generation.promote
+```
+
+### Pattern H — Business organism bootstrap
+
+```
+business.create_composite → business.get_org → business.apply_tariff (optional) → business.command_snapshot
+```
+
+### Platform comparison table
+
+| Axis | Sandbox generation (`generation.*`) | Business organism (`business.*`) |
+|------|-------------------------------------|----------------------------------|
+| Goal | Experiment with **project config/DNA** before production | Provision **multi-project org** (head + organ children) |
+| Entry | `generation.fork` on an existing project | `business.create_composite` greenfield |
+| Promote / commit | `generation.promote`, `generation.canary.advance` | `business.apply_tariff`, attach/detach organs — **not** generation promote |
+| Read model | `generation.status`, `generation.diff`, `generation.timeline` | `business.get_org`, `business.command_snapshot` |
+| Wrong tool | Composite create for a one-off config tweak | `generation.fork` when you need CRM + storefront organs |
+
+| Axis | `hosting.release.promote` | `generation.promote` |
+|------|---------------------------|----------------------|
+| Plane | **Static hosting** — immutable site bucket snapshots | **8DNA** — sandbox environment production pointer |
+| Typical pre-step | `commerce.storefront.hosted_publish` or `hosting.release.snapshot` | `generation.fork` → mutate → `generation.gates` |
+| Audit | `hosting.release.list` | `generation.timeline` |
+| Bridge | `generation.hosting.release` labels a snapshot with sandbox gen (**preview**; swap URL separately) | Hosted vitrine publish is **separate** after generation promote |
+
 ---
 
 ## 13. Marketplace storefront buy (REST + wallet)
@@ -1394,4 +1428,327 @@ await sdk.commerce.checkout.createSession({ listing_uuid, rail: 'wallet_internal
 - Commerce flows: `docs/MCP_ECONOMY_AND_COMMERCE_MAP.md`
 - API key safety: `docs/API_KEY_SERVICE_CAPS.md`
 
+---
+
+## 13. Read-only session bootstrap
+
+**Problem:** A 6-step batch with `stopOnError` dies on `buffs.get_effective_limits` or
+`apikeys.list` (`service_cap_denied`) and never reaches quota.
+
+**Tool chain:** `auth.get_profile` → `projects.get_stats` → `buffs.get_effective_limits`
+→ `storage.get_quota` with **`continueOnError: true`**. Omit `apikeys.list` unless the
+key has L1 `api_keys`. Omit `entity_kind` (string `"user"`/`"project"` only if passed).
+
+Recipe: `mcp_read_bootstrap`. Prompt: `agentstack_read_bootstrap`. Default
+`stopOnError` for mutation batches stays **true**.
+
+```json
+{
+  "continueOnError": true,
+  "steps": [
+    {"action": "auth.get_profile", "params": {}},
+    {"action": "projects.get_stats", "params": {}},
+    {"action": "buffs.get_effective_limits", "params": {}},
+    {"action": "storage.get_quota", "params": {}}
+  ]
+}
+```
+
+---
+
+## 14. Seller one-click
+
+**Problem:** A creator wants to sell digital goods in one session — seed catalog, bind earnings
+wallet, publish a hosted vitrine, and verify release history.
+
+**Tool chain:** `commerce.sell.activate` → `commerce.storefront.hosted_publish` →
+`hosting.release.list`
+
+```json
+{
+  "steps": [
+    {
+      "id": "activate",
+      "action": "commerce.sell.activate",
+      "params": {
+        "project_id": "$project_id",
+        "user_id": "$user_id",
+        "use_starter": true,
+        "publish_hosted": false,
+        "storefront_public": true,
+        "idempotency_key": "seller-one-click-v1"
+      }
+    },
+    {
+      "id": "publish",
+      "action": "commerce.storefront.hosted_publish",
+      "params": {
+        "project_id": "$project_id",
+        "user_id": "$user_id",
+        "bucket_name": "$store_slug"
+      },
+      "if": {"from": "activate.result.success", "op": "equals", "value": true}
+    },
+    {
+      "id": "releases",
+      "action": "hosting.release.list",
+      "params": {
+        "project_id": "$project_id",
+        "bucket_id": "$store_slug",
+        "limit": 10
+      },
+      "if": {"from": "publish.result.success", "op": "equals", "value": true}
+    }
+  ]
+}
+```
+
+**REST mirror:** `POST /api/commerce/sell/activate` · `POST /api/commerce/storefront/hosted/publish`
+
+**Key synergies:**
+
+- `commerce.sell.activate` = earnings wallet + seed + storefront index in one orchestrated path
+- `publish_hosted: false` in activate + separate `hosted_publish` = agent can inspect seed before vitrine
+- `hosting.release.list` confirms immutable release rows after publish (newest first)
+- Activation `share_kit` returns `hosted_url`, `shop_url`, and embed hints for operator handoff
+
+---
+
+## 15. Generation safe mutation + canary promote
+
+**Problem:** Change project config in a sandbox, review diff and gates, then promote to production
+with optional canary traffic steps.
+
+**Tool chain:** `generation.list` → `generation.fork` → `projects.patch_data` →
+`generation.diff` → `generation.gates` → `generation.promote` → `generation.canary.advance`
+
+### Phase A — Fork and mutate
+
+```json
+{
+  "steps": [
+    {
+      "id": "envs",
+      "action": "generation.list",
+      "params": {"project_id": "$project_id"}
+    },
+    {
+      "id": "fork",
+      "action": "generation.fork",
+      "params": {
+        "project_id": "$project_id",
+        "source_project_id": "$project_id",
+        "env_name": "pricing-tweak",
+        "env_type": "sandbox"
+      }
+    },
+    {
+      "id": "mutate",
+      "action": "projects.patch_data",
+      "params": {
+        "project_id": "$project_id",
+        "patches": [
+          {"path": ["config", "pricing", "pro_monthly_usd"], "value": 39}
+        ]
+      }
+    }
+  ]
+}
+```
+
+### Phase B — Gate, promote, advance canary
+
+```json
+{
+  "steps": [
+    {
+      "id": "diff",
+      "action": "generation.diff",
+      "params": {
+        "project_id": "$project_id",
+        "env_uuid_a": "$prod_env_uuid",
+        "env_uuid_b": {"from": "fork.result.anchor_uuid"}
+      }
+    },
+    {
+      "id": "gates",
+      "action": "generation.gates",
+      "params": {
+        "project_id": "$project_id",
+        "env_uuid": {"from": "fork.result.anchor_uuid"}
+      }
+    },
+    {
+      "id": "promote",
+      "action": "generation.promote",
+      "params": {
+        "project_id": "$project_id",
+        "env_uuid": {"from": "fork.result.anchor_uuid"},
+        "strategy": "immediate"
+      },
+      "if": {"from": "gates.result.all_passed", "op": "equals", "value": true}
+    },
+    {
+      "id": "canary_step",
+      "action": "generation.canary.advance",
+      "params": {
+        "project_id": "$project_id",
+        "env_uuid": {"from": "fork.result.anchor_uuid"}
+      },
+      "if": {"from": "promote.result.status", "op": "equals", "value": "rolling_out"}
+    }
+  ]
+}
+```
+
+**Key synergies:**
+
+- `generation.fork` isolates mutations — production pointer unchanged until promote
+- `generation.diff` + `generation.gates` = review-before-promote without custom CI
+- `generation.promote` with `strategy: "immediate"` vs canary `rolling_out` → `generation.canary.advance`
+- Manual gate pending → `generation.approve` then re-run `generation.gates`
+- Rollback path → `generation.canary.abort` + `generation.timeline` audit
+
+> **Not** `hosting.release.promote` — that plane moves static site snapshots, not 8DNA sandboxes.
+
+---
+
+## 16. Business composite bootstrap
+
+**Problem:** Greenfield business with organ children (CRM, storefront, bots, support), optional
+tariff, and a command-center read model in one batch.
+
+**Tool chain:** `business.create_composite` → `business.get_org` → `business.apply_tariff` →
+`business.command_snapshot`
+
+```json
+{
+  "steps": [
+    {
+      "id": "composite",
+      "action": "business.create_composite",
+      "params": {
+        "name": "Acme Studio",
+        "organs": ["crm", "storefront", "bots", "support"],
+        "tariff_template_id": "starter"
+      }
+    },
+    {
+      "id": "org",
+      "action": "business.get_org",
+      "params": {
+        "project_id": {"from": "composite.result.head_project_id"}
+      }
+    },
+    {
+      "id": "tariff",
+      "action": "business.apply_tariff",
+      "params": {
+        "project_id": {"from": "composite.result.head_project_id"},
+        "template_id": "growth"
+      },
+      "if": {"from": "composite.result.success", "op": "equals", "value": true}
+    },
+    {
+      "id": "snapshot",
+      "action": "business.command_snapshot",
+      "params": {
+        "project_id": {"from": "composite.result.head_project_id"},
+        "include_integrations": true
+      }
+    }
+  ]
+}
+```
+
+**REST mirror:** `POST /api/business/composite`
+
+**Key synergies:**
+
+- `business.create_composite` = head project + organ child projects + org index in one saga
+- `business.get_org` confirms `config.org` children before downstream organ-specific MCP
+- `business.command_snapshot` = treasury + CRM summary + integration health (read-only aggregate)
+- Link existing standalone projects with `business.link_child` instead of `create_composite` when adopting
+
+> **Not** `generation.fork` — business organism is multi-project topology, not sandbox DNA.
+
+---
+
+## 17. Services inquiry + downstream MCP
+
+**Problem:** A guest requests a professional-services quote on `/services/:sku`. The public BFF
+is REST-only; staff follow up via CRM MCP on ecosystem project 1.
+
+**REST chain (guest — not `agentstack.execute`):**
+
+1. `GET /api/public/services/catalog`
+2. `GET /api/public/services/skus/{sku_id}`
+3. `POST /api/public/services/inquiry` → **202 Accepted**
+
+```json
+{
+  "sku": "implementation-sprint",
+  "name": "Jane Doe",
+  "email": "jane@example.com",
+  "company": "Example Corp",
+  "message": "We need AgentStack CRM + storefront for 50 seats.",
+  "locale": "en"
+}
+```
+
+**Downstream MCP (staff on ecosystem pid=1):**
+
+```json
+{
+  "steps": [
+    {
+      "id": "find_lead",
+      "action": "crm.search",
+      "params": {
+        "project_id": 1,
+        "q": "jane@example.com",
+        "limit": 5
+      }
+    },
+    {
+      "id": "contact_360",
+      "action": "crm.get_contact_360",
+      "params": {
+        "project_id": 1,
+        "contact_id": {"from": "find_lead.result.contacts[0].id"}
+      }
+    },
+    {
+      "id": "log_followup",
+      "action": "crm.log_activity",
+      "params": {
+        "project_id": 1,
+        "contact_id": {"from": "find_lead.result.contacts[0].id"},
+        "kind": "note",
+        "body": "Staff replied to services inquiry — scheduling discovery call."
+      }
+    },
+    {
+      "id": "deal",
+      "action": "crm.create_deal",
+      "params": {
+        "project_id": 1,
+        "contact_id": {"from": "find_lead.result.contacts[0].id"},
+        "title": "Implementation sprint — Example Corp",
+        "stage_id": "qualified"
+      }
+    }
+  ]
+}
+```
+
+**Key synergies:**
+
+- Inquiry upserts CRM contact + timeline **note** on ecosystem project 1 (not tenant scope)
+- In-app notifications fan to pid=1 owner/admin with `action_href` → `/dev/projects/1/crm`
+- Honeypot field `website` silently accepts spam without persisting
+- Rate limit: 10 inquiries / hour / IP on `POST /inquiry`
+- No MCP action for guest submit — use REST BFF; staff use `crm.*` after acceptance
+
+**Gene:** `frontend.public.services_offers.gen1` · Hub: `/services` (not `/pricing` SaaS tiers)
 

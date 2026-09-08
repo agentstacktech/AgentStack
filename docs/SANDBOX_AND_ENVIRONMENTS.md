@@ -106,16 +106,16 @@ The platform **walks the `parent_uuid` chain** and **deep-merges** JSON from roo
 
 | Limit | Free | Starter | Basic | Pro | Premium | Enterprise |
 |-------|------|---------|-------|-----|---------|------------|
-| Environments | 0 | 1 | 3 | 10 | 30 | Unlimited |
-| Generation depth | 0 | 3 | 5 | 10 | 20 | Unlimited |
-| Checkpoints | 0 | 1 | 3 | 10 | 30 | Unlimited |
+| Environments (generations) | 0 | 1 | 3 | 5 | 25 | Unlimited |
+| Generation depth | 0 | 1 | 3 | 5 | 25 | Unlimited |
+| Checkpoints | 0 | 2 | 5 | 20 | 50 | Unlimited |
 | A/B tests | 0 | 0 | 1 | 5 | 20 | Unlimited |
 | Shadow writes | ✗ | ✗ | ✗ | ✓ | ✓ | ✓ |
-| Env TTL (days) | 0 | 7 | 14 | 30 | 90 | No expiry |
+| Env TTL (days) | 0 | 7 | 30 | 90 | 365 | No expiry |
 
 > **Free plan:** Backup and rollback of production entities only. No sandbox environments.
 >
-> **Starter plan:** 1 sandbox environment, 3 generations deep. Suitable for solo developers testing a feature branch.
+> **Starter plan:** 1 sandbox generation (accumulate → test → promote). **Basic:** 3. **Pro:** 5. Canary rollout from Starter.
 
 ---
 
@@ -190,7 +190,7 @@ Response:
 }
 ```
 
-Strategies: `immediate`, `canary`, `blue_green`.
+Strategies: `immediate`, `canary`, `blue_green`. Legacy field `instant: true|false` maps to `immediate` / `blue_green`.
 
 Pre-promotion checks run automatically:
 
@@ -207,10 +207,11 @@ If any check fails, promotion is blocked and the response contains `checks` with
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `POST` | `/api/sandbox/canary/advance` | Advance to next rollout step |
-| `POST` | `/api/sandbox/canary/abort` | Abort canary — rollback to previous traffic weight |
+| `POST` | `/api/sandbox/rollout/advance` | Advance to next rollout step |
+| `POST` | `/api/sandbox/rollout/abort` | Abort canary rollout |
+| `POST` | `/api/sandbox/rollout/abort` | Abort canary — rollback to previous traffic weight |
 
-#### POST /api/sandbox/canary/advance
+#### POST /api/sandbox/rollout/advance
 
 ```json
 { "env_uuid": "<anchor_uuid>" }
@@ -368,7 +369,7 @@ Canary rollout shifts production traffic gradually via `traffic_weight` (0–100
 ]
 ```
 
-Advance or abort via **`POST /api/sandbox/canary/advance`** and **`POST /api/sandbox/canary/abort`** (see [Swagger](https://agentstack.tech/swagger) for bodies).
+Advance or abort via **`POST /api/sandbox/rollout/advance`** and **`POST /api/sandbox/rollout/abort`** (see [Swagger](https://agentstack.tech/swagger) for bodies).
 
 ---
 

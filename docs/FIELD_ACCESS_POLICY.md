@@ -20,13 +20,13 @@ Request → [L1: API key caps — service/function gate]
         → Response
 ```
 
-**L1 (API key `service_caps`):** Project API keys may restrict which services are accessible at all, overriding even admin roles. Enforced in `session_auth.py` via the `require_key_service_cap(service)` dependency **before** RBAC. Configured by project owner as a list stored in `config.api_keys[key_id].service_caps` (UI: checkboxes). `None` = all services allowed (default).
+**L1 (API key `service_caps`):** User/agent PATs may restrict which services are accessible at all, overriding even admin roles. Enforced in `session_auth.py` via the `require_key_service_cap(service)` dependency **before** RBAC. Stored on `data.config.user_api_keys[key_id].service_caps`. `None` = all services allowed (default).
 
 **L2 (RBAC):** Standard role-based permissions per project.
 
 **L3 (FAP):** Field-level mask applied by `FieldAccessService.apply_mask()` after the route logic.
 
-**Project API key scope:** A project API key is scoped to exactly one project. Using a key from project A to access FAP data of project B is rejected with 403 (`_assert_key_project_scope`). User API keys and full sessions are not restricted to a single project.
+**PAT working project:** JWT identity `project_id` is always 1. Working pid is `X-Project-ID` / MCP `context.project_id`, gated by `resource_scope` ∩ membership. Out-of-scope pid is 403 `key_scope_denied`. SPA session JWTs remain per-project.
 
 ### Who can do what (API)
 

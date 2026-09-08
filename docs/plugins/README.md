@@ -2,7 +2,7 @@
 
 **Purpose:** Single entry point for AgentStack plugin documentation (Decomposition: one index; Elegant Minimalism: no duplication — details by link).
 
-**For AI agents:** Start with [CONTEXT_FOR_AI.md](CONTEXT_FOR_AI.md) and [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md). Plugin source repos: [agentstacktech/cursor-plugin](https://github.com/agentstacktech/cursor-plugin), [agentstacktech/claude-plugin](https://github.com/agentstacktech/claude-plugin), [agentstacktech/vscode-plugin](https://github.com/agentstacktech/vscode-plugin), [agentstacktech/gpt-plugin](https://github.com/agentstacktech/gpt-plugin).
+**For AI agents:** Start with [CONTEXT_FOR_AI.md](CONTEXT_FOR_AI.md) and [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md). Universal client matrix: [MCP_CLIENT_COMPATIBILITY_MATRIX.md](MCP_CLIENT_COMPATIBILITY_MATRIX.md). Browser prompts: [MCP_CHAT_COMMAND_COOKBOOK.md](MCP_CHAT_COMMAND_COOKBOOK.md). Plugin source repos: [agentstacktech/cursor-plugin](https://github.com/agentstacktech/cursor-plugin), [agentstacktech/claude-plugin](https://github.com/agentstacktech/claude-plugin), [agentstacktech/vscode-plugin](https://github.com/agentstacktech/vscode-plugin), [agentstacktech/gpt-plugin](https://github.com/agentstacktech/gpt-plugin), [agentstacktech/gemini-plugin](https://github.com/agentstacktech/gemini-plugin) (sync from monorepo).
 
 **Philosophy:** See [AGENTSTACK_PLUGIN_PHILOSOPHY.md](AGENTSTACK_PLUGIN_PHILOSOPHY.md).
 
@@ -14,9 +14,10 @@ All plugins are published as separate GitHub repositories (see table below). On 
 
 | Platform     | Folder | GitHub | Summary |
 |-------------|--------|--------|---------|
-| **Cursor**  | [cursor-plugin](https://github.com/agentstacktech/cursor-plugin) | [agentstacktech/cursor-plugin](https://github.com/agentstacktech/cursor-plugin) | **v0.4.15, gen3** — 5-layer plugin + catalog plane (rules + 24 domain skills + commands + agents + hooks), OAuth 2.1 Device Code, streamable-http MCP. Install via `/agentstack-init`. |
+| **Cursor**  | [cursor-plugin](https://github.com/agentstacktech/cursor-plugin) | [agentstacktech/cursor-plugin](https://github.com/agentstacktech/cursor-plugin) | **v0.4.18, gen3** — Plugin MCP via `mcpServers: "./mcp.json"` + Connect (Device Code); single `tools/list` tool; flow map [MCP_DEDUPE_FLOW.md](MCP_DEDUPE_FLOW.md). |
 | **Claude Code** | [claude-plugin](https://github.com/agentstacktech/claude-plugin) | [agentstacktech/claude-plugin](https://github.com/agentstacktech/claude-plugin) | Claude Code plugin: Skills, manifest `.claude-plugin/plugin.json`. MCP: `claude mcp add --transport http`. |
-| **GPT (OpenAI)** | [gpt-plugin](https://github.com/agentstacktech/gpt-plugin) | [agentstacktech/gpt-plugin](https://github.com/agentstacktech/gpt-plugin) | GPT Actions artifacts: OpenAPI 3.1 schema + instructions. Install = create Custom GPT per GPT_QUICKSTART. |
+| **GPT (OpenAI)** | [gpt-plugin](https://github.com/agentstacktech/gpt-plugin) | [agentstacktech/gpt-plugin](https://github.com/agentstacktech/gpt-plugin) | GPT Actions + ChatGPT MCP Connector — [GPT quick start](https://github.com/agentstacktech/gpt-plugin/blob/main/GPT_QUICKSTART.md). |
+| **Gemini** | [gemini-plugin](https://github.com/agentstacktech/gemini-plugin) | [agentstacktech/gemini-plugin](https://github.com/agentstacktech/gemini-plugin) | CLI + Spark Connected Apps — [GEMINI quick start](https://github.com/agentstacktech/gemini-plugin/blob/main/GEMINI_CLI_QUICKSTART.md). |
 | **VS Code** | [vscode-plugin](https://github.com/agentstacktech/vscode-plugin) | [agentstacktech/vscode-plugin](https://github.com/agentstacktech/vscode-plugin) | VS Code extension: MCP registered by extension; one-time API key entry (SecretStorage). |
 
 ---
@@ -29,7 +30,7 @@ All plugins are published as separate GitHub repositories (see table below). On 
 2. **Get an API key** — no signup (anonymous project) or from [AgentStack](https://agentstack.tech) in project settings.
 3. **Follow Quick Start** for your plugin (links below) — connect in a few minutes.
 
-**What plugins provide:** one MCP endpoint (`https://agentstack.tech/mcp`) and **<!-- stats:total_actions -->494<!-- /stats:total_actions --> catalog actions** for projects, 8DNA data, Rules Engine, payments, Buffs, auth, agents, **hosted static sites** (`hosting.*`), **project files** (`storage.*`), support, messenger, and more. Scale facts: [PLATFORM_SCALE.md](../publication/PLATFORM_SCALE.md). Full list: [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md).
+**What plugins provide:** one MCP endpoint (`https://agentstack.tech/mcp`) and **<!-- stats:total_actions -->568<!-- /stats:total_actions --> catalog actions** for projects, 8DNA data, Rules Engine, payments, Buffs, auth, agents, **hosted static sites** (`hosting.*`), **project files** (`storage.*`), support, messenger, and more. Scale facts: [PLATFORM_SCALE.md](../publication/PLATFORM_SCALE.md). Full list: [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md).
 
 ---
 
@@ -38,11 +39,15 @@ All plugins are published as separate GitHub repositories (see table below). On 
 | Document | Content |
 |----------|---------|
 | [Cursor plugin audit (maintainers)](https://github.com/agentstacktech/agentstack/blob/main/docs/plugins/CURSOR_PLUGIN_AUDIT_2026-07.md) | Cursor marketplace ship audit (P0–P2 gap register) |
+| [PLUGIN_VERSION_POLICY.md](PLUGIN_VERSION_POLICY.md) | Plugin semver: **do not bump** without Lance’s explicit order (see policy doc) |
+| [MCP_CHATGPT_GEMINI_GUIDE_RU.md](MCP_CHATGPT_GEMINI_GUIDE_RU.md) | **ChatGPT + Gemini:** integration map, auth matrix, troubleshooting |
 | [CONTEXT_FOR_AI.md](CONTEXT_FOR_AI.md) | AgentStack capability map for AI (domains, when to use which tool); for GPT, VS Code, etc. |
 | [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md) | Stable public link to the full MCP action catalogue (source: `GET /mcp/actions`). |
 | [CLAUDE_VS_CURSOR_PLUGIN.md](CLAUDE_VS_CURSOR_PLUGIN.md) | Comparison of all four plugins: manifest, install, MCP config, Skills/Rules. |
 | [AGENTSTACK_PLUGIN_PHILOSOPHY.md](AGENTSTACK_PLUGIN_PHILOSOPHY.md) | Plugin validation via PHILOSOPHY_INDEX (Creation over Conflict, Decomposition, Elegant Minimalism, 8DNA, Time) + v0.4.9 5-layer model. |
-| [../MCP_QUICKSTART.md](../MCP_QUICKSTART.md) | **Single hub** for MCP setup (API key, Cursor, debugging). Per-plugin stubs live in each GitHub repo. |
+| [../MCP_QUICKSTART.md](../MCP_QUICKSTART.md) | Lean verify + first call; full install → [MCP_SETUP_QUICKSTART.md](MCP_SETUP_QUICKSTART.md) |
+| [MCP_SETUP_QUICKSTART.md](MCP_SETUP_QUICKSTART.md) | **Install all clients** — Cursor, Claude, VS Code, ChatGPT/Gemini, copy-paste configs |
+| [MCP_BROWSER_QUICKSTART.md](MCP_BROWSER_QUICKSTART.md) | ChatGPT Custom GPT + Gemini Spark (browser) |
 
 ---
 
@@ -60,7 +65,8 @@ Checklists ship inside each plugin repo (`POST_RELEASE_CHECKLIST.md` or equivale
 
 - **Cursor:** [cursor-plugin README](https://github.com/agentstacktech/cursor-plugin#readme) · [MCP quick start](https://github.com/agentstacktech/cursor-plugin/blob/main/MCP_QUICKSTART.md)
 - **Claude:** [claude-plugin README](https://github.com/agentstacktech/claude-plugin#readme) · [MCP quick start](https://github.com/agentstacktech/claude-plugin/blob/main/MCP_QUICKSTART.md)
-- **GPT:** [gpt-plugin README](https://github.com/agentstacktech/gpt-plugin#readme) · [GPT quick start](https://github.com/agentstacktech/gpt-plugin/blob/main/GPT_QUICKSTART.md)
+- **GPT:** [gpt-plugin README](https://github.com/agentstacktech/gpt-plugin#readme) · [GPT quick start](https://github.com/agentstacktech/gpt-plugin/blob/main/GPT_QUICKSTART.md) · [ChatGPT + Gemini map](MCP_CHATGPT_GEMINI_GUIDE_RU.md)
+- **Gemini CLI:** [GEMINI quick start](https://github.com/agentstacktech/gemini-plugin/blob/main/GEMINI_CLI_QUICKSTART.md)
 - **VS Code:** [vscode-plugin README](https://github.com/agentstacktech/vscode-plugin#readme) · [MCP quick start](https://github.com/agentstacktech/vscode-plugin/blob/main/MCP_QUICKSTART.md)
 
 Full MCP tools list: [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md).  
@@ -80,10 +86,10 @@ Data store (how to use the “database”): [DNA_KEY_VALUE_API.md](../architectu
 <!-- BEGIN:PLUGIN_INVENTORY -->
 | Artifact | Count |
 |----------|------:|
-| Cursor skills | 25 |
-| Cursor commands | 13 |
-| Cursor agents | 5 |
-| MCP catalog actions | 494 |
-| MCP domains | 45 |
-| Platform version | 0.4.15 |
+| Cursor skills | 27 |
+| Cursor commands | 15 |
+| Cursor agents | 3 |
+| MCP catalog actions | 568 |
+| MCP domains | 48 |
+| Platform version | 0.4.18 |
 <!-- END:PLUGIN_INVENTORY -->

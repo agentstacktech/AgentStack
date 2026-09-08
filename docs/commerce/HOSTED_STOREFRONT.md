@@ -44,7 +44,7 @@ Example (version from your deployment):
 <script type="importmap">
 {
   "imports": {
-  "@agentstack/commerce": "/sdk/v0.4.14/commerce.esm.js"
+  "@agentstack/commerce": "/sdk/v0.4.18/commerce.esm.js"
   }
 }
 </script>
