@@ -3,9 +3,9 @@
 > **Integrator reference.** Action IDs match `GET https://agentstack.tech/mcp/actions`. Tenant-facing catalog only; platform-operator actions are omitted.
 
 - Source: in-process `mcp.routes._build_mcp_actions_catalog_payload`
-- Generated: 2026-09-08 22:01 UTC
+- Generated: 2026-09-17 17:06 UTC
 - Audience: **public (tenant only)**
-- Total actions: **568**
+- Total actions: **623**
 - Gene: `repo.plugins.capability_routing.gen1` · `docs.public.classification.gen1`
 
 <!-- BEGIN:AUTOGEN-CAPABILITY-MATRIX -->
@@ -55,7 +55,7 @@
 | `agentnet.vault.deposit_confirm` | `—` | Credit L0 agUSD shares after ERC-4626 deposit (operator/indexer). |
 | `agentnet.vault.nav` | `—` | ERC-4626 vault NAV (totalAssets, totalSupply). REST: GET /api/agentnet/{project_id}/vault/nav |
 
-## agents (32)
+## agents (33)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
@@ -75,6 +75,7 @@
 | `agents.list` | `agents_run` | List Agents Fleet rows for a project (8DNA entity_type=agent). |
 | `agents.list_pending_approvals` | `—` | List runs waiting for approval across project or personal agent scope. |
 | `agents.metrics` | `agents_run` | Read rollup metrics for an agent (ecosystem.agents_metrics). |
+| `agents.orchestrate` | `—` | Run the project orchestrator agent for a channel (workspace\|messenger\|bot\|mcp\|api). |
 | `agents.policy_preview` | `agents_run` | Expand AgentPolicy patterns to live MCP actions (preview, no persistence). |
 | `agents.promote` | `agents_admin` | Run auto-promotion gates; may set state to live when metrics pass. |
 | `agents.reconcile_run` | `agents_run|agents_admin` | Apply reconciler policy to one run (project write/admin RBAC). |
@@ -126,16 +127,19 @@
 | `assets.list_presets` | `—` | List deterministic asset wizard presets for the project. |
 | `assets.update` | `assets_write` | Update an existing asset. |
 
-## auth (9)
+## auth (12)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
 | `auth.channel_identities.list` | `—` | List bot channel identities linked to the authenticated user profile. |
 | `auth.channel_identities.revoke` | `—` | Revoke a channel identity link by id (owner-only). |
+| `auth.email_otp.login` | `—` | Verify email OTP and mint a session. MFA-enrolled users receive mfa_required on first call; retry with mfa_ticket + mfa_code (+ optional mfa_method). |
+| `auth.email_otp.send` | `—` | Request a passwordless email sign-in code (anti-enumeration: always returns sent=true when email is valid). Uses Mail Hub template `email_otp`. Pair with `auth.email_otp.login`. |
 | `auth.get_profile` | `—` | Get user profile information. |
 | `auth.identity.conflicts` | `—` | List project member emails that diverge from ecosystem canonical auth email. |
 | `auth.identity.resolve` | `—` | Resolve canonical vs display email for a user (support / debug). |
 | `auth.login` | `—` | Login to the system. |
+| `auth.password_reset.request` | `—` | Request a self-service password reset email for an ecosystem user. Always returns the same success message (enumeration-safe). The user opens the link in the email, sets a new password, then signs in. |
 | `auth.register` | `—` | Register a new user. |
 | `auth.switch_project` | `—` | Mint a session for an accessible target project (Session OS switch contour). |
 | `auth.update_profile` | `—` | Update user profile. |
@@ -201,12 +205,29 @@
 | `business.patch_org_settings` | `project_admin` | Patch business head org settings (config.org leaf). |
 | `business.transfer_preflight` | `—` | Scan transfer blockers before listing a project for sale. |
 
+## calendar (3)
+
+| Action | Required cap | Summary |
+|--------|--------------|---------|
+| `calendar.event.delete` | `—` | Delete a manual calendar event by id. |
+| `calendar.event.upsert` | `—` | Create or update a manual calendar event on ecosystem.calendar.manual_events. |
+| `calendar.events` | `—` | List calendar events merged from CRM deals, activities, invoices, manual. |
+
 ## cardgame (2)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
 | `cardgame.dna.read_rows` | `—` | List up to ``limit`` rows for a cardgame 8DNA entity type using DNA CRUD get (same permission model as the SPA). Use for match room / cell snapshots when building agent context. |
 | `cardgame.rules.execute` | `—` | Execute a Logic Engine command for ArcaneStack (e.g. ``cardgame.match.play_card``) with the same payload shape as the game client. Requires authenticated MCP context. |
+
+## checklist (4)
+
+| Action | Required cap | Summary |
+|--------|--------------|---------|
+| `checklist.append_item` | `—` | Append a checklist step. |
+| `checklist.get` | `—` | Get checklist for an entity (e.g. crm_deal). |
+| `checklist.set` | `—` | Replace checklist items for an entity. |
+| `checklist.toggle_item` | `—` | Toggle or set status on one checklist item. |
 
 ## commands (2)
 
@@ -277,18 +298,20 @@
 | `rest.marketplace.list_listings` | `—` | List marketplace listings with filters. |
 | `rest.marketplace.place_bid` | `—` | Place bid on auction listing. |
 
-## context (1)
+## context (2)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
-| `context.get` | `rag.read` | Prefetch RAG + memory context for a task. |
+| `context.get` | `rag.read` | Fetch RAG + memory + FAP-masked 8DNA snapshot for a task (Context Fabric). |
+| `context.resolve` | `—` | Resolve effective project_id for the session; surfaces ambiguous_project_context. |
 
-## crm (19)
+## crm (21)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
 | `crm.create_company` | `—` | Create a CRM company for a project. |
 | `crm.create_deal` | `—` | Create a CRM deal in the default pipeline. |
+| `crm.delete_deal` | `—` | Soft-delete (archive) a CRM deal. |
 | `crm.erase_contact` | `—` | Anonymize/erase a CRM contact (GDPR). |
 | `crm.export_contact` | `—` | Export GDPR bundle for a CRM contact. |
 | `crm.get_contact_360` | `—` | Contact 360 view: profile, deals, unified timeline. |
@@ -305,6 +328,7 @@
 | `crm.patch_crm_config` | `—` | Patch project CRM config (writers may update saved_views only). |
 | `crm.search` | `—` | Search CRM contacts by query string. |
 | `crm.suggest_field` | `—` | Suggest values for a CRM field from partial context. |
+| `crm.update_deal` | `—` | Patch a CRM deal (title, amount, due_at, stage_id, contact_ids, custom). |
 | `crm.upsert_contact` | `—` | Create or update a CRM contact (dedupe by email). |
 
 ## data_access (9)
@@ -321,21 +345,28 @@
 | `data_access.set_triggers` | `data_access_admin` | Upsert ``field_triggers`` for one resource. **triggers** is a map ``field_pattern → [trigger_def, …]`` (patterns like ``status``, ``config.**``, ``*``). |
 | `data_access.test_mask` | `—` | Preview what fields a given role can read/write in a resource. |
 
-## diagnostics (3)
+## diagnostics (4)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
+| `diagnostics.consistency.scan` | `—` | Read-only scan: projects dedup meta, logic projection, knowledge health. |
 | `diagnostics.gene_token_query` | `—` | GTPI bool query against process-local gene token lexicon. |
 | `diagnostics.neural_graph` | `—` | Neural Visualizer Gen2 snapshot: topology, heat planes (protein/api/dna_query/gene), composition edges, hot_region_hints. Always includes heat_meta (worker layout honesty). Process-local heat; Tier F |
 | `diagnostics.promote_hot_gene` | `—` | Promote a genetic tag's path prefixes into HotProteinRegion for an entity. Modes: warm, pin, prefetch_only. Tier F materialize blocked. |
 
-## discovery (3)
+## discovery (9)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
+| `discovery.describe` | `—` | Full descriptor for one MCP action (schema + instruction_slice). |
+| `discovery.domain` | `—` | List actions in one catalog domain (wrapper over discovery.search). |
 | `discovery.get_platform_surfaces` | `—` | List canonical platform routes from generated platform-surface-audit.json. |
 | `discovery.job_status` | `—` | Poll an async agentstack.execute job (options.async=true). Cheap. Use after a multi-step heavy batch; do not re-run bots.simulate to check status. |
 | `discovery.list` | `—` | List all MCP actions (alias for GET /mcp/actions catalog). Includes execute_budget (sync 60s / one heavy LLM step) and write_modes (merge\|replace\|append\|delete — pass write_mode on collection/body wri |
+| `discovery.recipes` | `—` | List onboarding MCP recipes (instruction plane SoT). |
+| `discovery.search` | `—` | Compact catalog search — returns ≤50 matching actions (not full discovery.list). |
+| `discovery.status` | `—` | Registry status — version, catalog etag, action/domain/recipe totals. |
+| `discovery.summary` | `—` | Lightweight MCP catalog totals (alias for GET /mcp/actions/summary). |
 
 ## dna (2)
 
@@ -359,21 +390,29 @@
 | `energy.list_packs` | `—` | Available LLM energy pack tiers (small/medium/large) and USD prices. |
 | `energy.purchase` | `—` | Purchase energy pack via unified finance.pay (wallet) or payments.create (card). |
 
-## finance (9)
+## finance (17)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
 | `finance.activity` | `—` | Unified wallet activity feed. |
 | `finance.dashboard_bundle` | `—` | Finance hub landing aggregate (portfolio + billing + activity preview). |
+| `finance.expense.create` | `—` | Create an expense row on data.money.expenses[]. |
+| `finance.expense.delete` | `—` | Delete expense by id. |
+| `finance.expense.list` | `—` | List project expenses. |
 | `finance.pay.execute` | `—` | Execute a quoted pay intent with idempotency key. |
 | `finance.pay.quote` | `—` | Quote a unified pay intent (energy_pack, subscription, compute_credits, fund, contribute). |
 | `finance.portfolio` | `—` | User finance portfolio aggregate (three rails + JSON wallets). |
-| `finance.project.contribute` | `—` | Member contribution: USD only from personal ecosystem wallet (project_id=1) to project treasury. Not for custom/game currencies. |
+| `finance.project.analytics` | `—` | Project finance analytics (revenue/expense trends) for hosted vertical widgets. |
+| `finance.project.contribute` | `finance.write` | Member contribution: USD only from personal ecosystem wallet (project_id=1) to project treasury. Not for custom/game currencies. |
 | `finance.project.contributions.list` | `—` | List member contributions for a project (FAP-masked). |
-| `finance.project.fund` | `—` | Fund a project via ecosystem USD transfer. |
-| `finance.project.portfolio` | `—` | Project business portfolio (operating + treasury + AGNT). |
+| `finance.project.fund` | `finance.write` | Fund a project via ecosystem USD transfer. |
+| `finance.project.portfolio` | `finance.read` | Project business portfolio (operating + treasury + AGNT). |
+| `finance.revenue.delete` | `—` | Delete a paid freelancer revenue row by id (actor-owned). |
+| `finance.revenue.list` | `—` | List paid freelancer revenue rows on data.money.invoices[] (actor-scoped). |
+| `finance.revenue.record` | `—` | Record paid freelancer revenue on data.money.invoices[] (EDITFLOW deal close). |
+| `finance.revenue.update` | `—` | Update paid freelancer revenue amount or description (actor-owned). |
 
-## generation (20)
+## generation (21)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
@@ -383,6 +422,7 @@
 | `generation.checkpoint` | `—` | Materialise merged production/sandbox DNA into a checkpoint generation (rollback SoT). Use before risky bulk edits; rollback via generation.rollback. |
 | `generation.diff` | `mcp_read` | Structured diff between two resolved generation entity states (same table/project). |
 | `generation.diff_vs_prod` | `mcp_read` | Diff stable production head vs pending sandbox head. Includes agent_context summary for diagnosis (counts, domains, sample paths). |
+| `generation.discard` | `—` | Discard sandbox changes (Postel alias for generation.realign_to_prod). Defaults to dry_run=true — set dry_run=false to apply. |
 | `generation.fork` | `project_admin` | Fork production project into a new sandbox environment generation. |
 | `generation.gates` | `mcp_read` | Run generation gate chain for an environment (schema, conflict, health, soak, metrics, optional manual). |
 | `generation.hosting.release` | `project_admin` | Snapshot live hosting workspace into an immutable release labeled with sandbox generation. Does not swap canonical /s/ URL — follow with hosting.release.promote. |
@@ -398,6 +438,15 @@
 | `generation.supply_status` | `—` | Tenant generation supply snapshot: owner tier, open-env quota usage, auto_generation settings, pending/canary state. Alias for agents (same SoT as GET /api/sandbox/limits + generation.status). |
 | `generation.timeline` | `mcp_read` | Promotion history for a project: completed, active canary (rolling_out), failed, and aborted requests (newest first). Items include strategy, traffic_weight, calver_label when recorded. |
 
+## goals (4)
+
+| Action | Required cap | Summary |
+|--------|--------------|---------|
+| `goals.delete` | `—` | Delete a goal by id from data.goals[]. |
+| `goals.list` | `—` | List goals stored in data.goals[]. |
+| `goals.progress` | `—` | Compute goal progress from finance/CRM/time BFFs. |
+| `goals.upsert` | `—` | Upsert a monthly goal (finance\|projects\|hours). |
+
 ## guidance (11)
 
 | Action | Required cap | Summary |
@@ -411,7 +460,7 @@
 | `guidance.match_playbook` | `—` | Match natural-language goal text to a Platform Compass playbook id using bundled intent patterns + RU/EN synonyms. Returns verifyKinds for bot/commerce paths. |
 | `guidance.path_status` | `—` | Snapshot Compass verify gates for a project: botExists, botLive, botChannelAttached, hostedVitrinePublished. Use after playbook steps or before go-live checks. |
 | `guidance.record_step` | `—` | Patch an active guidance session state (answers, currentNodeId, completedNodeIds, percent). Agent parity with SPA pathServerSync step PATCH. |
-| `guidance.start_path` | `—` | Alias for guidance.start_session — start a Platform Compass guided path on the server. Prefer this name in agent playbooks; identical parameters and response. |
+| `guidance.start_path` | `guidance.write` | Alias for guidance.start_session — start a Platform Compass guided path on the server. Prefer this name in agent playbooks; identical parameters and response. |
 | `guidance.start_session` | `—` | Start a Platform Compass guidance session on the server (8DNA data.guidance). Use with messaging-channel-bot for cross-device resume. |
 
 ## hosting (20)
@@ -439,7 +488,7 @@
 | `hosting.site.resolve` | `—` | Resolve hosting bucket_name to bucket_id and public URL hints. |
 | `hosting.storage.import_folder` | `—` | Import a project storage folder into a hosting bucket. |
 
-## integrations (50)
+## integrations (52)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
@@ -448,6 +497,7 @@
 | `integrations.connector_schema` | `mcp_read` | Provider setup schema metadata for wizard/agents. |
 | `integrations.create_connection` | `—` | Create an integration connection (REST POST /api/integrations/connections parity). Prefer integrations.install_recipe for packaged inbound webhooks. |
 | `integrations.create_scenario` | `—` | Create a draft integration scenario with backing logic rule. |
+| `integrations.delete_connection` | `—` | Delete an integration connection and unregister webhook bindings. |
 | `integrations.dynamic_fields` | `—` | List dynamic field sources for an integration app (schema-only in Phase 1). |
 | `integrations.export_connection` | `mcp_read` | Export connection public spec + config (secrets redacted). |
 | `integrations.export_connection_manifest` | `mcp_read` | Export project integration connections as JSON manifest for agent tool loops. |
@@ -455,6 +505,7 @@
 | `integrations.generate_scenario` | `—` | NL → RuleDocumentV1 draft for integration scenario (copilot stub). |
 | `integrations.generate_signing_secret` | `project_admin` | Rotate signing_secret server-side without reading the old value. |
 | `integrations.get_app` | `—` | Get a single integration app definition by provider id. |
+| `integrations.get_connection` | `—` | Get integration connection metadata (secrets redacted). |
 | `integrations.get_diagnostics` | `mcp_read` | Integration Hub diagnostics rollup and worker flags. |
 | `integrations.get_hubspot_relay_stats` | `—` | HubSpot platform relay rollup (7d success/denied/no-connection/missing portal). |
 | `integrations.hydrate_triggers` | `—` | Hydrate integration trigger registry from connection DNA (cold start recovery). |
@@ -567,22 +618,22 @@
 | `mentor.principal_link.bind_code` | `—` | MCP tool mentor.principal_link.bind_code |
 | `mentor.principal_link.upsert` | `—` | MCP tool mentor.principal_link.upsert |
 
-## messaging (5)
+## messaging (3)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
-| `messaging.get_delivery_health` | `—` | Messaging ops status snapshot (admin). |
-| `messaging.list_recent_deliveries` | `—` | Recent messaging delivery log rows (admin). |
+| `messaging.get_auth_email_readiness` | `—` | Probe auth email plane — provider secrets, email_confirmation + password_reset + email_otp templates. |
 | `messaging.list_suppressions` | `—` | List ecosystem email suppression list (bounces/complaints). |
-| `messaging.remove_suppression` | `—` | Remove an email from the ecosystem suppression list (admin). |
-| `messaging.send_test_email` | `—` | Send ecosystem test email (admin). |
+| `messaging.send_email` | `—` | Send email to any address (ecosystem admin). Use template_name + template_data for auth templates. |
 
-## notifications (7)
+## notifications (9)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
 | `notifications.cancel_push` | `—` | Cancel pending push items by correlation key prefix. |
+| `notifications.inbox_list` | `—` | List Fabric in-app inbox rows for a project (parity with GET /api/notifications/{project_id}). |
 | `notifications.list_prefs` | `—` | Messenger prefs plus category×channel matrix and enrolled bot sources. |
+| `notifications.mark_read` | `—` | Mark one project inbox notification as read (parity with PATCH …/read). |
 | `notifications.register_category` | `—` | Register a logical push category in user messenger prefs (persisted). |
 | `notifications.send` | `—` | Deprecated alias — use notifications.send_push or integrations webhooks. |
 | `notifications.send_push` | `—` | Enqueue OS web push for a user (self or admin). |
@@ -605,6 +656,18 @@
 | `payments.list_transactions` | `payments` | List all payment transactions for a project. |
 | `payments.refund` | `payments` | Refund a completed payment. |
 
+## permissions (1)
+
+| Action | Required cap | Summary |
+|--------|--------------|---------|
+| `permissions.effective` | `—` | Effective permission surface: token caps ∩ RBAC role ∩ buff limits. Optional resource + path_prefixes for Field Access Policy write preflight. |
+
+## preflight (1)
+
+| Action | Required cap | Summary |
+|--------|--------------|---------|
+| `preflight.check` | `—` | Tenant mutation preflight — supply, limits, optional RBAC permission. |
+
 ## processors (3)
 
 | Action | Required cap | Summary |
@@ -613,7 +676,7 @@
 | `processors.get_metadata` | `—` | Get detailed metadata for a specific processor. |
 | `processors.list` | `—` | List all available processors with their metadata. |
 
-## projects (16)
+## projects (22)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
@@ -628,7 +691,13 @@
 | `projects.get_projects` | `—` | Get list of projects for the current user. |
 | `projects.get_stats` | `—` | Get project statistics. |
 | `projects.get_users` | `—` | Get list of users in a project. |
+| `projects.limits.get` | `—` | Project effective limits — buffs + bot create gate metadata. |
+| `projects.orchestrator.export_pack` | `—` | Export portable ProjectOrchestratorPack JSON. |
+| `projects.orchestrator.get` | `—` | Get project_orchestrator 8DNA leaf config. |
+| `projects.orchestrator.import_from_asset` | `—` | Fulfill orchestrator pack from commerce asset or raw pack dict. |
+| `projects.orchestrator.patch` | `—` | Patch project_orchestrator leaf (dna_set_project_data_path). |
 | `projects.patch_data` | `—` | Leaf SET on project.data (REST PATCH /projects/{id}/data). write_mode=replace sets the path; merge overlays an object; delete removes it. Do not use projects.update_project for nested bot commands or |
+| `projects.readiness.get` | `—` | Lightweight project readiness — supply + knowledge health skim. |
 | `projects.remove_user` | `project_admin` | Remove a user from a project (requires Professional subscription or ecosystem context). |
 | `projects.schedule_deletion` | `project_admin` | Schedule project deletion after inventory + execution token. |
 | `projects.update_project` | `project_admin` | Update an existing project. |
@@ -773,26 +842,37 @@
 | `social.users.lookup` | `social_read` | Find users by id, email, or @username (no email in response). |
 | `social.users.public_cards` | `social_read` | Public display cards for user ids (no friendship check). |
 
-## storage (10)
+## storage (13)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
 | `storage.admin_list_rows` | `—` | Ecosystem admin: list 8DNA rows with data.ecosystem.storage (project_id, dna_user_id, file counts, bytes). |
 | `storage.admin_reconcile` | `—` | Ecosystem admin (platform hub): fix disk↔8DNA drift for any row. Tenants: use storage.reconcile with scope. |
 | `storage.admin_scan` | `—` | Ecosystem admin (platform hub): compare on-disk files with 8DNA storage registry for (project_id, dna_user_id). Tenants: use storage.scan. |
+| `storage.bind_entity` | `—` | Attach entity_ref to a storage file card. |
 | `storage.delete_file` | `—` | Deletes a file from ecosystem storage (JSON registry + blob). Requires write access for user scope; owner/admin for project scope. |
 | `storage.get_hub_summary` | `—` | Hub v4 aggregate: permanent/temp totals, hosting bytes, pool cap, sites count. |
 | `storage.get_project_usage_summary` | `—` | Owner/admin: total permanent/temp bytes across all members and project slice, plus project_pool_limit_bytes from the owner's subscription tier. |
 | `storage.get_quota` | `—` | Returns storage quota for the current user or project slice: used/limit bytes, tier_basis (project_owner vs fallback), owner_user_id. Pass project_id or rely on API key / session project. scope=user ( |
+| `storage.list_by_entity` | `—` | List files bound to an entity_ref. |
 | `storage.list_files` | `—` | Lists files in an ecosystem storage folder for the current user or project slice. Pass folder key (use '_' for root) or omit to list all folders (heavy). Set include_folders=1 to return folder_index f |
 | `storage.reconcile` | `—` | Project RBAC: fix disk↔8DNA drift for the resolved row (dry_run default true). scope=user requires write; scope=project requires owner/admin. Prefer over storage.admin_reconcile for tenants. |
 | `storage.scan` | `—` | Project RBAC: compare on-disk files with 8DNA storage registry for the resolved row. scope=user (default) scans caller member row; scope=project scans project slice (user_id=0). Prefer over storage.ad |
+| `storage.upload` | `—` | Binary upload uses REST POST /api/storage/upload (multipart/form-data). This MCP action returns the contract + quota gate — call storage.get_quota first. |
 
 ## system (1)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
 | `system.ping` | `—` | Health check tool — always succeeds, no authentication required. |
+
+## time (3)
+
+| Action | Required cap | Summary |
+|--------|--------------|---------|
+| `time.list` | `—` | List recent time entries. |
+| `time.log` | `—` | Log a time entry (minutes) optionally linked to crm_deal. |
+| `time.report` | `—` | Aggregate time report for project. |
 
 ## user (4)
 
@@ -802,6 +882,21 @@
 | `user.apikeys.list` | `—` | List personal PATs (metadata only). Optional project_id filters agent keys scoped to that project. |
 | `user.apikeys.revoke` | `—` | Revoke (soft-delete) a personal PAT by key_id. |
 | `user.apikeys.rotate` | `—` | Rotate a personal PAT; returns a new secret once. |
+
+## vertical_demo (4)
+
+| Action | Required cap | Summary |
+|--------|--------------|---------|
+| `vertical_demo.repair_due_dates` | `—` | Set stage-based due_at on CRM deals missing a deadline (idempotent). |
+| `vertical_demo.seed_apply` | `—` | Apply demo CRM deals, contacts, expenses, goals. |
+| `vertical_demo.seed_clear` | `—` | Remove demo-tagged entities. |
+| `vertical_demo.seed_plan` | `—` | Dry-run demo seed for vertical workspace. |
+
+## vertical_workspace (1)
+
+| Action | Required cap | Summary |
+|--------|--------------|---------|
+| `vertical_workspace.bootstrap` | `—` | Bootstrap vertical workspace after register: CRM pipeline preset, persona leaf, freelancer logic templates (idempotent). |
 
 ## wallets (4)
 
