@@ -19,7 +19,7 @@ curl -s -X POST https://agentstack.tech/mcp/tools/projects.create_project_anonym
 
 **Настройте один раз** в параметрах GPT/Gemini или менеджере паролей: вставьте ключ в поле API Key / Token (`X-API-Key`). Не просите модель «запомнить» ключ.
 
-Уже есть аккаунт? Создайте ключ на [agentstack.tech/me/keys](https://agentstack.tech/me/keys).
+Уже есть аккаунт? Создайте ключ на [agentstack.tech/user/profile?tab=api](https://agentstack.tech/user/profile?tab=api).
 
 **Установка MCP (все клиенты):** [MCP_SETUP_QUICKSTART.md](MCP_SETUP_QUICKSTART.md) · EN: [MCP_BROWSER_QUICKSTART.md](MCP_BROWSER_QUICKSTART.md)
 

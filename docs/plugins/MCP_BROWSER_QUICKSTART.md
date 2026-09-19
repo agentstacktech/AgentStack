@@ -20,7 +20,7 @@ The response returns `user_api_key` or `project_api_key` at the **top level**, p
 
 **Configure once** in ChatGPT/Gemini settings or your password manager — paste the key into the connector’s API Key / Token field (`X-API-Key` header). Do not rely on the model to store it.
 
-Signed-in users: create a scoped key at [agentstack.tech/me/keys](https://agentstack.tech/me/keys) instead.
+Signed-in users: create a scoped key at [agentstack.tech/user/profile?tab=api](https://agentstack.tech/user/profile?tab=api) instead.
 
 ---
 
@@ -100,7 +100,7 @@ Full cookbook: [MCP_CHAT_COMMAND_COOKBOOK.md](MCP_CHAT_COMMAND_COOKBOOK.md)
 | Gemini missing custom app | Requires Gemini Spark (US); otherwise use ChatGPT |
 | ChatGPT “Tool scan failed” | Retry save 2–3×; URL must be exactly `https://agentstack.tech/mcp` |
 | Model invents data | Say: “Call AgentStack API — do not fabricate project IDs.” |
-| Permission denied | Key has narrow `service_caps` — create a wider key at [me/keys](https://agentstack.tech/me/keys) |
+| Permission denied | Key has narrow `service_caps` — create a wider key at [Profile → API keys](https://agentstack.tech/user/profile?tab=api) |
 
 Live probe (no local Core clone):
 

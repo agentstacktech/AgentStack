@@ -86,12 +86,12 @@ Data store (how to use the “database”): [DNA_KEY_VALUE_API.md](../architectu
 <!-- BEGIN:PLUGIN_INVENTORY -->
 | Artifact | Count |
 |----------|------:|
-| Cursor skills | 27 |
-| Claude skills (gen3 mirror) | 25 |
-| VS Code skills (gen3 mirror) | 26 |
-| Cursor commands | 15 |
+| Cursor skills | 31 |
+| Claude skills (gen3 mirror) | 29 |
+| VS Code skills (gen3 mirror) | 30 |
+| Cursor commands | 20 |
 | Cursor agents | 3 |
-| MCP catalog actions | 568 |
-| MCP domains | 48 |
+| MCP catalog actions | 621 |
+| MCP domains | 56 |
 | Platform version | 0.4.18 |
 <!-- END:PLUGIN_INVENTORY -->

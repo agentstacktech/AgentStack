@@ -28,7 +28,7 @@ curl -s https://agentstack.tech/mcp/actions/summary
 |--------|--------|
 | **Connect (OAuth)** | Plugin panel → AgentStack MCP → **Connect** (G-A174) |
 | **Device Code** | Chat command `/agentstack-authorize` — writes `~/.cursor/mcp.json` |
-| **API key** | [agentstack.tech/me/keys](https://agentstack.tech/me/keys) → add header below |
+| **API key** | [agentstack.tech/user/profile?tab=api](https://agentstack.tech/user/profile?tab=api) → add header below |
 
 **Lean `~/.cursor/mcp.json`** (after OAuth or for API key):
 
@@ -142,7 +142,7 @@ curl -s -X POST https://agentstack.tech/mcp \
 
 | Symptom | Fix |
 |---------|-----|
-| 401 / unauthorized | Re-run Connect or `/agentstack-authorize`; check key at [me/keys](https://agentstack.tech/me/keys) |
+| 401 / unauthorized | Re-run Connect or `/agentstack-authorize`; check key at [Profile → API keys](https://agentstack.tech/user/profile?tab=api) |
 | Empty tools list | URL must be `https://agentstack.tech/mcp` (not `/api/...`) |
 | `service_cap_denied` | Widen API key caps or use a key with the needed domain |
 | Stale action names | `GET /mcp/actions` with `If-None-Match` / `catalog_etag`; run `discovery.list` |

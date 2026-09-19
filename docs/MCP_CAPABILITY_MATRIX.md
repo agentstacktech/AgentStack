@@ -3,9 +3,9 @@
 > **Integrator reference.** Action IDs match `GET https://agentstack.tech/mcp/actions`. Tenant-facing catalog only; platform-operator actions are omitted.
 
 - Source: in-process `mcp.routes._build_mcp_actions_catalog_payload`
-- Generated: 2026-09-17 17:06 UTC
+- Generated: 2026-09-19 15:30 UTC
 - Audience: **public (tenant only)**
-- Total actions: **623**
+- Total actions: **631**
 - Gene: `repo.plugins.capability_routing.gen1` · `docs.public.classification.gen1`
 
 <!-- BEGIN:AUTOGEN-CAPABILITY-MATRIX -->
@@ -302,7 +302,7 @@
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
-| `context.get` | `rag.read` | Fetch RAG + memory + FAP-masked 8DNA snapshot for a task (Context Fabric). |
+| `context.get` | `rag.read` | Prefetch RAG + memory context for a task. |
 | `context.resolve` | `—` | Resolve effective project_id for the session; surfaces ambiguous_project_context. |
 
 ## crm (21)
@@ -412,7 +412,7 @@
 | `finance.revenue.record` | `—` | Record paid freelancer revenue on data.money.invoices[] (EDITFLOW deal close). |
 | `finance.revenue.update` | `—` | Update paid freelancer revenue amount or description (actor-owned). |
 
-## generation (21)
+## generation (20)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
@@ -422,7 +422,6 @@
 | `generation.checkpoint` | `—` | Materialise merged production/sandbox DNA into a checkpoint generation (rollback SoT). Use before risky bulk edits; rollback via generation.rollback. |
 | `generation.diff` | `mcp_read` | Structured diff between two resolved generation entity states (same table/project). |
 | `generation.diff_vs_prod` | `mcp_read` | Diff stable production head vs pending sandbox head. Includes agent_context summary for diagnosis (counts, domains, sample paths). |
-| `generation.discard` | `—` | Discard sandbox changes (Postel alias for generation.realign_to_prod). Defaults to dry_run=true — set dry_run=false to apply. |
 | `generation.fork` | `project_admin` | Fork production project into a new sandbox environment generation. |
 | `generation.gates` | `mcp_read` | Run generation gate chain for an environment (schema, conflict, health, soak, metrics, optional manual). |
 | `generation.hosting.release` | `project_admin` | Snapshot live hosting workspace into an immutable release labeled with sandbox generation. Does not swap canonical /s/ URL — follow with hosting.release.promote. |
@@ -545,10 +544,14 @@
 | `integrations.unpublish_scenario` | `—` | Unpublish scenario (pause) and disable backing logic. Parity with REST unpublish. |
 | `integrations.update_connection` | `—` | Patch integration connection metadata (label, status, config, direction). |
 
-## knowledge (31)
+## knowledge (41)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
+| `knowledge.acceptance.case.run` | `—` | MCP tool knowledge.acceptance.case.run |
+| `knowledge.acceptance.case.upsert` | `—` | MCP tool knowledge.acceptance.case.upsert |
+| `knowledge.acceptance.list` | `—` | MCP tool knowledge.acceptance.list |
+| `knowledge.acceptance.run` | `—` | MCP tool knowledge.acceptance.run |
 | `knowledge.access.grant` | `—` | MCP tool knowledge.access.grant |
 | `knowledge.access.list` | `—` | MCP tool knowledge.access.list |
 | `knowledge.access.revoke` | `—` | MCP tool knowledge.access.revoke |
@@ -558,16 +561,21 @@
 | `knowledge.content.get` | `—` | Get one KB document by source_doc_id (chunks + joined text). Always call this before knowledge.content.patch replace. text uses the same \n\n join as list; check text_chars before rewriting. |
 | `knowledge.content.list` | `—` | List operator KB documents. Each item includes title, source_doc_id, chunk_count, and joined text (same as GET /knowledge/content). |
 | `knowledge.content.patch` | `—` | Patch a KB document: metadata (title, gene_stems, …) and/or body. Body write_mode is replace (full text), append, or prepend — never a silent section splice. Same as PATCH /knowledge/content/{id}. |
+| `knowledge.correction.propose` | `—` | MCP tool knowledge.correction.propose |
+| `knowledge.doctor.run` | `—` | MCP tool knowledge.doctor.run |
 | `knowledge.eval.run` | `—` | MCP tool knowledge.eval.run |
 | `knowledge.eval.run_all` | `—` | MCP tool knowledge.eval.run_all |
 | `knowledge.export` | `—` | MCP tool knowledge.export |
 | `knowledge.gc.reconcile` | `—` | MCP tool knowledge.gc.reconcile |
 | `knowledge.gc.status` | `—` | MCP tool knowledge.gc.status |
+| `knowledge.gene_pack.pinned_shape.upsert` | `—` | MCP tool knowledge.gene_pack.pinned_shape.upsert |
 | `knowledge.health` | `—` | MCP tool knowledge.health |
 | `knowledge.import` | `—` | MCP tool knowledge.import |
+| `knowledge.journal.get` | `—` | MCP tool knowledge.journal.get |
 | `knowledge.journal.list` | `—` | MCP tool knowledge.journal.list |
 | `knowledge.kb.heal_index` | `—` | Realign DNA storage_ref.sha256 to on-disk sqlite for a KB collection (no wipe). Fixes rag_index_sha256_mismatch. Default collection_id=content_registry. |
 | `knowledge.kb.ingest` | `—` | MCP tool knowledge.kb.ingest |
+| `knowledge.phenotype.upsert` | `—` | MCP tool knowledge.phenotype.upsert |
 | `knowledge.playground` | `—` | Full bot simulate with RAG/safety/gene-lock trace (REST playground). Heavy LLM: one per sync agentstack.execute. Prefer over raw rag.search for mentor fidelity. Same budget as bots.simulate. |
 | `knowledge.policy_templates.apply` | `—` | Apply a platform policy template onto the tenant: plan_instructions append (marker [policy:id]), merge crisis match_any (keep tenant template), union gene_pack.situational_needles, optional safety_fai |
 | `knowledge.policy_templates.list` | `—` | Platform policy templates (synthesis / crisis / situational needles / gate). Same catalog as GET /knowledge/policy-templates. Apply writes 8DNA via existing prompt+config PATCH — not a second bus. |
@@ -580,6 +588,7 @@
 | `knowledge.prompt.patch` | `—` | Patch grounded assistant system_preamble and/or plan_instructions (same as PATCH /knowledge/prompt). omit-unset keeps unsent keys; a sent field is the full string. Writes prompt_settings leaf via patc |
 | `knowledge.registry.list` | `—` | MCP tool knowledge.registry.list |
 | `knowledge.registry.upsert` | `—` | MCP tool knowledge.registry.upsert |
+| `knowledge.retrieve.probe` | `—` | MCP tool knowledge.retrieve.probe |
 
 ## logic (19)
 
@@ -626,7 +635,7 @@
 | `messaging.list_suppressions` | `—` | List ecosystem email suppression list (bounces/complaints). |
 | `messaging.send_email` | `—` | Send email to any address (ecosystem admin). Use template_name + template_data for auth templates. |
 
-## notifications (9)
+## notifications (8)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
@@ -635,7 +644,6 @@
 | `notifications.list_prefs` | `—` | Messenger prefs plus category×channel matrix and enrolled bot sources. |
 | `notifications.mark_read` | `—` | Mark one project inbox notification as read (parity with PATCH …/read). |
 | `notifications.register_category` | `—` | Register a logical push category in user messenger prefs (persisted). |
-| `notifications.send` | `—` | Deprecated alias — use notifications.send_push or integrations webhooks. |
 | `notifications.send_push` | `—` | Enqueue OS web push for a user (self or admin). |
 | `notifications.subscribe_push` | `—` | Returns VAPID status; browser must still call PushManager.subscribe. |
 | `notifications.update_prefs` | `—` | Patch messenger prefs and/or category×channel notification matrix. |
