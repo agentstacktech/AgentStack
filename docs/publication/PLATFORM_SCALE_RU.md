@@ -13,13 +13,13 @@
 
 | Показатель | Значение | Пояснение |
 |------------|--------:|-----------|
-| **Действий в каталоге** | **<!-- stats:total_actions -->568<!-- /stats:total_actions -->** | `GET /mcp/actions` / Total actions в capability matrix |
-| **Доменов действий** | **<!-- stats:mcp_domains -->48<!-- /stats:mcp_domains -->** | Секции доменов в matrix (codegen) |
-| **Инструментов в реестре** | **<!-- stats:registry_tools -->593<!-- /stats:registry_tools -->** | `MCP_TOOLS_REGISTERED` = `len(MCP_TOOLS_REGISTRY)`; не catalog actions |
+| **Действий в каталоге** | **<!-- stats:total_actions -->656<!-- /stats:total_actions -->** | `GET /mcp/actions` / Total actions в capability matrix |
+| **Доменов действий** | **<!-- stats:mcp_domains -->57<!-- /stats:mcp_domains -->** | Секции доменов в matrix (codegen) |
+| **Инструментов в реестре** | **<!-- stats:registry_tools -->695<!-- /stats:registry_tools -->** | `MCP_TOOLS_REGISTERED` = `len(MCP_TOOLS_REGISTRY)`; не catalog actions |
 | **Точка входа для IDE** | **1** | `agentstack.execute` — батч шагов, discovery через `/mcp/actions` |
 | **Поверхности плагинов** | **4** | Cursor, Claude Code, GPT, VS Code |
 
-**Короткая формулировка для постов:** *550+ действий для агентов* · *45+ доменов* · *один протокол для людей и ИИ*.
+**Короткая формулировка для постов:** *<!-- stats:mcp_actions_floor_public --> действий для агентов* · *<!-- stats:mcp_domains_shorthand --> доменов* · *один протокол для людей и ИИ*.
 
 ---
 
@@ -27,9 +27,9 @@
 
 | Метрика | Пример | Назначение |
 |---------|--------:|------------|
-| **Действия каталога (public)** | <!-- stats:total_actions -->568<!-- /stats:total_actions --> | Маркетинг, `GET /mcp/actions` |
-| **Инструменты реестра (runtime)** | ~568 | `GET /mcp/health` → `tools_count` |
-| **MCP tools registered (константа)** | <!-- stats:registry_tools -->593<!-- /stats:registry_tools --> | `MCP_TOOLS_REGISTERED` при codegen |
+| **Действия каталога (public)** | <!-- stats:total_actions -->656<!-- /stats:total_actions --> | Маркетинг, `GET /mcp/actions` |
+| **Инструменты реестра (runtime)** | ~<!-- stats:registry_tools -->695<!-- /stats:registry_tools --> | `GET /mcp/health` → `tools_count` |
+| **MCP tools registered (константа)** | <!-- stats:registry_tools -->695<!-- /stats:registry_tools --> | `MCP_TOOLS_REGISTERED` при codegen |
 
 Не обновлять SEO по `tools_count` без сверки с catalog (MET-01).
 
@@ -60,5 +60,15 @@ GET https://agentstack.tech/mcp/actions
 ```
 
 ---
+
+## Чеклист обновления (maintainers)
+
+1. Цепочка codegen матрицы возможностей (см. runbook Living Plane).
+2. `node scripts/codegen-platform-stats.mjs`
+3. `shared/constants.py` — `MCP_CATALOG_ACTIONS` / `MCP_ACTION_DOMAINS` / `MCP_TOOLS_REGISTERED`
+4. Этот файл + `PLATFORM_SCALE.md` — плейсхолдеры `<!-- stats:* -->`, не ручные «550+» / «311»
+5. `node scripts/patch-public-doc-stats.mjs`
+6. `npm run sync:mcp-marketing-prose`
+7. `npm run audit:stats-plane-parity` · `npm run audit:hardcoded-mcp-stats:widen`
 
 **Genetic tag:** `docs.publication.platform_scale.gen1` · Living Plane: `docs.freshness.living.gen1`

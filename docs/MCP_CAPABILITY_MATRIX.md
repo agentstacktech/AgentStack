@@ -3,9 +3,9 @@
 > **Integrator reference.** Action IDs match `GET https://agentstack.tech/mcp/actions`. Tenant-facing catalog only; platform-operator actions are omitted.
 
 - Source: in-process `mcp.routes._build_mcp_actions_catalog_payload`
-- Generated: 2026-09-19 15:30 UTC
+- Generated: 2026-09-30 19:38 UTC
 - Audience: **public (tenant only)**
-- Total actions: **631**
+- Total actions: **656**
 - Gene: `repo.plugins.capability_routing.gen1` · `docs.public.classification.gen1`
 
 <!-- BEGIN:AUTOGEN-CAPABILITY-MATRIX -->
@@ -55,17 +55,15 @@
 | `agentnet.vault.deposit_confirm` | `—` | Credit L0 agUSD shares after ERC-4626 deposit (operator/indexer). |
 | `agentnet.vault.nav` | `—` | ERC-4626 vault NAV (totalAssets, totalSupply). REST: GET /api/agentnet/{project_id}/vault/nav |
 
-## agents (33)
+## agents (29)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
-| `agents.admin.execute` | `—` | Ecosystem-owner platform actions only (killswitch, bulk_pause, metrics). |
 | `agents.approve_run` | `agents_run` | Approve a run stuck in waiting_for_approval and resume execution. |
 | `agents.automation_map` | `—` | Fleet automation aggregate: triggers, Logic rule ids, support ownership. |
 | `agents.create` | `agents_admin` | Create a new agent row (draft AgentSpec). |
 | `agents.create_from_template` | `agents_admin` | Create an agent row from a built-in template (atomic merge on server). |
 | `agents.delete` | `agents_admin` | Delete an agent row. |
-| `agents.fleet_diagnostics` | `agents_run` | Project fleet health (stuck runs, queue, killswitch) — project read RBAC. |
 | `agents.fork` | `agents_admin` | Fork an agent to a new generation (DNA row). |
 | `agents.gates` | `agents_run` | Evaluate promotion gates for an agent. |
 | `agents.get` | `agents_run` | Get a single agent by UUID (default owner=project; personal rows need owner=user). |
@@ -75,31 +73,37 @@
 | `agents.list` | `agents_run` | List Agents Fleet rows for a project (8DNA entity_type=agent). |
 | `agents.list_pending_approvals` | `—` | List runs waiting for approval across project or personal agent scope. |
 | `agents.metrics` | `agents_run` | Read rollup metrics for an agent (ecosystem.agents_metrics). |
-| `agents.orchestrate` | `—` | Run the project orchestrator agent for a channel (workspace\|messenger\|bot\|mcp\|api). |
+| `agents.orchestrate` | `—` | Run the project AI orchestrator for a channel (workspace\|messenger\|bot\|mcp\|api). |
 | `agents.policy_preview` | `agents_run` | Expand AgentPolicy patterns to live MCP actions (preview, no persistence). |
 | `agents.promote` | `agents_admin` | Run auto-promotion gates; may set state to live when metrics pass. |
-| `agents.reconcile_run` | `agents_run|agents_admin` | Apply reconciler policy to one run (project write/admin RBAC). |
 | `agents.rollout_advance` | `agents_admin` | Advance canary rollout step (5→20→50→100). |
 | `agents.run` | `agents_run` | Enqueue an agent run (durable work queue). |
 | `agents.run_get` | `agents_run` | Get a run row plus normalized RunDetailDTO for cockpit/audit views. |
 | `agents.run_with_agnt_credits` | `agents_run` | Demo orchestration: purchase compute credits (AGNT) then enqueue an agent run. |
 | `agents.runs_list` | `agents_run` | List agent runs with REST/SDK filters and lightweight audit fields. |
 | `agents.stop` | `agents_run` | Cancel a running / queued agent run. |
-| `agents.sweep_stale_runs` | `agents_run|agents_admin` | Budgeted stale-run reconcile within one project (write/admin RBAC). |
 | `agents.template_preview` | `agents_run` | Return merged AgentSpec-shaped preview for a template (no persistence). |
 | `agents.templates_list` | `agents_run` | List built-in Agent Fleet templates (canonical Python catalog). |
 | `agents.timeline` | `agents_run` | List recent runs for an agent (uuid + status + timestamps). |
 | `agents.traces` | `agents_run` | Return stored run events (trace buffer) for a run. |
-| `agents.update` | `agents_admin` | Update an agent — PathAtom section patches via protein DELTA when `path_updates` or `section`+`section_value` is set (write_mode=patch); otherwise `agent_spec` is a full replace (write_mode=replace). |
+| `agents.update` | `agents_admin` | Update an agent. `section`+`section_value` or `path_updates` load the current AgentSpec, merge objects (lists replace), validate, then `update_agent_spec` (Logic sync for workflow, reactions, schedule |
 | `agents.version_timeline` | `—` | List agent version lineage (generation tree — REST GET /timeline parity). |
 
-## ai_builder (3)
+## ai_builder (11)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
+| `ai_builder.build.enqueue` | `—` | Queue a Vite build. Returns immediately with build_uuid or status=cached. Does not call an LLM. |
+| `ai_builder.build.status` | `—` | Read a Vite build status, including file and line when it failed. |
+| `ai_builder.compose.apply` | `—` | Materialize a blueprint or UAM onto the project source tree. Does not run Vite. |
 | `ai_builder.compose.preview` | `—` | Deterministic compose preview: returns content_sha256 and file paths. |
 | `ai_builder.manifest.get` | `—` | Load Unified Application Manifest (UAM v1) for the current project. |
 | `ai_builder.manifest.validate` | `—` | Validate a UAM v1 JSON object (structure + catalog + logic templates). |
+| `ai_builder.publish` | `—` | Copy the dev Vite build into a hosting bucket as an SPA and publish it. |
+| `ai_builder.source.get` | `—` | Read one UTF-8 source file and its sha256. |
+| `ai_builder.source.list` | `—` | List React source files under the project builder tree (not hosting bytes). |
+| `ai_builder.source.patch` | `—` | Patch one source file by replacements, a whole function, full content, or a unified diff. Never enqueues a build. Do not patch the published assets/index-*.js bundle. |
+| `ai_builder.source.put` | `—` | Create or replace one source file. Does not start Vite. |
 
 ## analytics (2)
 
@@ -220,11 +224,12 @@
 | `cardgame.dna.read_rows` | `—` | List up to ``limit`` rows for a cardgame 8DNA entity type using DNA CRUD get (same permission model as the SPA). Use for match room / cell snapshots when building agent context. |
 | `cardgame.rules.execute` | `—` | Execute a Logic Engine command for ArcaneStack (e.g. ``cardgame.match.play_card``) with the same payload shape as the game client. Requires authenticated MCP context. |
 
-## checklist (4)
+## checklist (5)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
 | `checklist.append_item` | `—` | Append a checklist step. |
+| `checklist.clear` | `—` | Clear all checklist items for an entity. |
 | `checklist.get` | `—` | Get checklist for an entity (e.g. crm_deal). |
 | `checklist.set` | `—` | Replace checklist items for an entity. |
 | `checklist.toggle_item` | `—` | Toggle or set status on one checklist item. |
@@ -398,7 +403,7 @@
 | `finance.dashboard_bundle` | `—` | Finance hub landing aggregate (portfolio + billing + activity preview). |
 | `finance.expense.create` | `—` | Create an expense row on data.money.expenses[]. |
 | `finance.expense.delete` | `—` | Delete expense by id. |
-| `finance.expense.list` | `—` | List project expenses. |
+| `finance.expense.list` | `—` | List project expenses on the canonical money.expenses leaf. Not inside a generation sandbox. Filter by date_from/date_to then limit. |
 | `finance.pay.execute` | `—` | Execute a quoted pay intent with idempotency key. |
 | `finance.pay.quote` | `—` | Quote a unified pay intent (energy_pack, subscription, compute_credits, fund, contribute). |
 | `finance.portfolio` | `—` | User finance portfolio aggregate (three rails + JSON wallets). |
@@ -425,7 +430,7 @@
 | `generation.fork` | `project_admin` | Fork production project into a new sandbox environment generation. |
 | `generation.gates` | `mcp_read` | Run generation gate chain for an environment (schema, conflict, health, soak, metrics, optional manual). |
 | `generation.hosting.release` | `project_admin` | Snapshot live hosting workspace into an immutable release labeled with sandbox generation. Does not swap canonical /s/ URL — follow with hosting.release.promote. |
-| `generation.list` | `mcp_read` | List sandbox environment anchors for a project (names, status, CalVer, auto_created flags). |
+| `generation.list` | `mcp_read` | List sandbox environment anchors for a project (names, status, CalVer, auto_created flags). error_code list_unavailable means the read failed. |
 | `generation.notify` | `project_admin` | Manual generation notify — webhooks, audit log, optional in-app notification. |
 | `generation.promote` | `project_admin` | Promote a sandbox environment to production (runs promotion checks first). |
 | `generation.queue` | `—` | Promotion queue: pending sandbox generations with gate evaluation (REST parity). |
@@ -462,18 +467,19 @@
 | `guidance.start_path` | `guidance.write` | Alias for guidance.start_session — start a Platform Compass guided path on the server. Prefer this name in agent playbooks; identical parameters and response. |
 | `guidance.start_session` | `—` | Start a Platform Compass guidance session on the server (8DNA data.guidance). Use with messaging-channel-bot for cross-device resume. |
 
-## hosting (20)
+## hosting (22)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
 | `hosting.bucket.file.get` | `—` | Read a single bucket file (text or base64, max 2MB). |
+| `hosting.bucket.file.patch` | `—` | Patch one UTF-8 bucket text file. search_replace does not need a prior GET. Omit bucket_id on the primary site. Identical bytes skip the disk write and gzip. A real change refreshes the .gz sibling an |
 | `hosting.bucket.file.rename` | `—` | Rename or move a file within a bucket. |
 | `hosting.bucket.files.bulk_delete` | `—` | Delete multiple files by path list or prefix. |
 | `hosting.bucket.files.list` | `—` | List files in a hosting bucket (optional prefix, cursor pagination, optional q path substring filter). |
 | `hosting.demo.status` | `—` | Public demo hosting pool status (enabled, depth, sandbox project id). |
 | `hosting.demo_store.status` | `—` | Golden promo demo-store vitrine: catalog row count on sandbox, published build id, manifest bucket (`frontend.commerce.hosted_storefront.gen1`). |
 | `hosting.deploy_files` | `—` | Batch-upload files to a bucket and optionally publish (max 50 files per call). |
-| `hosting.files.put` | `—` | Upload or replace a file in a hosting bucket. |
+| `hosting.files.put` | `—` | Upload or replace one file in a hosting bucket. Many files: one hosting.deploy_files call. List: hosting.bucket.files.list. |
 | `hosting.gc.ix` | `—` | Prune orphan hosting_buckets/_ix symlinks (admin diagnostics broken_ix). |
 | `hosting.project.set_primary_site` | `—` | Set the project's primary public site URL when multiple sites exist (PH-18). |
 | `hosting.project.status` | `—` | Project hosting plane: Host/Sell/Scale ladder, sites summary, next_actions. |
@@ -482,6 +488,7 @@
 | `hosting.release.list` | `—` | List site release history (newest first). |
 | `hosting.release.promote` | `—` | Promote a release snapshot to the live site bucket and publish. |
 | `hosting.release.snapshot` | `—` | Create immutable snapshot (archive bucket copy) for a site. |
+| `hosting.site.delete` | `—` | Remove a hosted site bucket (same as REST DELETE /api/hosting/buckets/{bucket_id}). |
 | `hosting.site.edge_health` | `—` | Check nginx edge readiness (symlinks, index.html) for a hosting bucket. |
 | `hosting.site.quick_start` | `—` | Create bucket, upload HTML index, optional publish; returns public /s/{project_id}/{bucket_name}/ URL. |
 | `hosting.site.resolve` | `—` | Resolve hosting bucket_name to bucket_id and public URL hints. |
@@ -493,7 +500,7 @@
 |--------|--------------|---------|
 | `integrations.activate_webhook` | `—` | Register provider inbound webhook for a connection (post-OAuth or manual retry). |
 | `integrations.connection_health` | `mcp_read` | Read connection health snapshot (public spec only). |
-| `integrations.connector_schema` | `mcp_read` | Provider setup schema metadata for wizard/agents. |
+| `integrations.connector_schema` | `mcp_read` | Provider setup schema (required secrets, setup_steps, quick_setup) — call before install_recipe or create_connection so agents know which secrets= keys to pass. |
 | `integrations.create_connection` | `—` | Create an integration connection (REST POST /api/integrations/connections parity). Prefer integrations.install_recipe for packaged inbound webhooks. |
 | `integrations.create_scenario` | `—` | Create a draft integration scenario with backing logic rule. |
 | `integrations.delete_connection` | `—` | Delete an integration connection and unregister webhook bindings. |
@@ -510,7 +517,7 @@
 | `integrations.hydrate_triggers` | `—` | Hydrate integration trigger registry from connection DNA (cold start recovery). |
 | `integrations.import_connection` | `project_admin` | Import connection from export JSON (optionally with secrets). |
 | `integrations.import_make_preview` | `mcp_read` | Dry-run preview: map Make scenario JSON to recipe + logic block draft. |
-| `integrations.import_n8n_preview` | `—` | Preview n8n workflow JSON as recipe + logic block draft. |
+| `integrations.import_n8n_preview` | `—` | Preview n8n workflow JSON as AgentStack steps. Does not install or run it. |
 | `integrations.import_zapier_preview` | `mcp_read` | Dry-run preview: map Zapier export JSON to recipe + logic block draft. |
 | `integrations.install_recipe` | `project_admin` | Install a recipe: creates connection + declarative logic rule. |
 | `integrations.list_apps` | `—` | List integration app catalog entries (connectors + recipe metadata). |
@@ -635,11 +642,12 @@
 | `messaging.list_suppressions` | `—` | List ecosystem email suppression list (bounces/complaints). |
 | `messaging.send_email` | `—` | Send email to any address (ecosystem admin). Use template_name + template_data for auth templates. |
 
-## notifications (8)
+## notifications (9)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
 | `notifications.cancel_push` | `—` | Cancel pending push items by correlation key prefix. |
+| `notifications.deliver` | `—` | Send one notice on email, in-app, web push, webhook, or a bound bot channel (telegram, max, whatsapp, instagram, slack, discord, sms). |
 | `notifications.inbox_list` | `—` | List Fabric in-app inbox rows for a project (parity with GET /api/notifications/{project_id}). |
 | `notifications.list_prefs` | `—` | Messenger prefs plus category×channel matrix and enrolled bot sources. |
 | `notifications.mark_read` | `—` | Mark one project inbox notification as read (parity with PATCH …/read). |
@@ -684,17 +692,18 @@
 | `processors.get_metadata` | `—` | Get detailed metadata for a specific processor. |
 | `processors.list` | `—` | List all available processors with their metadata. |
 
-## projects (22)
+## projects (24)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
-| `projects.add_user` | `project_admin` | Add a user to a project (requires Professional subscription or ecosystem context and manage_users/owner). |
+| `projects.add_user` | `project_admin` | Add a user to a project (requires manage_users or owner on that project). |
 | `projects.create_project` | `—` | Create a new project. |
 | `projects.create_project_anonymous` | `—` | Create a new anonymous project for MCP clients without prior authentication. |
 | `projects.delete_project` | `project_admin` | Delete a project (PSDP). |
 | `projects.execute_deletion` | `project_admin` | Execute scheduled or immediate deletion with execution token. |
 | `projects.get_data` | `—` | Read one nested path under project.data (REST GET /projects/{id}/data?path=). Use before projects.patch_data when you need the current leaf. |
 | `projects.get_deletion_inventory` | `—` | Pre-delete inventory: blockers, warnings, and execution_token for safe delete. |
+| `projects.get_my_data` | `—` | Read the signed-in member's project data (REST GET /projects/{id}/users/me/data). path is optional. |
 | `projects.get_project` | `—` | Get detailed information about a specific project. |
 | `projects.get_projects` | `—` | Get list of projects for the current user. |
 | `projects.get_stats` | `—` | Get project statistics. |
@@ -705,18 +714,20 @@
 | `projects.orchestrator.import_from_asset` | `—` | Fulfill orchestrator pack from commerce asset or raw pack dict. |
 | `projects.orchestrator.patch` | `—` | Patch project_orchestrator leaf (dna_set_project_data_path). |
 | `projects.patch_data` | `—` | Leaf SET on project.data (REST PATCH /projects/{id}/data). write_mode=replace sets the path; merge overlays an object; delete removes it. Do not use projects.update_project for nested bot commands or |
+| `projects.patch_my_data` | `—` | Leaf write on the signed-in member's project data (REST PATCH /projects/{id}/users/me/data). write_mode replace sets the path; merge overlays an object. |
 | `projects.readiness.get` | `—` | Lightweight project readiness — supply + knowledge health skim. |
-| `projects.remove_user` | `project_admin` | Remove a user from a project (requires Professional subscription or ecosystem context). |
+| `projects.remove_user` | `project_admin` | Remove a user from a project (requires manage_users or owner on that project). |
 | `projects.schedule_deletion` | `project_admin` | Schedule project deletion after inventory + execution token. |
 | `projects.update_project` | `project_admin` | Update an existing project. |
 | `projects.update_user_role` | `project_admin` | Update a user's role in a project (requires manage_users or owner; cannot assign owner via this tool). |
 
-## rag (16)
+## rag (18)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
 | `rag.collection_create` | `rag.write` | Create a new RAG knowledge base collection for the current project. |
 | `rag.collection_delete` | `rag.write` | Delete a RAG collection and all its documents. This is irreversible. |
+| `rag.collection_get` | `—` | Get one RAG collection by id (verify-after-write read model). |
 | `rag.collection_list` | `rag.read` | List all RAG collections for the current project. |
 | `rag.document_add` | `rag.write` | Add a text document to a RAG collection. |
 | `rag.document_add_batch` | `—` | Add multiple documents to a RAG collection in one call. |
@@ -725,6 +736,7 @@
 | `rag.export` | `—` | Export accessible collection chunks (access-tier filtered) as JSON documents. |
 | `rag.health` | `—` | RAG persistence mode and collection stats for the current project scope. |
 | `rag.ingest_from_storage` | `—` | Ingest text extracted from a Storage file into a RAG collection. |
+| `rag.ingest_job_cancel` | `—` | Cancel a queued or in-flight rag_ingest job (idempotent). |
 | `rag.ingest_job_status` | `—` | Poll async batch ingest job status (work_queue rag_ingest). |
 | `rag.memory_add` | `rag.write` | Store a conversation turn in AI memory. |
 | `rag.memory_get` | `rag.read` | Get the most recent conversation turns from memory (chronological order). |
@@ -747,7 +759,7 @@
 |--------|--------------|---------|
 | `safety.evaluate` | `—` | MCP tool safety.evaluate |
 
-## scheduler (11)
+## scheduler (12)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
@@ -755,6 +767,7 @@
 | `scheduler.clear_pool_tasks` | `scheduler` | Clear all tasks from the execution pool (does not delete from database). |
 | `scheduler.create_task` | `scheduler` | Create a new scheduled task for automated execution. |
 | `scheduler.delete_pool_task` | `scheduler` | Remove a specific task from the execution pool (does not delete from database). |
+| `scheduler.delete_task` | `—` | Soft-disable alias for scheduler.cancel_task (sets enabled=false; row remains). Prefer scheduler.cancel_task for new agents. |
 | `scheduler.execute_task` | `scheduler` | Execute a scheduled task immediately, bypassing the cron schedule. |
 | `scheduler.get_pool_task_details` | `scheduler` | Get detailed information about a specific task from the execution pool. |
 | `scheduler.get_pool_tasks` | `scheduler` | Get all tasks from the execution pool (in-memory task queue). |
@@ -779,7 +792,22 @@
 | `services.diagnostic_sow_draft` | `—` | Render a studio diagnostic (kickoff) SoW markdown from the services catalog fixture. Staff-only on ecosystem project 1. |
 | `services.kickoff_slot_status` | `—` | Read kickoff slot status for CRM contact (optional payer user buff merge). |
 
-## social (66)
+## showcase (10)
+
+| Action | Required cap | Summary |
+|--------|--------------|---------|
+| `showcase.catalog.diff_vs_fixture` | `—` | Drift report: DNA catalog entry ids vs git fixture. |
+| `showcase.catalog.export_fixture` | `—` | Export merged catalog as fixture-shaped JSON for git sync. |
+| `showcase.catalog.get` | `—` | Merged public showcase catalog (ecosystem DNA + fixture seed). |
+| `showcase.catalog.list_entries` | `—` | Lightweight list of showcase catalog cards (merged). required_scope: ecosystem project_id=1. Other project ids return invalid_parameters. |
+| `showcase.catalog.patch_entry` | `—` | Partial update of one catalog card on ecosystem DNA. |
+| `showcase.catalog.reorder` | `—` | Reorder showcase cards (entry_order on ecosystem DNA). |
+| `showcase.catalog.upsert_entry` | `—` | Upsert one showcase catalog card on ecosystem DNA (pid=1). |
+| `showcase.health.probe` | `—` | Probe canonical /s/ URLs and stamp ecosystem health. |
+| `showcase.settings.patch` | `—` | Patch showcase gallery settings on ecosystem DNA. |
+| `showcase.tenant.register` | `—` | Register an independent tenant on the public showcase (gallery card only). |
+
+## social (68)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
@@ -839,7 +867,9 @@
 | `social.public.quota_get` | `social_read` | Social public index quota for current user. |
 | `social.public.reconcile` | `social_read` | Reconcile public maps (privileged role only). |
 | `social.public.unpublish` | `social_read` | Remove a public index entry. |
+| `social.support.ai_binding_health` | `—` | Read support AI binding health (agent, mode, warnings). |
 | `social.support.assign` | `project_support` | Staff: assign a support ticket to a staff user id (or unassign with null). |
+| `social.support.config.patch` | `—` | Merge project support config (ai_agent_uuid, ai_mode, entry gates). Owner or admin. |
 | `social.support.eligibility` | `project_support` | Batch read: for home project ids the user can access, returns whether end-user private support and/or public Messenger support lounge are enabled (channel id public support lounge channel for the project when public). |
 | `social.support.history` | `project_support` | Read project support thread for the authenticated user (channel project support channel for the authenticated user). |
 | `social.support.inbox` | `project_support` | Staff inbox preview list for a project (requires support access). |
@@ -860,7 +890,7 @@
 | `storage.bind_entity` | `—` | Attach entity_ref to a storage file card. |
 | `storage.delete_file` | `—` | Deletes a file from ecosystem storage (JSON registry + blob). Requires write access for user scope; owner/admin for project scope. |
 | `storage.get_hub_summary` | `—` | Hub v4 aggregate: permanent/temp totals, hosting bytes, pool cap, sites count. |
-| `storage.get_project_usage_summary` | `—` | Owner/admin: total permanent/temp bytes across all members and project slice, plus project_pool_limit_bytes from the owner's subscription tier. |
+| `storage.get_project_usage_summary` | `—` | Owner/admin: total permanent/temp bytes across all members and project slice, plus project_pool_limit_bytes from the project billing tier. |
 | `storage.get_quota` | `—` | Returns storage quota for the current user or project slice: used/limit bytes, tier_basis (project_owner vs fallback), owner_user_id. Pass project_id or rely on API key / session project. scope=user ( |
 | `storage.list_by_entity` | `—` | List files bound to an entity_ref. |
 | `storage.list_files` | `—` | Lists files in an ecosystem storage folder for the current user or project slice. Pass folder key (use '_' for root) or omit to list all folders (heavy). Set include_folders=1 to return folder_index f |

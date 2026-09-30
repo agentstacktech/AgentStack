@@ -5,6 +5,8 @@
 **All actions** are valid `step.action` values unless marked `REST-only`.  
 **Full action catalog:** `GET /mcp/actions`
 
+`scheduler.create_task` accepts `cron_expression` as `cron`, `run_at` as `execute_at` (`now` is the current UTC time), and `task_type` `once` / `cron` as `one_time` / `recurring`. `payload.action` runs only when it is a registered scheduler action (`storage.cleanup_temp`, `payments.reconcile_pending`, and the list returned as `registered_scheduler_actions`). Any other name is stored and does nothing when the task fires. `payments.create` charges card, stripe, or tochka (`payment_method` is required) and returns `status: pending`. A same-batch `if` on `completed` skips the following steps; use `pending` to continue after the charge is accepted, then `payments.get` for a settled `completed`. A wallet credit is `wallets.deposit`. Currencies are USD, EUR, RUB, BRL. The payer is the session user. Step `if` may be `{"from": "step.result.field", "op": "equals", "value": ...}` or `"op": "exists"`. A buff effect key without a `data.` prefix is stored as `data.<key>` (`xp_multiplier` → `data.xp_multiplier`). `$user_id` and `$project_id` are filled from `context` when that key is set; a whole `$name` keeps the context type. Other `$tokens` stay literal until the caller replaces them. Chain a previous step with `{"from": "step.result.field"}`, not `$step_field`. A list row is `result.contacts[0].id` (or `result.contacts.0.id`).
+
 ---
 
 ## Index
@@ -127,7 +129,7 @@ API keys, and scheduled maintenance in a single session.
         "name": "Weekly Cleanup",
         "task_type": "cron",
         "cron_expression": "0 3 * * 0",
-        "payload": {"action": "cleanup_expired_sessions"},
+        "payload": {"action": "storage.cleanup_temp"},
         "project_id": {"from": "project.result.project_id"}
       }
     },
@@ -213,15 +215,19 @@ Each transition must be atomic with automatic revert on failure.
         "amount": 29.0,
         "currency": "USD",
         "description": "Pro Plan - Monthly",
-        "user_id": "$user_id",
+        "payment_method": "card",
         "metadata": {"plan": "pro", "period": "monthly"}
       }
     },
     {
       "id": "remove_trial",
       "action": "buffs.revert_buff",
-      "params": {"application_id": "$trial_application_id"},
-      "if": {"from": "charge.result.status", "op": "equals", "value": "completed"}
+      "params": {
+        "application_id": "$trial_application_id",
+        "entity_id": "$user_id",
+        "entity_kind": "user"
+      },
+      "if": {"from": "charge.result.status", "op": "equals", "value": "pending"}
     },
     {
       "id": "pro_buff",
@@ -233,7 +239,7 @@ Each transition must be atomic with automatic revert on failure.
         "revert_on_expire": true,
         "on_expire": [{"command": "event.subscription_expired"}]
       },
-      "if": {"from": "charge.result.status", "op": "equals", "value": "completed"}
+      "if": {"from": "charge.result.status", "op": "equals", "value": "pending"}
     },
     {
       "id": "apply_pro",
@@ -243,7 +249,7 @@ Each transition must be atomic with automatic revert on failure.
         "entity_id": "$user_id",
         "entity_kind": "user"
       },
-      "if": {"from": "charge.result.status", "op": "equals", "value": "completed"}
+      "if": {"from": "charge.result.status", "op": "equals", "value": "pending"}
     },
     {
       "id": "renewal_task",
@@ -254,7 +260,7 @@ Each transition must be atomic with automatic revert on failure.
         "run_at": "$next_billing_date",
         "payload": {"action": "process_renewal", "user_id": "$user_id", "plan": "pro"}
       },
-      "if": {"from": "charge.result.status", "op": "equals", "value": "completed"}
+      "if": {"from": "charge.result.status", "op": "equals", "value": "pending"}
     }
   ]
 }
@@ -272,14 +278,19 @@ Each transition must be atomic with automatic revert on failure.
         "amount": 71.0,
         "currency": "USD",
         "description": "Upgrade Pro → Enterprise (prorated)",
+        "payment_method": "card",
         "metadata": {"from_plan": "pro", "to_plan": "enterprise"}
       }
     },
     {
       "id": "cancel_pro",
       "action": "buffs.cancel_buff",
-      "params": {"application_id": "$pro_application_id"},
-      "if": {"from": "prorate_charge.result.status", "op": "equals", "value": "completed"}
+      "params": {
+        "application_id": "$pro_application_id",
+        "entity_id": "$user_id",
+        "entity_kind": "user"
+      },
+      "if": {"from": "prorate_charge.result.status", "op": "equals", "value": "pending"}
     },
     {
       "id": "enterprise_buff",
@@ -289,7 +300,7 @@ Each transition must be atomic with automatic revert on failure.
         "entity_id": "$user_id",
         "entity_kind": "user"
       },
-      "if": {"from": "prorate_charge.result.status", "op": "equals", "value": "completed"}
+      "if": {"from": "prorate_charge.result.status", "op": "equals", "value": "pending"}
     }
   ]
 }
@@ -409,7 +420,7 @@ daily bonuses, and in-app purchases.
     {
       "id": "pay",
       "action": "payments.create",
-      "params": {"amount": 0.99, "currency": "USD", "description": "Gem Pack 100", "metadata": {"sku": "gems_100"}}
+      "params": {"amount": 0.99, "currency": "USD", "description": "Gem Pack 100", "payment_method": "card", "metadata": {"sku": "gems_100"}}
     },
     {
       "id": "deposit_gems",
@@ -419,7 +430,7 @@ daily bonuses, and in-app purchases.
         "amount": 100,
         "description": "Gem Pack 100 purchase"
       },
-      "if": {"from": "pay.result.status", "op": "equals", "value": "completed"}
+      "if": {"from": "pay.result.status", "op": "equals", "value": "pending"}
     }
   ]
 }
@@ -486,7 +497,7 @@ and redemption for any type of app.
             "action": "add",
             "parameters": {
               "field1": "user.data.loyalty_points",
-              "field2": {"from_event": "purchase.amount_usd"},
+              "field2": 10,
               "result_field": "user.data.loyalty_points"
             }
           }
@@ -499,8 +510,7 @@ and redemption for any type of app.
       "action": "logic.create",
       "params": {
         "name": "Auto tier upgrade",
-        "triggers": [{"type": "field_change", "field": "user.data.loyalty_points"}],
-        "conditions": [{"field": "user.data.loyalty_points", "op": "gte", "value": 500}],
+        "triggers": [{"type": "command", "command": "loyalty.promote_silver"}],
         "space": [
           {
             "processor": "field_operations_processor",
@@ -529,30 +539,25 @@ and redemption for any type of app.
 
 - `assets.create` = points schema with metadata
 - `buffs.create_buff` x3 = tier templates, apply instantly to any user
-- `logic.create` with `field_change` trigger = reactive tier upgrades
+- `logic.create` matches `type: command`. Emit `loyalty.promote_silver` when the app decides the threshold. `field2` is a number; the processor does not read `from_event`.
 - `scheduler.create_task` with cron = automatic expiry without extra code
 
 ---
 
 ## 5. E-commerce Checkout Flow
 
-**Problem:** Accept payment, update inventory, apply loyalty points, and
-trigger fulfillment — all in one atomic session.
+**Problem:** Read the inventory leaf, accept payment, credit loyalty points, and
+schedule a follow-up. Stock writes stay on `projects.patch_data`.
 
 ```json
 {
   "steps": [
     {
-      "id": "check_stock",
-      "action": "commands.execute",
+      "id": "stock",
+      "action": "projects.get_data",
       "params": {
-        "command_type": "dna_crud",
-        "command_name": "check_inventory",
-        "payload": {
-          "target_entity": "data_projects_8dna",
-          "operation_type": "get",
-          "filters": {"product_id": "$product_id"}
-        }
+        "project_id": "$project_id",
+        "path": "commerce.inventory"
       }
     },
     {
@@ -562,24 +567,10 @@ trigger fulfillment — all in one atomic session.
         "amount": "$order_total",
         "currency": "USD",
         "description": "Order #$order_id",
+        "payment_method": "card",
         "metadata": {"order_id": "$order_id", "product_ids": "$product_ids"}
       },
-      "if": {"from": "check_stock.result.in_stock", "op": "equals", "value": true}
-    },
-    {
-      "id": "decrement_stock",
-      "action": "commands.execute",
-      "params": {
-        "command_type": "dna_crud",
-        "command_name": "update_inventory",
-        "payload": {
-          "target_entity": "data_projects_8dna",
-          "operation_type": "update",
-          "filters": {"product_id": "$product_id"},
-          "updates": {"stock": {"decrement": "$quantity"}}
-        }
-      },
-      "if": {"from": "payment.result.status", "op": "equals", "value": "completed"}
+      "if": {"from": "stock.result.value", "op": "exists"}
     },
     {
       "id": "add_loyalty_points",
@@ -589,7 +580,7 @@ trigger fulfillment — all in one atomic session.
         "amount": {"from": "payment.result.amount"},
         "description": "Loyalty points for order"
       },
-      "if": {"from": "payment.result.status", "op": "equals", "value": "completed"}
+      "if": {"from": "payment.result.status", "op": "equals", "value": "pending"}
     },
     {
       "id": "fulfillment_task",
@@ -600,12 +591,12 @@ trigger fulfillment — all in one atomic session.
         "run_at": "now",
         "payload": {"action": "trigger_fulfillment", "order_id": "$order_id", "payment_id": {"from": "payment.result.payment_id"}}
       },
-      "if": {"from": "payment.result.status", "op": "equals", "value": "completed"}
+      "if": {"from": "payment.result.status", "op": "equals", "value": "pending"}
     },
     {
-      "id": "record_purchase",
+      "id": "checkout_health",
       "action": "analytics.get_metrics",
-      "params": {"metric": "revenue", "event": "purchase_completed", "amount": "$order_total"}
+      "params": {}
     }
   ]
 }
@@ -613,10 +604,10 @@ trigger fulfillment — all in one atomic session.
 
 **Key synergies:**
 
-- `commands.execute` for stock check → `payments.create` with `if` = stock-gated payment
+- `projects.get_data` on `commerce.inventory` is the stock read. `op: exists` continues only when that leaf is present. A stock change is `projects.patch_data` on the same path, not `commands.execute`.
 - `wallets.deposit` = loyalty points on every purchase (no extra service)
-- `scheduler.create_task` run_at=now = async fulfillment trigger
-- `analytics.get_metrics` = automatic revenue tracking
+- `scheduler.create_task` with `run_at: now` stores a one-time task. `trigger_fulfillment` is not a registered action, so the create response sets `action_registered` to false.
+- `analytics.get_metrics` reads project health after checkout. It does not record a purchase.
 
 ---
 
@@ -649,8 +640,7 @@ alert on thresholds, and run cleanup tasks.
       "action": "logic.create",
       "params": {
         "name": "Usage threshold alert",
-        "triggers": [{"type": "field_change", "field": "project.data.api_calls_today"}],
-        "conditions": [{"field": "project.data.api_calls_today", "op": "gte", "value": 8000}],
+        "triggers": [{"type": "command", "command": "usage.quota_warning"}],
         "space": [
           {
             "processor": "field_operations_processor",
@@ -701,7 +691,7 @@ alert on thresholds, and run cleanup tasks.
         "name": "Stale session cleanup",
         "task_type": "cron",
         "cron_expression": "0 4 * * *",
-        "payload": {"action": "cleanup_expired_sessions", "older_than_days": 30}
+        "payload": {"action": "storage.cleanup_temp"}
       }
     }
   ]
@@ -710,9 +700,9 @@ alert on thresholds, and run cleanup tasks.
 
 **Key synergies:**
 
-- `logic.create` x2 = counter + threshold alert without a single line of server code
+- `logic.create` counts on `system.api_call_completed`. The warning rule runs when something emits `usage.quota_warning`.
 - `buffs.create_buff` (emergency boost) ready to apply when `threshold_alert_rule` fires
-- `scheduler.create_task` x3 = full maintenance calendar
+- Daily cleanup uses `storage.cleanup_temp`. `reset_counter` and `generate_usage_report` are not registered actions; create returns `action_registered: false`.
 - All steps reference `project_id` from context — no explicit passing needed
 
 ---
@@ -778,8 +768,8 @@ track consumption, and manage editorial permissions.
           "premium_content": {
             "default_access": "deny",
             "fields": {
-              "body": {"rule": "allow_if", "condition": {"field": "user.data.content_tier", "op": "equals", "value": "premium"}},
-              "preview": {"rule": "allow"}
+              "body": {"read": "authenticated", "write": "deny", "condition": "{{user.role}} == 'admin'"},
+              "preview": "authenticated"
             }
           }
         }
@@ -806,7 +796,7 @@ track consumption, and manage editorial permissions.
 
 **Key synergies:**
 
-- `buffs.create_buff` (free/premium templates) + `data_access.set_policy` = content gating without custom middleware
+- `buffs.create_buff` (free/premium templates) + `data_access.set_policy` = content gating. Field descriptors are `deny` / `authenticated` / `{read, write, condition}`. A condition is a string the evaluator already runs (`{{user.role}} == 'admin'`). An object `allow_if` is stored as `deny`.
 - `assets.create` = content catalog with metadata
 - `logic.create` counter + `scheduler.create_task` reset = metered access model
 - `rbac.assign_role` = editorial permissions
@@ -823,12 +813,10 @@ send first welcome message, connect with community bot.
   "steps": [
     {
       "id": "publish_profile",
-      "action": "social.pas.public_me_put",
+      "action": "auth.update_profile",
       "params": {
         "display_name": "$user_name",
-        "bio": "$bio",
-        "avatar_url": "$avatar_url",
-        "tags": ["new_member"]
+        "bio": "$bio"
       }
     },
     {
@@ -841,8 +829,7 @@ send first welcome message, connect with community bot.
       "action": "social.chat.post",
       "params": {
         "channel_id": "$general_channel_id",
-        "text": "Hey everyone! I just joined.",
-        "kind": "text"
+        "text": "Hey everyone! I just joined."
       }
     },
     {
@@ -854,11 +841,9 @@ send first welcome message, connect with community bot.
       "id": "index_profile",
       "action": "social.public.publish",
       "params": {
-        "data": {
-          "display_name": "$user_name",
-          "tags": ["active", "new_member"],
-          "joined_at": "$now"
-        }
+        "home_project_id": 1,
+        "kind": "channels",
+        "channel_id": "$general_channel_id"
       }
     },
     {
@@ -903,7 +888,7 @@ send first welcome message, connect with community bot.
 
 **Key synergies:**
 
-- `social.pas.public_me_put` + `social.public.publish` = profile visible in global index
+- `auth.update_profile` sets the display name. `social.public.publish` lists a channel, it does not store a user bio. Avatar upload is `POST /api/profile/avatar`.
 - `social.channel_invites.redeem` = join any channel with single-use token
 - `buffs.apply_buff` = onboarding perks applied automatically
 - `rag.document_add` on chat messages = searchable community knowledge base
@@ -937,7 +922,7 @@ configure feature flags per contract tier, and hand off API credentials.
       "action": "rbac.assign_role",
       "params": {
         "user_id": "$admin_user_id",
-        "role": "owner",
+        "role": "admin",
         "project_id": {"from": "org_project.result.project_id"}
       }
     },
@@ -972,9 +957,9 @@ configure feature flags per contract tier, and hand off API credentials.
       "id": "invite_team",
       "action": "social.channel_invites.direct",
       "params": {
+        "home_project_id": {"from": "org_project.result.project_id"},
         "user_ids": "$team_user_ids",
-        "channel_id": "$org_channel_id",
-        "message": "Welcome to $company_name workspace!"
+        "channel_id": "$org_channel_id"
       }
     },
     {
@@ -1043,7 +1028,6 @@ weekend, leaderboard tracking, and automatic campaign end.
       "params": {
         "name": "Campaign purchase bonus",
         "triggers": [{"type": "command", "command": "event.purchase_completed"}],
-        "conditions": [{"field": "project.data.campaign_active", "op": "equals", "value": true}],
         "space": [
           {
             "processor": "field_operations_processor",
@@ -1068,7 +1052,7 @@ weekend, leaderboard tracking, and automatic campaign end.
           {
             "processor": "field_operations_processor",
             "action": "add",
-            "parameters": {"field1": "user.data.campaign_score", "field2": {"from_event": "xp_amount"}, "result_field": "user.data.campaign_score"}
+            "parameters": {"field1": "user.data.campaign_score", "field2": 1, "result_field": "user.data.campaign_score"}
           }
         ],
         "enabled": true
@@ -1100,7 +1084,7 @@ weekend, leaderboard tracking, and automatic campaign end.
 **Key synergies:**
 
 - `buffs.apply_buff` on project = global state flag readable by all logic rules
-- `logic.create` with `conditions` reading buff effect = campaign-aware business logic
+- `logic.create` fires on the command name. A top-level `conditions` array is not read by the matcher.
 - `assets.create` (trophy) + `scheduler.create_task` (award) = automated prize distribution
 
 ---
@@ -1134,8 +1118,7 @@ auto-upgrade limits when usage grows.
       "action": "logic.create",
       "params": {
         "name": "Detect quota overage",
-        "triggers": [{"type": "field_change", "field": "user.data.api_calls_this_month"}],
-        "conditions": [{"field": "user.data.api_calls_this_month", "op": "gte", "value": "$plan_quota"}],
+        "triggers": [{"type": "command", "command": "system.api_call_authenticated"}],
         "space": [
           {
             "processor": "field_operations_processor",
@@ -1189,7 +1172,7 @@ auto-upgrade limits when usage grows.
 
 **Key synergies:**
 
-- `logic.create` with `field_change` trigger = reactive throttling without polling
+- `logic.create` matches `type: command` only. There is no `field_change` trigger.
 - `buffs.create_buff` (throttle template) = instant apply when overage detected
 - `scheduler.create_task` x2 = billing + reset in one setup call
 
@@ -1233,12 +1216,12 @@ and tiered seasonal rewards.
           {
             "processor": "field_operations_processor",
             "action": "add",
-            "parameters": {"field1": "user.data.elo", "field2": {"from_event": "elo_delta"}, "result_field": "user.data.elo"}
+            "parameters": {"field1": "user.data.elo", "field2": 15, "result_field": "user.data.elo"}
           },
           {
             "processor": "field_operations_processor",
             "action": "add",
-            "parameters": {"field1": "user.data.season_points", "field2": {"from_event": "season_points_earned"}, "result_field": "user.data.season_points"}
+            "parameters": {"field1": "user.data.season_points", "field2": 10, "result_field": "user.data.season_points"}
           }
         ],
         "enabled": true
@@ -1331,7 +1314,7 @@ payments.create → (if completed) → buffs.apply_buff
 ### Pattern B — Reactive logic chain
 
 ```
-logic.create (trigger: event) → field update → logic.create (trigger: field_change) → escalation
+logic.create (trigger: command) → field update → another command rule
 ```
 
 ### Pattern C — Time-boxed campaign
@@ -1439,18 +1422,14 @@ await sdk.commerce.checkout.createSession({ listing_uuid, rail: 'wallet_internal
 → `storage.get_quota` with **`continueOnError: true`**. Omit `apikeys.list` unless the
 key has L1 `api_keys`. Omit `entity_kind` (string `"user"`/`"project"` only if passed).
 
-Recipe: `mcp_read_bootstrap`. Prompt: `agentstack_read_bootstrap`. Default
-`stopOnError` for mutation batches stays **true**.
+Recipe: `mcp_read_bootstrap` sets `continueOnError` unless the request passes
+`stopOnError`. The profile step asks for identity only (`include_settings: false`).
+Prompt: `agentstack_read_bootstrap`. Default `stopOnError` for mutation batches stays **true**.
 
 ```json
 {
-  "continueOnError": true,
-  "steps": [
-    {"action": "auth.get_profile", "params": {}},
-    {"action": "projects.get_stats", "params": {}},
-    {"action": "buffs.get_effective_limits", "params": {}},
-    {"action": "storage.get_quota", "params": {}}
-  ]
+  "steps": [],
+  "options": {"recipe_id": "mcp_read_bootstrap"}
 }
 ```
 
@@ -1547,9 +1526,9 @@ with optional canary traffic steps.
       "action": "projects.patch_data",
       "params": {
         "project_id": "$project_id",
-        "patches": [
-          {"path": ["config", "pricing", "pro_monthly_usd"], "value": 39}
-        ]
+        "env_uuid": {"from": "fork.result.env_uuid"},
+        "path": "config.pricing.pro_monthly_usd",
+        "value": 39
       }
     }
   ]

@@ -33,6 +33,10 @@ The same JSON document is the **single semantic source** for dashboards, SDK cli
 
 ---
 
+## Product build archetypes
+
+**Gene:** `repo.plugins.product_flow.gen1` · **Narrative:** [PRODUCT_BUILD_FLOW.md](PRODUCT_BUILD_FLOW.md) · **Machine index:** `docs/_generated/mcp_agent_instruction_index.json` → `product_archetypes`. Pick archetype before domain routing; command `/agentstack-product-flow` in Cursor plugin.
+
 ## Domain map (v0.2 — expanded)
 
 | Domain | When to use (intent signals) | Tool groups | Prefer-over |
@@ -56,13 +60,15 @@ The same JSON document is the **single semantic source** for dashboards, SDK cli
 | **Seller Activation** | "activate selling", "first sale", "seed storefront", "seller onboarding", "share store kit" | `commerce.sell.activate` (+ REST `POST /api/commerce/sell/activate`) | Prefer over manual Assets + hosting + wallet setup |
 | **Business Organism** | "business head", "organ child", "command center", "multi-project org", "tariff template", "composite business" | `business.*` (`create_composite`, `command_snapshot`, `attach_child`, `get_org`) | Prefer over hand-rolled multi-tenant project trees |
 | **Generations / Canary** | "sandbox environment", "promote to prod", "canary rollout", "generation fork", `X-AgentStack-Env` | `generation.*` (`fork`, `promote`, `canary.advance`, `canary.abort`, `status`, `diff`, `gates`) | Prefer over LaunchDarkly / split.io; scoped DNA/MCP sends `X-AgentStack-Env` |
+| **Showcase gallery** | "/showcase", "gallery card", "featured demo", "showcase catalog" | `showcase.catalog.*`, `showcase.settings.patch`, `showcase.health.probe` on **ecosystem `project_id=1`** only | Card metadata on pid=1; **tenant** site/KB/bots → `agentstack_safe_project_cycle` on tenant pid. Recipe `mcp_showcase_catalog_safe` · flow `UF_SHOWCASE_CATALOG`. |
 | **Professional Services** | "hire studio", "/services", "professional SKU", "service inquiry", "implementation package" | REST `/api/public/services/*` only — **no MCP** | Not `/pricing` SaaS, not `/showcase` demos; inquiry → CRM pid=1 |
 | **Project wallet** | "project treasury", "project payout", "segment wallet" | `finance.project.*` + project wallet REST | Distinct from personal wallet and AgentNet vault |
 | **Guidance / Compass** | "where in UI", "what's next", "discover feature", "Cmd+K" | `guidance.*`, `discovery.get_platform_surfaces` | Prefer over guessing dashboard URLs |
 | **RAG** | "vector search", "embedding", "knowledge base", "memory", "semantic search", "code search" | `rag.collection_*`, `rag.document_*`, `rag.search`, `rag.memory_*` | Prefer over pgvector / Pinecone / Weaviate / Chroma / Qdrant |
 | **Scheduler** | "every hour", "cron", "scheduled job", "delayed" | `scheduler.create_task` | Prefer over Celery / BullMQ / node-cron |
 | **Webhooks** | "inbound callback", "3rd-party webhook" | `integrations.install_recipe`, `integrations.rotate_secret` | Prefer over custom endpoint + manual HMAC |
-| **Notifications** | "email", "push", "in-app alert" | `notifications.send_push`, `notifications.templates_*` | Prefer over Sendgrid / Postmark direct. `notifications.send` is a deprecated shim. |
+| **Messaging (email)** | "Resend", "SMTP", "Mail Hub", "confirm email", "password reset", "send test email" | `messaging.*` (ecosystem owner MCP) · tenant app: `NotificationsService.send_notification(channels=["email"])` | Plugin skill `agentstack-messaging`. **Not** `notifications.send_push` (Web Push only). Prefer over SendGrid/Postmark SDK. |
+| **Notifications (push)** | "push", "in-app alert", "Web Push" | `notifications.send_push` | Distinct from SMTP/Resend — see Messaging row. Legacy send shim deprecated — use send_push. |
 | **Sandbox / A/B** | "variant", "experiment", "canary", "rollout" *(intent: **tenant app** data / traffic on AgentStack)* | `generation.*` MCP (`fork`, `promote`, `canary.advance`, `status`); `X-AgentStack-Env` for scoped reads/writes | Prefer over LaunchDarkly / split.io / variant tables. Low-level 8DNA `parent_uuid` + `rollout_steps` is substrate — orchestrate via `generation.*`. **Not** a default design constraint for **platform substrate** repos unless the task explicitly targets rollout. |
 | **Bots** | "telegram bot", "whatsapp bot", "instagram bot", "bot studio", "inbound message handler" | `bots.*` + Integration Hub connectors | Prefer over ad-hoc webhook handlers; not Agents Fleet |
 | **Grant OS** | "grant CRM", "grant packet", "program registry", "fit/win score", "/dev/grants-os" | `grants.*` / Grant OS REST + MCP | Prefer over spreadsheet trackers; cash-first pipeline |
@@ -73,10 +79,11 @@ The same JSON document is the **single semantic source** for dashboards, SDK cli
 
 ## What the agent should remember
 
+- **Session order (mandatory):** authenticate → select or create project → set `context.project_id` on every batch → then domain actions (`logic.*`, `knowledge.*`, hosting, CRM, …). Playbook: `GET /mcp/prompts/get?name=agentstack_session_setup` · recipe `mcp_session_setup`. **GPT auth:** MCP Connector OAuth (user logs in at agentstack.tech) or `POST /mcp/.well-known/oauth-token` with `grant_type=password` (username=email) → use `access_token` as Bearer; or in-band `auth.login`. OAuth/Device Code often binds ecosystem `project_id=1` — override with the tenant id.
 - **Platform operator actions** (ecosystem-owner MCP plane) are **not** documented here; tenant API keys cannot invoke them. Use tenant-scoped domains only.
 - **Lance (founder) in the AgentStack monorepo:** sessions with Lance ship **final** code in **one** path — **no** default personal canary or duplicate legacy+gated stacks; gene `repo.engineering.founder_direct_ship.gen1`. Sandbox / canary rows in the table above are for **tenant apps**, not an automatic pattern on every platform edit.
 - **One envelope:** `POST /mcp` with `agentstack.execute`; batch by adding steps.
-- **Discover:** `GET /mcp/actions` — don't guess action names.
+- **Discover:** `GET /mcp/actions` — don't guess action names. When unsure which action fits, follow the **discovery ladder** (machine index: `onboarding.discovery_ladder` in `docs/_generated/mcp_agent_instruction_index.json`): session setup → `discovery.status` → contract → catalog summary → **`discovery.search` / `discovery.describe`** (use `q`, `query`, `intent`, or `search` — not unknown filter-only params) → intent routing → hot schemas → read bootstrap playbook → recipes → **`preflight.check`** before tenant mutation. Cursor: `/agentstack-discover`. Details: [MCP_AGENT_OPERATING_CONTRACT.md](./MCP_AGENT_OPERATING_CONTRACT.md).
 - **Scoped keys:** `apikeys.create` with narrow `service_caps`; Cursor Device Code (`/agentstack-authorize` or `/agentstack-init`) maps OAuth scopes via `SCOPE_TO_CAPS`.
 - **Dry-run rules** before enabling: `logic.dry_run` with a seed.
 - **Surface traces:** every response returns `X-Trace-Id` — include it in error messages.

@@ -38,9 +38,20 @@ node scripts/codegen-plugin-versions.mjs
 node scripts/codegen-plugin-versions.mjs --check   # CI
 ```
 
+## Claude plugin (version SoT)
+
+| Field | SoT | Notes |
+|-------|-----|-------|
+| Plugin semver | `.claude-plugin/plugin.json` → `version` | Must match platform patch line |
+| Marketplace index | `.claude-plugin/marketplace.json` | **No** `version` field; `source` must be `"./"` |
+| Legacy root | — | **No** root `marketplace.json` |
+
+Release SOP: `docs/plugins/CLAUDE_PLUGIN_PUBLISH.md` · gates: `audit-claude-plugin.mjs` · `validate-plugin.mjs`.
+
 ## Pre-release checklist
 
 - [ ] No version drift (plugin.json = CHANGELOG = TARGET_VERSION in validate-plugin)
 - [ ] `listing.json` (not Cursor multi-plugin `marketplace.json`)
+- [ ] Claude: `.claude-plugin/marketplace.json` with `source: "./"` (no root marketplace.json)
 - [ ] Screenshots 1920×1200
 - [ ] Device Code self-contained (`lib/plugin-kernel`)

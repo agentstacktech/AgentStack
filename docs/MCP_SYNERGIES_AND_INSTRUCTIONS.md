@@ -46,7 +46,7 @@
 | Область                | Статус                                                 | Как обойти                                            |
 | ---------------------- | ------------------------------------------------------ | ----------------------------------------------------- |
 | **Webhooks**           | Нет отдельного домена `webhooks.*`                     | `integrations.install_recipe`, `integrations.list_connections`, `logic.create` |
-| **Уведомления (push)** | Каноническое имя `notifications.send_push`             | `notifications.send` — deprecated shim (ошибка в каталоге); не `send_notification` |
+| **Уведомления (push)** | Каноническое имя `notifications.send_push`             | deprecated shim notifications.send — не использовать; не send_notification |
 | **Экспорт аналитики**  | analytics.export_data в старых примерах (без MCP action) | `analytics.get_metrics`, `analytics.get_usage`                    |
 
 

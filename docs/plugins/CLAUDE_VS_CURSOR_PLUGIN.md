@@ -48,7 +48,7 @@ One plugin — one artifact (Decomposition). Shared MCP endpoint and ecosystem; 
 | **Manifest** | `.cursor-plugin/plugin.json` | `.claude-plugin/plugin.json` | OpenAPI 3.1 schema + GPT_INSTRUCTIONS.md | `package.json` + `contributes.mcpServerDefinitionProviders` |
 | **Install** | Copy plugin + MCP config | Install plugin + `claude mcp add` | Create Custom GPT, paste schema and instructions | Marketplace/VSIX + one-time API key entry |
 | **MCP config** | `mcp.json` (HTTP: `type`, `baseUrl`, `headers`) | HTTP via user setup (see below) | API Key or OAuth in Action settings | HTTP via extension (auto-registration) |
-| **Skills** | `plugins/agentstack/skills/*/SKILL.md` — **27** domain routers (25 mirrored to Claude/VS Code; `backend` + `solana` Cursor-only) | **25** gen3 mirrors via `sync-claude-skill-stubs.mjs` | No skill tree; `GPT_INSTRUCTIONS.md` from `agentstack-backend` router (`sync-gpt-instructions.mjs`) | **25** gen3 mirrors via `sync-vscode-skill-stubs.mjs` |
+| **Skills** | `plugins/agentstack/skills/*/SKILL.md` — **31** folders (29 mirrored; `backend` + `solana` Cursor-only) | **29** gen3 mirrors + **`agentstack-prefer`** via `sync-claude-skill-stubs.mjs` | No skill tree; `GPT_INSTRUCTIONS.md` from `agentstack-backend` router | **29** gen3 mirrors via `sync-vscode-skill-stubs.mjs` |
 | **Rules** | `rules/*.mdc` (Cursor-specific) | No equivalent; knowledge in Skills + doc links | No equivalent | No equivalent |
 
 ---
@@ -66,8 +66,12 @@ One plugin — one artifact (Decomposition). Shared MCP endpoint and ecosystem; 
 
 ### Claude and OAuth
 
-- Current recommended path for Claude Code is API key (`X-API-Key`) for MCP HTTP.
-- If the Claude platform/MCP catalog requires OAuth, AgentStack already provides standard OAuth2 endpoints (`/api/oauth2/authorize`, `/api/oauth2/token`) without a separate "for Claude" implementation.
+- **Claude Code (CLI plugin):** preferred path is **Device Code** with `--scope-preset=full` (`device-login.mjs` or `/agentstack:login`), then `claude mcp add` with Bearer — see `MCP_QUICKSTART.md`.
+- **Claude web / MCP connector:** use **OAuth Connect** at `https://agentstack.tech/mcp` (same OAuth2 endpoints as ChatGPT Connect), not a manual scoped API key as the first step.
+- **Fallback:** `X-API-Key` for headless automation only; interactive users should not be steered to scoped keys before Connect/Device Code full login.
+- AgentStack OAuth2: `/api/oauth2/authorize`, `/api/oauth2/token`, device authorize `/api/oauth2/device/authorize`.
+- **Connect:** interactive login uses the OAuth endpoints above. `auth.get_profile` → `auth_surface.recommended_reauth` tells the client when to reconnect.
+- **MCP surface:** `auth.get_profile` returns `auth_surface` (`auth_transport`, `service_caps_scoped`, `recommended_reauth`) — use before asking users to mint scoped API keys.
 
 ---
 
@@ -80,7 +84,7 @@ One plugin — one artifact (Decomposition). Shared MCP endpoint and ecosystem; 
 | Parity gate | `audit-cursor-plugin` | `check-claude-skills-parity` + stub `--check` | `check-vscode-skills-parity` + stub `--check` | OpenAPI + instructions drift |
 | Skip mirror | `agentstack-backend`, `solana` | same | same | backend router feeds GPT autogen block |
 
-All **25** mirrored gen3 domains (data, logic, auth-rbac, commerce, CRM, agentnet, hosting, support, messenger, …) are synced with canonical folder names. Legacy gen1 folders (`agentstack-8dna`, `agentstack-payments`, …) are **retired** — `sync-*-skill-stubs.mjs` prunes them when canonical stubs exist.
+All **29** mirrored gen3 domains (data, logic, auth-rbac, commerce, CRM, agentnet, hosting, support, messenger, …) are synced with canonical folder names. Claude adds **`agentstack-prefer`** (MCP-first router, not mirrored from Cursor). Legacy gen1 folders (`agentstack-8dna`, `agentstack-payments`, …) are **retired** — `sync-*-skill-stubs.mjs` prunes them when canonical stubs exist.
 
 Hooks and Device Code install are **Cursor-only**. Claude uses `claude mcp add` per [MCP_QUICKSTART](https://github.com/agentstacktech/claude-plugin/blob/master/MCP_QUICKSTART.md).
 

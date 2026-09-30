@@ -1,7 +1,7 @@
 # AgentStack — Documentation
 
 [![platform](https://img.shields.io/badge/platform-v0.4.18-blue)](https://agentstack.tech)
-[![MCP actions](https://img.shields.io/badge/MCP-568%20actions-8B5CF6)](https://agentstack.tech/mcp/actions)
+[![MCP actions](https://img.shields.io/badge/MCP-656%20actions-8B5CF6)](https://agentstack.tech/mcp/actions)
 
 This repository contains the **public** documentation for **AgentStack** (English, user- and integrator-facing): web product, MCP, plugins, REST APIs, **RAG**, sandboxes, subscriptions, and examples.
 
@@ -11,7 +11,7 @@ This repository contains the **public** documentation for **AgentStack** (Englis
 
 **If you run AI agents on a large codebase:** [docs/genetic-system/](docs/genetic-system/) — Navigation OS overview, economics (labor vs tokens), link to the portable kit.
 
-**If you integrate AI or automate:** [docs/MCP_AND_ECOSYSTEM.md](docs/MCP_AND_ECOSYSTEM.md) — MCP (**568** catalog actions — [docs/MCP_SCALE.md](docs/MCP_SCALE.md)), REST, plugins, SDK.
+**If you integrate AI or automate:** [docs/MCP_AND_ECOSYSTEM.md](docs/MCP_AND_ECOSYSTEM.md) — MCP (**656** catalog actions — [docs/MCP_SCALE.md](docs/MCP_SCALE.md)), REST, plugins, SDK.
 
 **REST / OpenAPI:** [docs/OPENAPI.md](docs/OPENAPI.md) — [Swagger UI](https://agentstack.tech/swagger) · [openapi.json](https://agentstack.tech/openapi.json) · [API overview](https://agentstack.tech/api-docs).
 
@@ -33,7 +33,7 @@ This repository contains the **public** documentation for **AgentStack** (Englis
 
 | Plugin | Notes |
 |--------|--------|
-| [cursor-plugin](https://github.com/agentstacktech/cursor-plugin) | **v0.4.9+** — 5-layer architecture (rules, skills, commands, agents, hooks); **OAuth 2.1 device code** flow for activation |
+| [cursor-plugin](https://github.com/agentstacktech/cursor-plugin) | **v0.4.18, gen3** — rules, skills, commands, agents, hooks; Plugin MCP Connect and **OAuth 2.1 device code** |
 | [claude-plugin](https://github.com/agentstacktech/claude-plugin) | Claude Desktop / API installers |
 | [gpt-plugin](https://github.com/agentstacktech/gpt-plugin) | ChatGPT / OpenAI ecosystem |
 | [vscode-plugin](https://github.com/agentstacktech/vscode-plugin) | VS Code marketplace distribution |

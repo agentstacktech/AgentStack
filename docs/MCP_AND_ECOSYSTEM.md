@@ -2,7 +2,7 @@
 
 Single entry point for MCP (Model Context Protocol) documentation, plugins, ecosystem API, and usage examples. Official repo: [https://github.com/agentstacktech/AgentStack](https://github.com/agentstacktech/AgentStack).
 
-**Scale (May 2026):** **311** MCP tools · **<!-- stats:total_actions -->568<!-- /stats:total_actions -->** catalog actions · **<!-- stats:mcp_domains -->48<!-- /stats:mcp_domains -->** domains · one `agentstack.execute` for AI IDEs — [PLATFORM_SCALE.md](publication/PLATFORM_SCALE.md) · [MCP_CAPABILITY_MATRIX.md](MCP_CAPABILITY_MATRIX.md).
+**Scale (May 2026):** **<!-- stats:registry_tools -->695<!-- /stats:registry_tools -->** MCP tools · **<!-- stats:total_actions -->656<!-- /stats:total_actions -->** catalog actions · **<!-- stats:mcp_domains -->57<!-- /stats:mcp_domains -->** domains · one `agentstack.execute` for AI IDEs — [PLATFORM_SCALE.md](publication/PLATFORM_SCALE.md) · [MCP_CAPABILITY_MATRIX.md](MCP_CAPABILITY_MATRIX.md).
 
 **Using the website (dashboard)?** See **[USER_FEATURES_GUIDE.md](USER_FEATURES_GUIDE.md)** (English, end-user overview: dashboard, RAG, sandboxes, access control, subscriptions).
 

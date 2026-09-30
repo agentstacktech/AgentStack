@@ -4,10 +4,11 @@
 
 Highlights for integrators and dashboard users:
 
+- **Plans:** personal (Free / Premium / VIP) and business (Launch / Business / Scale / Enterprise) are separate planes — [subscription/SUBSCRIPTION_TIERS.md](subscription/SUBSCRIPTION_TIERS.md)
 - **Docs Living Plane (0.4.18):** plugin/SDK/public mirror alignment — unified MCP stats SoT and regenerated capability matrix
 - **Cursor plugin gen3:** Plugin MCP Connect + Device Code at platform **0.4.18**
 - **Unified 8DNA** data plane for project and user rows
-- **MCP scale:** <!-- stats:total_actions -->568<!-- /stats:total_actions --> catalog actions — [MCP_SCALE.md](MCP_SCALE.md)
+- **MCP scale:** <!-- stats:total_actions -->656<!-- /stats:total_actions --> catalog actions — [MCP_SCALE.md](MCP_SCALE.md)
 - **CRM** — project-scoped contacts and pipelines — [crm/README.md](crm/README.md)
 - **Storefront Studio** — merchant workspace — [commerce/STOREFRONT_STUDIO.md](commerce/STOREFRONT_STUDIO.md)
 - **Public docs site** — Starlight build from this mirror — [DOCS_SITE_OPTIONAL.md](DOCS_SITE_OPTIONAL.md)

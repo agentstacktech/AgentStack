@@ -8,42 +8,24 @@ AgentStack offers multiple subscription tiers to meet different user needs, from
 
 ## Available Tiers
 
-1. **ANONYMOUS** - Restricted tier for anonymous users (no registration required)
-2. **FREE** - Free tier for registered users
-3. **STARTER** - Entry-level paid tier
-4. **BASIC** - Mid-level paid tier
-5. **PRO** - Professional tier
-6. **PREMIUM** - Corporate tier
-7. **ENTERPRISE** - Enterprise tier (unlimited resources)
+Two planes. Current prices and limits: [agentstack.tech/pricing](https://agentstack.tech/pricing).
+
+**Personal** (the user, not a project): Free, Premium $15, VIP $45. They grant personal AI energy, personal files, and personal project slots (5 / 25 / 99). Business projects do not use those slots.
+
+**Business** (the business and the projects inside it): Free, Launch $29 (`starter`), Business $69 (`basic`), Scale $199 (`pro`), Enterprise custom. There is no cap on how many projects you add. Active projects are how many run at once (Free 1, Launch 3, Business 3, Scale 15).
+
+The stored string `business` still means enterprise until the legacy rewrite. Do not treat Premium as a $999 corporate plan.
 
 ## Tier Comparison
 
-| Feature | Anonymous | FREE | STARTER | BASIC | PRO | PREMIUM | ENTERPRISE |
-|---------|-----------|------|---------|-------|-----|---------|------------|
-| **Price** | $0 | $0 | $29/mo | $69/mo | $199/mo | $999/mo | Custom |
-| **Projects** | 1 | 1 | 3 | 5 | 25 | Unlimited | Unlimited |
-| **Active Projects** | 1 | 1 | 3 | 3 | 15 | Unlimited | Unlimited |
-| **Total Members (Aggregated)** | 10 | 1,000 | 5,000 | 25,000 | Unlimited | Unlimited | Unlimited |
-| **Note** | ✅ Aggregated across all projects | ✅ Aggregated across all projects | ✅ Aggregated across all projects | ✅ Aggregated across all projects | - | - | - |
-| **API Keys** | 1 | 2 | 10 | 10 | 50 | 200 | Unlimited |
-| **User API Keys** | 1 | 1 | 3 | 5 | 10 | Unlimited | Unlimited |
-| **Logic Engine Calls/Month** | 1,000 | 10,000 | 50,000 | 50,000 | 200,000 | 1,000,000 | Unlimited |
-| **API Calls/Month** | 10,000 | 50,000 | 200,000 | 500,000 | 2,000,000 | 10,000,000 | Unlimited |
-| **Triggers** | 20 | 50 | 100 | 100 | 250 | 1,000 | Unlimited |
-| **Logic Pages** | 3 | 3 | 5 | 5 | 10 | 50 | Unlimited |
-| **JSON Storage (Per User)** | 20 MB | 100 MB | 500 MB | 500 MB | 2 GB | 10 GB | Unlimited |
-| **Project Storage (Data Only)** | 0.02 GB | 0.1 GB | 0.5 GB | 1 GB | 5 GB | 20 GB | Unlimited |
-| **Note** | Files in separate service | Files in separate service | Files in separate service | Files in separate service | Files in separate service | Files in separate service | Files in separate service |
-| **Payments** | ❌ Disabled | ✅ Unlimited | ✅ Unlimited | ✅ Unlimited | ✅ Unlimited | ✅ Unlimited | ✅ Unlimited |
-| **Analytics Retention** | 7 days | 7 days | 30 days | 30 days | 90 days | 365 days | Unlimited |
-| **Analytics Exports** | 1 | 1 | 5 | 5 | 20 | 100 | Unlimited |
-| **Support** | Community | Community | Email | Email | Priority | Priority | Dedicated |
-| **Uptime SLA** | 99.0% | 99.0% | 99.5% | 99.5% | 99.9% | 99.95% | 99.99% |
-| **Sandbox generations (open)** | 0 | 0 | 1 | 3 | 5 | 25 | Unlimited |
-| **Sandbox generation depth** | 0 | 0 | 1 | 3 | 5 | 25 | Unlimited |
-| **Sandbox shadow writes** | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Feature | Anonymous | FREE | LAUNCH | BUSINESS | SCALE | PREMIUM | VIP | ENTERPRISE |
+|---------|-----------|------|--------|----------|-------|---------|-----|------------|
+| **Price** | $0 | $0 | $29/mo | $69/mo | $199/mo | $15/mo | $45/mo | Custom |
+| **Plane** | — | both | business | business | business | personal | personal | business |
+| **Personal projects** | 0 | 5 | 5 | 5 | 5 | 25 | 99 | 5 |
+| **Active projects** | 1 | 1 | 3 | 3 | 15 | — | — | unlimited |
 
-> Sandbox SoT: subscription tier ladder. Open-status quota — see [SANDBOX_AND_ENVIRONMENTS.md](../SANDBOX_AND_ENVIRONMENTS.md).
+Included API, Logic Engine, members, and project storage stay on the business plane. Read them from the catalog above, not from a second table. Sandbox quotas: [SANDBOX_AND_ENVIRONMENTS.md](../SANDBOX_AND_ENVIRONMENTS.md).
 
 ## Overage Pricing (Pay-as-you-go)
 
@@ -57,7 +39,7 @@ AgentStack offers flexible Pay-as-you-go pricing for exceeding subscription limi
 
 ### API Calls Overage
 
-- **Price:** $0.50 per 1,000 calls beyond your limit (50% cheaper than Logic Engine)
+- **Price:** $0.50 per 1,000 calls beyond your limit
 - **Minimum charge:** $0.01 for any overage
 - **Example:** If you have 500K calls included and use 600K, you pay $50.00 for the 100K overage
 
@@ -102,7 +84,7 @@ For gaming projects that need more Logic Engine calls and API calls without upgr
 - Logic Engine: `POST /api/billing/logic-engine-package?package_size=small|medium|large`
 - API Calls: `POST /api/billing/api-calls-package?package_size=small|medium|large`
 
-Packages are one-time purchases that add permanent capacity. They are stored in `user.data.config.packages` and apply to the user's account (aggregated across all projects).
+Packages are one-time purchases that add capacity to the business plan. Projects inside that business share the allowance.
 
 **See:** Overage and package behaviour in this document (sections above). For live API parameters, use [Swagger](https://agentstack.tech/swagger) and [OPENAPI.md](../OPENAPI.md).
 
@@ -128,9 +110,9 @@ Packages are one-time purchases that add permanent capacity. They are stored in 
 - Community support
 - Good starting point for learning AgentStack
 
-**Key Features:**
-- 1 project
-- 1,000 total members (aggregated across all projects)
+**Key Features (business plane — shared inside one business):**
+- 1 active business project on free business tier
+- 1,000 total members on that business
 - 10,000 Logic Engine calls/month
 - 50,000 API calls/month
 - 50 triggers
@@ -142,8 +124,8 @@ Packages are one-time purchases that add permanent capacity. They are stored in 
 
 **Best for:** Small teams and growing projects
 
-- 3 projects (3 active)
-- 5,000 total members (aggregated across projects)
+- 3 active business projects (Launch)
+- 5,000 total members on that business
 - 200,000 API calls/month
 - 50,000 Logic Engine calls/month
 - 100 triggers, 5 logic pages
@@ -155,8 +137,8 @@ Packages are one-time purchases that add permanent capacity. They are stored in 
 
 **Best for:** Medium-sized teams
 
-- 5 projects
-- 25,000 total members (aggregated across all projects)
+- 3 active business projects (Business / `basic`)
+- 25,000 total members on that business
 - 50,000 Logic Engine calls/month
 - 500,000 API calls/month
 - 100 triggers
@@ -168,8 +150,8 @@ Packages are one-time purchases that add permanent capacity. They are stored in 
 
 **Best for:** Professional teams and businesses
 
-- 25 projects
-- Unlimited total members (aggregated across all projects)
+- 15 active business projects (Scale / `pro`)
+- Unlimited total members on that business
 - 200,000 Logic Engine calls/month
 - 2,000,000 API calls/month
 - 250 triggers
@@ -179,19 +161,9 @@ Packages are one-time purchases that add permanent capacity. They are stored in 
 - Custom analytics
 - Audit logs
 
-### PREMIUM Tier
+### PREMIUM / VIP (personal plane)
 
-**Best for:** Large organizations
-
-- Unlimited projects
-- Unlimited members
-- 1,000,000 Logic Engine calls/month
-- 1,000 triggers
-- 10 GB JSON storage
-- Priority support
-- White label
-- Custom domain
-- System admin access
+**Best for:** Power users — personal AI energy, personal files, and personal project slots (5 / 25 / 99). Does **not** raise Logic Engine, API, members, or project storage on business projects.
 
 ### ENTERPRISE Tier
 
@@ -264,16 +236,16 @@ Contact support or use the billing interface to upgrade to a paid tier.
 
 ## Limit Enforcement
 
-**Important:** All limits are applied **aggregated across all user's projects**, not per-project. For example, if you have 50,000 Logic Engine calls/month included, this limit applies to the total usage across all your projects combined.
+**Important:** Logic Engine, API calls, members, and project storage on a **business** plan are shared by the projects inside that business. Personal Premium and VIP do not raise those project quotas.
 
 All limits are enforced at the API level:
 
-1. **Logic Engine** - Limits checked before execution (aggregated across all projects)
-2. **Project Creation** - Limits checked before creation
-3. **API Key Creation** - Limits checked before creation
-4. **Storage** - Limits checked during storage operations (aggregated across all projects)
-5. **User Count** - Limits checked when adding users (aggregated across all projects - `max_total_members`)
-6. **JSON Storage** - Limits checked during storage operations (aggregated across all projects)
+1. **Logic Engine** - Checked per business project (tier from project billing resolver)
+2. **Project Creation** - Personal slots vs active business projects (separate gates)
+3. **API Key Creation** - Per project / business limits
+4. **Storage** - Project storage per business tier; JSON storage per user (personal plane)
+5. **User Count** - `max_total_members` on the business plan
+6. **JSON Storage** - Per-user cap from personal subscription (Premium/VIP raise only this)
 7. **Payments** - Limits checked before payment processing
 
 ### Metrics Storage
@@ -281,7 +253,7 @@ All limits are enforced at the API level:
 Usage metrics are automatically tracked by the ecosystem:
 
 - **Project local metrics:** Stored in `project.data.ecosystem.metrics` (protected, not visible to project owners)
-- **User aggregated metrics:** Stored in `user.data.metrics` (project_id=1, ecosystem) - aggregated across all projects
+- **Usage counters:** Stored in `user.data.metrics` (ecosystem slice); business limits are enforced per project billing tier while metrics may still roll up for billing UI
 - **Automatic updates:** Metrics are updated automatically when resources are used (no explicit calls needed)
 - **Fast access:** Metrics are cached for O(1) performance when checking limits
 
