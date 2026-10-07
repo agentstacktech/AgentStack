@@ -4,6 +4,14 @@
 
 **Purpose:** Single reference for AI agents (Cursor, Claude, VS Code, Custom GPT): which domain to use and which tool groups to call for a user request. Use this document to decide "when user says X → use domain Y". Full tool list and parameters: [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md).
 
+## Default loop (do this before the catalog)
+
+```text
+session → context.project_id → agents.work_next → packet.next_action → claim / execute → work_next
+```
+
+Recipe `mcp_work_loop_v1`. Prompt `agentstack_closed_loop_autonomy`. Follow `packet.next_action`. `discovery.search` is a schema lookup when there is no packet. Live DNA edits stay on the safe circle (sandbox → checks → promote). Measured story: [WORK_GRAPH.md](WORK_GRAPH.md).
+
 ## Order of preference (channels)
 
 1. **MCP** — `POST /mcp` with `agentstack.execute` steps; each step has `action` from `GET /mcp/actions`. See [MCP_AND_ECOSYSTEM.md](../MCP_AND_ECOSYSTEM.md). **IDE agents** stay on MCP plugins.
@@ -83,7 +91,7 @@ The same JSON document is the **single semantic source** for dashboards, SDK cli
 - **Platform operator actions** (ecosystem-owner MCP plane) are **not** documented here; tenant API keys cannot invoke them. Use tenant-scoped domains only.
 - **Lance (founder) in the AgentStack monorepo:** sessions with Lance ship **final** code in **one** path — **no** default personal canary or duplicate legacy+gated stacks; gene `repo.engineering.founder_direct_ship.gen1`. Sandbox / canary rows in the table above are for **tenant apps**, not an automatic pattern on every platform edit.
 - **Structured domain errors:** MCP `tools/call` with `failure_kind=domain` returns `isError=false` and `structuredContent` (`ok=false`, `error_code`, recovery). Parse structured fields — do not treat domain denials (e.g. `plan_revision_conflict`, `provision_required`) as transport crashes. `isError=true` is for transport/internal faults only. ADR: `docs/adr/MCP_STRUCTURED_DOMAIN_ERRORS.md`.
-- **Closed-loop work graph:** Multi-step goals → prompt `agentstack_closed_loop_autonomy` · genes `core.agents.work_graph.gen1` · `core.mcp.instruction_plane.gen1`. Agent loop: `agents.plan_get` → `agents.work_next` → follow **`next_action`** (not `next_actions[0]` guess) → claim/execute → repeat. Lightweight progress only: `agents.work_status` (`summary_only`). A local 2026-10-07 registry build measured an example next-action packet at **250 bytes** versus **1.68 MB** for the full catalog JSON — follow the packet so the window is spent on the step. Byte table and SLO targets (90% follow / ≤5% catalog shopping; targets, not a prod sample): [MCP_AGENT_OPERATING_CONTRACT.md](./MCP_AGENT_OPERATING_CONTRACT.md). Full matrix: [CONTEXT_FOR_AI_MCP.md](CONTEXT_FOR_AI_MCP.md) autogen spine.
+- **Closed-loop work graph:** Multi-step goals → prompt `agentstack_closed_loop_autonomy` · genes `core.agents.work_graph.gen1` · `core.mcp.instruction_plane.gen1`. Agent loop: `agents.plan_get` → `agents.work_next` → follow **`next_action`** (not `next_actions[0]` guess) → claim/execute → repeat. Lightweight progress only: `agents.work_status` (`summary_only`). A local 2026-10-07 registry build measured an example next-action packet at **250 bytes** versus **1.68 MB** for the full catalog JSON — follow the packet so the window is spent on the step. Byte table and SLO targets (90% follow / ≤5% catalog shopping; targets, not a prod sample): [WORK_GRAPH.md](./WORK_GRAPH.md) · [MCP_AGENT_OPERATING_CONTRACT.md](./MCP_AGENT_OPERATING_CONTRACT.md). Full matrix: [CONTEXT_FOR_AI_MCP.md](CONTEXT_FOR_AI_MCP.md) autogen spine.
 - **One envelope:** `POST /mcp` with `agentstack.execute`; batch by adding steps.
 - **Discover:** `GET /mcp/actions` — don't guess action names. When unsure which action fits, follow `onboarding.discovery_ladder` (step 1 is `agents.work_next`). Schema lookup is **`discovery.search` / `discovery.describe`** (use `q`, `query`, `intent`, or `search`). **`preflight.check`** before tenant mutation. Cursor: `/agentstack-discover`. Details: [MCP_AGENT_OPERATING_CONTRACT.md](./MCP_AGENT_OPERATING_CONTRACT.md).
 - **Scoped keys:** `apikeys.create` with narrow `service_caps`; Cursor Device Code (`/agentstack-authorize` or `/agentstack-init`) maps OAuth scopes via `SCOPE_TO_CAPS`.

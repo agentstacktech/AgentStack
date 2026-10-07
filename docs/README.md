@@ -1,6 +1,8 @@
 # AgentStack documentation (public mirror)
 
-**English only.** This tree mirrors **integrator- and user-facing** guides published alongside the product. For **REST**, **MCP**, **SDK**, **RAG**, and **plugins**, start here and drill into the sections below.
+**English only.** This tree mirrors **integrator- and user-facing** guides published alongside the product.
+
+**Start with the loop.** Work Graph is the control plane: `session → context.project_id → agents.work_next → packet.next_action`. Live edits stay on the safe circle: connect, sandbox, review, promote. Story: [plugins/WORK_GRAPH.md](plugins/WORK_GRAPH.md) · [agentstack.tech/work-graph](https://agentstack.tech/work-graph) · [mcp-docs#safe-cycle](https://agentstack.tech/mcp-docs#safe-cycle).
 
 **Product:** [agentstack.tech](https://agentstack.tech) · **OpenAPI:** [Swagger](https://agentstack.tech/swagger)
 
@@ -10,6 +12,7 @@
 
 | Audience | Document | ~Time to first call |
 |----------|----------|---------------------|
+| **Any AI agent** | [plugins/WORK_GRAPH.md](plugins/WORK_GRAPH.md) | 2 min (one next step) |
 | **Product builders** | [BUILD_YOUR_PRODUCT.md](BUILD_YOUR_PRODUCT.md) | 15 min (hosting tutorial) |
 | **Dashboard users** | [USER_FEATURES_GUIDE.md](USER_FEATURES_GUIDE.md) | 5 min (UI) |
 | **Integrators & automations** | [MCP_AND_ECOSYSTEM.md](MCP_AND_ECOSYSTEM.md) | 10 min (MCP curl) |

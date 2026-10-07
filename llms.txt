@@ -2,9 +2,13 @@
 
 > Public documentation for integrators and AI agents. Platform line 0.4.21. Public MCP catalog: 714 actions, 58 domains — verify live: GET /mcp/actions/summary.
 
+The default loop is Work Graph, not the catalog: session → context.project_id → agents.work_next → packet.next_action → claim / execute → work_next. Recipe mcp_work_loop_v1. Prompt agentstack_closed_loop_autonomy. Live edits stay on the safe circle: connect → sandbox → review → promote.
+
 ## Start
 
-- [README](https://github.com/agentstacktech/AgentStack/blob/master/README.md): How to enter the docs
+- [README](https://github.com/agentstacktech/AgentStack/blob/master/README.md): Work Graph, the loop, and who it helps
+- [Work Graph](https://github.com/agentstacktech/AgentStack/blob/master/docs/plugins/WORK_GRAPH.md): Measured packet vs catalog, scenarios, contract
+- [Work Graph page](https://agentstack.tech/work-graph): The same story on the site
 - [Docs index](https://github.com/agentstacktech/AgentStack/blob/master/docs/README.md): Section map
 - [What's new](https://github.com/agentstacktech/AgentStack/blob/master/docs/WHATS_NEW.md): Partner summary for 0.4.18
 - [Build a product](https://github.com/agentstacktech/AgentStack/blob/master/docs/BUILD_YOUR_PRODUCT.md): Golden paths and SDK

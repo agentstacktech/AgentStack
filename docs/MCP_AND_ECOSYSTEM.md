@@ -1,6 +1,14 @@
 # MCP and AgentStack Ecosystem — Index
 
-Single entry point for MCP (Model Context Protocol) documentation, plugins, ecosystem API, and usage examples. Official repo: [https://github.com/agentstacktech/AgentStack](https://github.com/agentstacktech/AgentStack).
+**Start with Work Graph, not the catalog.** After the session is bound to a project, call `agents.work_next` and follow `packet.next_action`. Recipe `mcp_work_loop_v1`. Prompt `agentstack_closed_loop_autonomy`.
+
+```text
+session → context.project_id → agents.work_next → packet.next_action → claim / execute → work_next
+```
+
+Live edits stay on the safe circle: connect → sandbox → review → promote. A local registry build on 2026-10-07 measured an example next-action packet at **250 bytes** and the full catalog JSON at **1.68 MB** (6,720×). That build is not a bill and not a production rate. Write-up: [plugins/WORK_GRAPH.md](plugins/WORK_GRAPH.md) · [agentstack.tech/work-graph](https://agentstack.tech/work-graph).
+
+Single entry point for MCP documentation, plugins, ecosystem API, and usage examples. Official repo: [https://github.com/agentstacktech/AgentStack](https://github.com/agentstacktech/AgentStack).
 
 **Scale (May 2026):** **<!-- stats:registry_tools -->756<!-- /stats:registry_tools -->** MCP tools · **<!-- stats:total_actions -->714<!-- /stats:total_actions -->** catalog actions · **<!-- stats:mcp_domains -->58<!-- /stats:mcp_domains -->** domains · one `agentstack.execute` for AI IDEs — [PLATFORM_SCALE.md](publication/PLATFORM_SCALE.md) · [MCP_CAPABILITY_MATRIX.md](MCP_CAPABILITY_MATRIX.md).
 

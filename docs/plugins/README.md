@@ -2,7 +2,7 @@
 
 **Purpose:** Single entry point for AgentStack plugin documentation (Decomposition: one index; Elegant Minimalism: no duplication — details by link).
 
-**For AI agents:** Start with [CONTEXT_FOR_AI.md](CONTEXT_FOR_AI.md) and [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md). Universal client matrix: [MCP_CLIENT_COMPATIBILITY_MATRIX.md](MCP_CLIENT_COMPATIBILITY_MATRIX.md). Browser prompts: [MCP_CHAT_COMMAND_COOKBOOK.md](MCP_CHAT_COMMAND_COOKBOOK.md). Plugin source repos: [agentstacktech/cursor-plugin](https://github.com/agentstacktech/cursor-plugin), [agentstacktech/claude-plugin](https://github.com/agentstacktech/claude-plugin), [agentstacktech/vscode-plugin](https://github.com/agentstacktech/vscode-plugin), [agentstacktech/gpt-plugin](https://github.com/agentstacktech/gpt-plugin), [agentstacktech/gemini-plugin](https://github.com/agentstacktech/gemini-plugin) (sync from monorepo).
+**For AI agents:** Run the loop first — [WORK_GRAPH.md](WORK_GRAPH.md) (`agents.work_next` → `packet.next_action`). Then [CONTEXT_FOR_AI.md](CONTEXT_FOR_AI.md) and [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md). Search is a schema lookup when there is no packet. Universal client matrix: [MCP_CLIENT_COMPATIBILITY_MATRIX.md](MCP_CLIENT_COMPATIBILITY_MATRIX.md). Browser prompts: [MCP_CHAT_COMMAND_COOKBOOK.md](MCP_CHAT_COMMAND_COOKBOOK.md). Plugin source repos: [agentstacktech/cursor-plugin](https://github.com/agentstacktech/cursor-plugin), [agentstacktech/claude-plugin](https://github.com/agentstacktech/claude-plugin), [agentstacktech/vscode-plugin](https://github.com/agentstacktech/vscode-plugin), [agentstacktech/gpt-plugin](https://github.com/agentstacktech/gpt-plugin), [agentstacktech/gemini-plugin](https://github.com/agentstacktech/gemini-plugin) (sync from monorepo).
 
 **Philosophy:** See [AGENTSTACK_PLUGIN_PHILOSOPHY.md](AGENTSTACK_PLUGIN_PHILOSOPHY.md).
 
@@ -41,6 +41,7 @@ All plugins are published as separate GitHub repositories (see table below). On 
 | [Cursor plugin audit (maintainers)](https://github.com/agentstacktech/agentstack/blob/main/docs/plugins/CURSOR_PLUGIN_AUDIT_2026-07.md) | Cursor marketplace ship audit (P0–P2 gap register) |
 | [PLUGIN_VERSION_POLICY.md](PLUGIN_VERSION_POLICY.md) | Plugin semver: **do not bump** without Lance’s explicit order (see policy doc) |
 | [MCP_CHATGPT_GEMINI_GUIDE_RU.md](MCP_CHATGPT_GEMINI_GUIDE_RU.md) | **ChatGPT + Gemini:** integration map, auth matrix, troubleshooting |
+| [WORK_GRAPH.md](WORK_GRAPH.md) | The loop: `agents.work_next` → `packet.next_action`. Measured packet vs catalog. |
 | [CONTEXT_FOR_AI.md](CONTEXT_FOR_AI.md) | AgentStack capability map for AI (domains, when to use which tool); for GPT, VS Code, etc. |
 | [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md) | Stable public link to the full MCP action catalogue (source: `GET /mcp/actions`). |
 | [CLAUDE_VS_CURSOR_PLUGIN.md](CLAUDE_VS_CURSOR_PLUGIN.md) | Comparison of all four plugins: manifest, install, MCP config, Skills/Rules. |
