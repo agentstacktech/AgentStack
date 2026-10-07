@@ -93,3 +93,22 @@ node provided_plugins/scripts/validate-all-plugins.mjs
 ## Rate limits
 
 MCP shares platform HTTP rate limits with REST. On **HTTP 429**, honor `Retry-After` when present; otherwise exponential backoff (1s → 2s → 5s). Surface `X-Trace-Id` for support. Do not tight-loop `tools/call` or catalog refresh — use `If-None-Match` on `GET /mcp/actions` when polling.
+
+---
+
+## JSON-RPC wire branches
+
+Resolver: `agentstack-core/mcp/client_transport_profile.py` · CI: `check_mcp_client_compat.py`
+
+| Branch | Trigger | HTTP / body | Safe to change? |
+|--------|---------|-------------|-----------------|
+| `notifications/initialized` legacy | `openai-mcp` UA + `MCP-Protocol-Version: 2025-03-26` | **200** + `{"jsonrpc":"2.0","result":{}}` | **No** — GPT scanner test |
+| `notifications/initialized` streamable | Cursor / Claude / Gemini / Codex + `2025-11-25` or `2026-07-28` | **202** empty body | **No** — notification transport pytest |
+| OAuth transport challenge | ChatGPT/Gemini UA or modern proto (not Cursor) | **401** + `WWW-Authenticate` | **No** for Cursor UA |
+| Cursor auth errors | `User-Agent` contains `cursor` | **200** JSON-RPC + `isError` | **No** |
+| Lifecycle `id` synthesis | Request method without `id` member | Server generates UUID in response | **No** — scanner compatibility |
+| Explicit `id: null` | `"id": null` in request | Echo `null` in response | **No** |
+| JSON-RPC batch arrays | POST body is `[{...},{...}]` | Single `-32600` Invalid Request | Documented non-goal (see `MCP_FORWARD_COMPAT_2026.md`) |
+| `GET /mcp` SSE fallback | `Accept: text/event-stream` | SSE `event: endpoint` + heartbeat | Cursor streamable-http |
+
+**Probes:** `run_gpt_scanner_compat_checks`, `run_cursor_compat_checks`, `run_claude_compat_checks`, `run_gemini_compat_checks` in `gpt_scanner_probe.py`.

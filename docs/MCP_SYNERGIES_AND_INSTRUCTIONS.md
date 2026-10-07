@@ -22,7 +22,7 @@
 | Домен                     | Инструменты                                                                                                                                                              | Примечание                                                                        |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
 | **Проекты**               | projects.get_projects, get_project, get_stats, get_users, create_project, create_project_anonymous, update_project, delete_project                                       | —                                                                                 |
-| **Участники**             | projects.get_users, add_user, update_user_role, remove_user                                                                                                              | add/remove — Professional или экосистема                                          |
+| **Участники**             | projects.get_users, add_user, update_user_role, remove_user                                                                                                              | add/remove — Launch+ **проектный** план или экосистема (personal Premium/VIP не подходит) |
 | **Планировщик**           | scheduler.create_task, get_task, update_task, list_tasks, execute_task, cancel_task, delete_pool_task, clear_pool_tasks, refresh_pool, get_all_db_tasks                  | —                                                                                 |
 | **Ассеты**                | assets.create, get, list, update, delete                                                                                                                                 | В т.ч. валюты: type=currency                                                      |
 | **Баффы**                 | buffs.create_buff, get_buff, list_active_buffs, get_effective_limits, apply_buff, extend_buff, revert_buff, cancel_buff, apply_temporary_effect, apply_persistent_effect | —                                                                                 |
@@ -32,7 +32,7 @@
 | **API-ключи**             | apikeys.create, list, delete                                                                                                                                             | + service_caps (L1 gate) — see `GET /mcp/actions` domain `apikeys` |
 | **Данные (универсально)** | commands.execute, commands.execute_batch                                                                                                                                 | dna_crud по сущностям                                                             |
 | **Аутентификация**        | auth.login, register, get_profile, update_profile                                                                                                                        | —                                                                                 |
-| **Аналитика**             | analytics.get_usage, get_metrics                                                                                                                                         | чтение метрик                                                                     |
+| **Аналитика**             | analytics.project_snapshot (KPI дашборд), get_usage (activity slice), get_metrics (custom DNA counters)                                                                   | KPI → `project_snapshot`; `get_metrics` только для `data.metrics[]`               |
 | **Процессоры**            | processors.list, get_metadata, execute                                                                                                                                   | для логики                                                                        |
 | **RAG / база знаний**     | rag.collection_create/list/delete, rag.document_add/list/delete, rag.search, rag.memory_add/get/search                                                                   | семантический поиск и память                                                      |
 | **Доступ к полям (FAP)**  | data_access.get_policy/set_policy, get_triggers/set_triggers, check_field, test_mask, get_defaults_template/set_defaults_template/apply_defaults_template                | L2 маски и политики полей                                                         |
@@ -47,7 +47,7 @@
 | ---------------------- | ------------------------------------------------------ | ----------------------------------------------------- |
 | **Webhooks**           | Нет отдельного домена `webhooks.*`                     | `integrations.install_recipe`, `integrations.list_connections`, `logic.create` |
 | **Уведомления (push)** | Каноническое имя `notifications.send_push`             | deprecated shim notifications.send — не использовать; не send_notification |
-| **Экспорт аналитики**  | analytics.export_data в старых примерах (без MCP action) | `analytics.get_metrics`, `analytics.get_usage`                    |
+| **Экспорт аналитики**  | analytics.export_data в старых примерах (без MCP action) | `analytics.project_snapshot` (+ app-side CSV); legacy `get_usage`/`get_metrics`     |
 
 
 ### Commerce: маркетплейс, аукционы, межпроектный обмен
@@ -75,18 +75,21 @@
 Сначала проект (credentials на верхнем уровне + neutral `bootstrap` — настроить заголовки MCP-клиента один раз), потом валюты как ассеты, затем кошельки и пополнение.
 - **Проект → участники**  
 `projects.get_users` → `projects.add_user` / `projects.update_user_role` / `projects.remove_user`  
-Управление составом при наличии прав (owner / manage_users, Professional для add/remove).
+Управление составом при наличии прав (owner / manage_users; add/remove — Launch+ проектный план или экосистема).
 - **Триал/подписка**  
 `buffs.create_buff` (шаблон триала) → `logic.create` (триггер user.created) → `buffs.apply_buff` / `buffs.apply_temporary_effect`  
 Авто-назначение триала новым пользователям.
-- **Платёж → эффект**  
-`payments.create` → `buffs.apply_buff` или `buffs.apply_persistent_effect`  
-После успешной оплаты — выдача подписки или постоянного эффекта.
+- **Платёж → эффект (tenant SaaS)**  
+`commerce.sell.activate` → `payments.create` (`recipient_project_id`) → webhook/C24 auto-grant  
+Промпт: `agentstack_tenant_subscription_monetization`. Ручная выдача: `buffs.grant_tenant_subscription`. Платформа: `buffs.grant_subscription` (PID=1).
+- **Платёж → эффект (legacy DIY)**  
+`payments.create` → `buffs.apply_buff` / `buffs.apply_persistent_effect`  
+Только когда нет buff_template_id / webhook path.
 - **Расписание + логика**  
 `scheduler.create_task` (cron) → в task_data вызов `logic.execute` или команды  
 Периодические проверки (напоминания, отчёты, напоминания об истечении триала).
 - **Лимиты и авто-масштабирование**  
-`logic.create` (триггер по метрике) + `analytics.get_usage` + `buffs.apply_temporary_effect`  
+`logic.create` (триггер по метрике) + `analytics.project_snapshot` (`include=['activity']`) + `buffs.apply_temporary_effect`  
 При достижении порога — временное повышение лимитов через бафф.
 - **Глобальное событие**  
 `buffs.apply_buff` / `buffs.apply_temporary_effect` с entity_kind=project, entity_id=project_id  
@@ -136,8 +139,10 @@
 2. `buffs.create_buff` — шаблон триала (duration_days, effects с limits).
 3. `logic.create` — триггер user.created, в space вызов применения баффа (или явно buffs.apply_buff после регистрации).
 4. `buffs.create_buff` — шаблон подписки (persistent, extends_on_reapply).
-5. `payments.create` при оплате → затем `buffs.revert_buff` (триал) + `buffs.apply_buff` (подписка).
-6. `scheduler.create_task` для проверки истекших триалов и напоминаний.
+5. **Paid:** `commerce.sell.activate` → `payments.create` → webhook/C24 auto-grant (не manual apply_buff).
+6. **Manual/support:** `buffs.grant_tenant_subscription` · промпт `agentstack_tenant_buff_grant`.
+7. **Legacy DIY:** `payments.create` → `buffs.revert_buff` (триал) + `buffs.apply_buff` (подписка) — только без webhook path.
+8. `scheduler.create_task` для проверки истекших триалов и напоминаний.
 
 ### Игра: валюта и награды
 
@@ -207,7 +212,7 @@
 - Нужен безопасный API-ключ для агента → `apikeys.create` с `service_caps: [список_сервисов]`.
 - Нужны социальные функции → `social.public.publish` (профиль) → `social.channels.register` (канал) → `social.chat.post` (сообщение) → `social.friends.request` (связи).
 - Нужны роли/права → `rbac.get_roles` → `rbac.assign_role` / `rbac.revoke_role` → `rbac.check_permission`.
-- Нужна аналитика → `analytics.get_usage` (лимиты, использование) → `analytics.get_metrics` (метрики проекта).
+- Нужна аналитика / KPI дашборда → `analytics.project_snapshot` (activity, finance, CRM, product_events; `include=` для срезов). Legacy: `analytics.get_usage` — только activity slice; `analytics.get_metrics` — custom DNA counters (`data.metrics[]`), не performance KPIs.
 
 ## 6. Промпты для использования с MCP
 

@@ -4,9 +4,30 @@
 
 **Plugin mirror:** Cursor skill `provided_plugins/cursor-plugin/plugins/agentstack/skills/agentstack-backend/SKILL.md` § User request → action — autogen via `node provided_plugins/scripts/sync-mcp-hot-path-skill.mjs`.
 
+**Closed-loop spine:** autogen via `node provided_plugins/scripts/sync-mcp-hot-path-skill.mjs` from `mcp_agent_instruction_index.json`.
+
 **Broader context:** [MCP_AND_ECOSYSTEM.md](../MCP_AND_ECOSYSTEM.md) (all channels) · [CONTEXT_FOR_AI.md](CONTEXT_FOR_AI.md) (includes HTTP-only fallback: 8DNA + Protein). Operator access is membership plus `context.project_id` (session table below). Docs navigation is separate from `GET /mcp/actions`.
 
 **Session bootstrap (default for agents):** `GET /mcp/prompts/get?name=agentstack_session_setup` **first** (auth → project → `context.project_id`) → `GET /mcp/ai_prompt?mode=contract` → `POST /mcp/discover/by_intent` when intent is ambiguous → `GET /mcp/actions?schemas=hot` for unfamiliar mutations. Full prompt: `?mode=full` · examples: `/mcp/ai_prompt/examples`.
+
+**Discovery hierarchy (SoT: `instruction_plane.get_onboarding_bundle()`):**
+
+| Layer | Entry | When |
+|-------|-------|------|
+| MCP resources | `agentstack://instructions/session`, `agentstack://instructions/work-graph`, `agentstack://planes`, `agentstack://catalog/summary` | resources/list clients |
+| HTTP bootstrap | `http_bootstrap_ladder()` — contract → manifest → organs → `schemas=public` | Before first execute batch |
+| MCP ladder | `machine_discovery_ladder` — session → **work_next** → discovery.status → search → describe → preflight | After `context.project_id` |
+| Single action | `discovery.describe` (`related_surfaces` cross-links) | Before unfamiliar mutation |
+
+### Multi-instruction surfaces
+
+| Surface | URI / action | Role |
+|---------|--------------|------|
+| Session ladder | MCP resource `agentstack://instructions/session` · prompt `agentstack_session_setup` | Auth → project → bind context |
+| Work graph | MCP resource `agentstack://instructions/work-graph` · prompt `agentstack_closed_loop_autonomy` | Default spine after project bind |
+| Planes atlas | MCP resource `agentstack://planes` | Domain prefix → first action |
+| Catalog totals | MCP resource `agentstack://catalog/summary` · `discovery.summary` | Etag + counts without full catalog |
+| Compass | **`guidance.list`** → `guidance.match_playbook` → `guidance.start_path` | PlaybookIds before NL match |
 
 ### Mandatory session order
 
@@ -16,8 +37,24 @@
 | 2 Project | Workspace scope | `projects.get_projects` → pick id; or `projects.create_project` |
 | 3 Bind context | Tenant isolation | `context.project_id` on every batch (OAuth often defaults to ecosystem `1`) |
 | 3b Access model | Mutations allowed? | **User-scoped OAuth/PAT/bearer_token:** membership RBAC — set `context.project_id`; **`auth.get_profile.mutation_allowed`**. **Project-scoped API key JWT:** `auth.switch_project` + Bearer. |
-| 4 Domain work | Feature actions | Recipe `mcp_session_setup` then `mcp_read_bootstrap` (includes optional `hosting.project.status` for primary `/s/` URL) or **`agentstack_safe_project_cycle`** (tenant mutations) |
-| 5 Safe cycle (tenant) | Sandbox → promote | Preflight → domain mutate → verify → `generation.diff_vs_prod` → `generation.gates` → `generation.promote` — prompt `agentstack_safe_project_cycle` |
+| **4 Work Graph route** | **Route → plan → verify (default for multi-step)** | Prompt **`agentstack_closed_loop_autonomy`** · recipe **`mcp_work_loop_v1`** · `agents.work_next` → follow `packet.next_action` — **before** domain CRUD or `discovery.search` shopping |
+| 5 Domain work | Feature actions | Recipe `mcp_session_setup` then `mcp_read_bootstrap` (includes optional `hosting.project.status` for primary `/s/` URL) or **`agentstack_safe_project_cycle`** (tenant mutations) |
+| 6 Safe cycle (tenant) | Sandbox → promote | Preflight → domain mutate → verify → `generation.diff_vs_prod` → `generation.gates` → `generation.promote` — prompt `agentstack_safe_project_cycle` |
+
+### Work Graph routing (after `context.project_id` is bound)
+
+| User intent | First tool | Never first |
+|-------------|-----------|-------------|
+| Do project work / fleet / plan graph | `agents.work_next` then **`agentstack_closed_loop_autonomy`** | `discovery.search` catalog shopping |
+| What tools exist? | `discovery.list` | N/A |
+| How does one action work? | `discovery.describe` | `agents.plan_execute` |
+| Status-only poll | `agents.work_status` | Re-running `discovery.search` |
+
+**Autonomous loop API keys:** preset cap alias **`agents_autonomous_loop`** — scoped keys for headless `mcp_work_loop_v1` / `agentstack_closed_loop_autonomy` (includes `agents.work_next`, `plan_claim`, `plan_execute`; denies catalog mutations via competence guard).
+
+<!-- BEGIN:AUTOGEN-CLOSED-LOOP-SPINE -->
+**Closed loop (one paragraph):** After `context.project_id` is bound, multi-step goals use **discovery routed_goal** (not keyword-only ranking), **plan graph v2** with CAS revisions, **`agents.work_next` → `agents.ensure_agent` (provision) → `agents.plan_claim` → `agents.plan_execute`**, **instruction_packet** skills, then **agents.run** / **agents.orchestrate** with evidence and completion gates. Blocked leaves: read `diagnostics.harness_state` on `work_next` packets. **Business self-service:** head project + organ children (`business.*`) — same loop on each child `context.project_id`; prompts `agentstack_business_organism` + `agentstack_closed_loop_autonomy`. **Specialized agents:** `agents.team.create` routing + templates + parallel plan nodes. External MCP clients: follow `inverse_orchestration_ladder` (allowed_actions only).
+<!-- END:AUTOGEN-CLOSED-LOOP-SPINE -->
 
 ---
 
@@ -54,6 +91,10 @@
 | Tenant sandbox / promote | Generation | **Prompt:** `agentstack_tenant_8dna_supply` · `generation.fork`, `generation.diff_vs_prod`, `generation.gates`, `generation.promote`, `generation.realign_to_prod` | Safe cycle default for paid tenants; strategy from `auto_promote_strategy`; not deploy scripts. |
 | Give user a 7-day trial | Buffs | `buffs.apply_temporary_effect` | Params: project_id, user_id, effect id/code, duration. |
 | List active subscriptions / buffs | Buffs | `buffs.list_active_buffs`, `buffs.get_effective_limits` | project_id, optional user_id. |
+| Grant platform tier (ecosystem op) | Buffs | `buffs.grant_subscription` | Prompt `agentstack_platform_subscription_grant` · PID=1 · personal premium/vip or project launch/business/scale. |
+| Grant tenant subscription (support/comp) | Buffs | `buffs.grant_tenant_subscription` | Prompt `agentstack_tenant_buff_grant` · recipe `mcp_tenant_manual_entitlement_grant` · tenant PID>1, project write. |
+| Grant tenant inventory (digital goods) | Commerce | `commerce.participant.grant_holding` | Pair with subscription grant when SKU is inventory-backed. |
+| Sell tenant subscription (paid checkout) | Commerce + Buffs | `buffs.create_buff` → `commerce.sell.activate` → `payments.create` | Auto-grant via webhook (`recipient_project_id`) or C24 — not manual `apply_buff`. Prompt `agentstack_tenant_subscription_monetization`. |
 | Create payment / check status / refund | Payments | `payments.create`, `payments.get`, `payments.refund` | AgentPay — **not** Stripe SDK. Balance: `payments.get_balance`. |
 | Wallets (personal / commerce) | Wallets | `wallets.list`, `wallets.deposit`, `wallets.transfer` | User/commerce balances — not project treasury (`finance.project.*`). |
 | Project wallet / treasury | Finance | `finance.project.portfolio`, `finance.project.fund`, `finance.project.contribute` | Project-scoped treasury segments; pair with `commerce.sell.activate` payouts. |
@@ -62,11 +103,12 @@
 | TypeScript / SDK / OpenAPI | SDK + MCP | `GET /mcp/actions`, `sdk.protocol`, `getCapabilityMatrix()` | Operator scripts: `@agentstack/sdk`. Hosted page: import map `/sdk/v…` + cookie `/s/{pid}/mcp`. Contract: `/openapi-mcp.json` + `/openapi.json` — not raw fetch sprawl. |
 | CRM contact / deal pipeline | CRM | `crm.upsert_contact`, `crm.list_contacts`, `crm.create_deal`, `crm.move_deal_stage` | Contact 360: `crm.get_contact_360`; CSV: `crm.import_contacts`. |
 | Run project agent / fleet | Agents | `agents.list`, `agents.run`, `agents.create_from_template` | One heavy `agents.run` (`wait=true`) per sync `agentstack.execute` batch. |
-| Project AI orchestrator (copilot / support / bot brain) | Agents / Projects | `agents.orchestrate`, `projects.orchestrator.get`, `projects.orchestrator.patch` | **Single SoT:** DNA leaf config.project_orchestrator.agent_uuid. Workspace → channel=workspace; messenger support → channel=messenger + conversation_id=psup_p{pid}_u{uid}; bot → channel=bot + bot_uuid. Memory thread via `rag.memory_*` on memory_session_id from run input. Recipes: `mcp_project_operator_session`, `mcp_orchestrator_memory_bootstrap`, `mcp_project_faq_bootstrap`. |
+| Closed-loop autonomy (plan + verify + teams) | Agents / Discovery / Projects | `discovery.search`, `agents.plan_get`, `agents.work_next`, `agents.ensure_agent`, `agents.plan_claim`, `agents.plan_execute`, `agents.plan_propose`, `agents.plan_apply_proposal`, `agents.plan_recovery_scan`, `agents.orchestrate`, `agents.team.create` | Prompt **`agentstack_closed_loop_autonomy`** · ladder `closed_loop_ladder`. Spine: **`work_next` → `ensure_agent` (provision) → `plan_claim` → `plan_execute`**. Thread same **`env_uuid`** on sandbox forks. Blocked: `diagnostics.harness_state` + `recovery.next_actions` (not `missing_roles`). Plan patch requires `if_match_revision`. Team goals: prefer routed `agents.team.create` over `integrations.*`. |
+| Project AI orchestrator (copilot / support / bot brain) | Agents / Projects | `agents.orchestrate`, `projects.orchestrator.get`, `projects.orchestrator.patch` | **Single SoT:** DNA leaf config.project_orchestrator.agent_uuid. Workspace → channel=workspace; messenger support → channel=messenger + conversation_id=psup_p{pid}_u{uid}; bot → channel=bot + bot_uuid. Memory thread via `rag.memory_*` on memory_session_id from run input. Recipes: `mcp_project_operator_session`, `mcp_orchestrator_memory_bootstrap`, `mcp_project_faq_bootstrap`. Link: **closed loop** prompt above for multi-step copilot goals. |
 | Import orchestrator marketplace pack | Projects / Assets | `projects.orchestrator.import_from_asset`, preset `project_orchestrator_pack_v2` | Post-deal fulfillment or `orchestrator.importPack` post-create action — not manual DNA blob replace. |
 | Bot channel / simulate | Bots | `bots.create`, `bots.set_brain`, `bots.simulate`, `bots.go_live` | `bots.simulate` is heavy LLM — one per batch; channels via `bots.attach_channel`. Lifecycle: `bots.get` returns `lifecycle` (`draft` \| `active` \| `paused` \| `archived`) and `cleanup_action` (`bots.archive` when retiring). **Canonical retire:** `bots.archive` — not ad-hoc deletes. |
 | Activate seller / storefront | Commerce | `commerce.sell.activate`, `commerce.storefront.seed_plan`, `commerce.storefront.hosted_publish` | Seller onboarding + hosted vitrine — distinct from marketplace REST (`commerce_rest`). |
-| Business head / organ projects | Business | `business.create_composite`, `business.command_snapshot`, `business.list_children` | Multi-project organism — distinct from `generation.*` 8DNA sandbox lineage. |
+| Business head / organ projects | Business | `business.create_composite`, `business.command_snapshot`, `business.list_children` | Multi-project organism — distinct from `generation.*` 8DNA sandbox lineage. **Self-service:** each organ project runs the same closed loop (route/plan/execute/verify) with `context.project_id` = child id. Prompt: `agentstack_business_organism` + `agentstack_closed_loop_autonomy`. |
 | Mentor / knowledge KB | Knowledge | `knowledge.kb.ingest`, `knowledge.playground`, `knowledge.config.patch` | Tenant KB + mentor simulate; `knowledge.playground` heavy — one per batch. **Index heal:** `knowledge.kb.heal_index` — not deprecated alias `knowledge.reindex`. Runbook: MCP prompts `agentstack_knowledge_*` + `/agentstack-safe-cycle`. |
 | AgentNet proofs / economy | AgentNet | `agentnet.bnb.proof_bundle_for_run`, `agentnet.genome.verify` | AGNT / agUSD rails — never legacy AGC ticker in new integrations. |
 | Compass / guided path | Guidance | `guidance.start_path`, `guidance.complete_step`, `guidance.match_playbook` | Platform Compass playbooks — not docs-nav `docs_nav.*`. |
@@ -79,13 +121,13 @@
 | Marketplace / auction / exchange | REST (same Core) | `GET /mcp/actions` domain **`commerce_rest`** (path hints only) | Not valid `step.action` — use HTTP `/api/marketplace/*`, `/api/exchange/*`. See [MCP_AND_ECOSYSTEM.md](../MCP_AND_ECOSYSTEM.md). |
 | Login / register / get profile | Auth | `auth.login`, `auth.register`, `auth.get_profile`, `auth.update_profile` | Session probe: `auth.get_profile` accepts aliases **`auth.me`**, **`auth.profile`**, `auth.status`, `auth.whoami` (same as REST `GET /api/auth/me`). Health: `discovery.health` → `system.ping`. Catalog: `discovery.list_actions` → `discovery.list`. Device Code via plugin OAuth — not a separate MCP action. |
 | Assets / inventory | Assets | `assets.create`, `assets.list` | project_id in params. |
-| Analytics / usage / metrics | Analytics | `analytics.get_usage`, `analytics.get_metrics` | set_budget is not in the catalog. |
+| Analytics / dashboard KPIs | Analytics | `analytics.project_snapshot` | Unified snapshot (activity, finance, CRM, product events). Use `include=` for optional slices. Legacy: `analytics.get_usage` (activity slice only), `analytics.get_metrics` (custom DNA counters `data.metrics[]` — not performance KPIs). set_budget is not in the catalog. |
 | API keys (project) | API Keys | `apikeys.list`, `apikeys.create`, `apikeys.delete` | Always set `service_caps` on keys for AI agents. Legacy projects API-key aliases are not in catalog. |
 | Webhooks / integration recipes | Integrations / notifications | `integrations.list_recipes`, `integrations.connector_schema`, `integrations.install_recipe`, `integrations.test_hook` | Recipe `mcp_integrations_universal_connect_v1`. Missing connection → **`connection_not_found`**; missing scenario → **`scenario_not_found`** (`list_scenarios`). Legacy `webhooks.*` MCP removed. |
 | RBAC / permissions | RBAC | `rbac.check_permission`, `rbac.assign_role`, `rbac.get_roles` | Prefer FAP `data_access.set_policy` for field-level gates. |
 | In-app messenger | Social | `social.chat.post`, `social.chat.history` | Project-scoped chat — not a second WebSocket stack. |
 | Support staff inbox | Social / support | `social.support.inbox`, `social.support.history` | Staff plane — user channel uses `social.chat.*`. |
-| Transactional email (Mail Hub) | Messaging | `messaging.send`, `messaging.get_config` | Ecosystem email templates — skill `agentstack-messaging`. Admin ops (`messaging.send_test_email`, etc.) are operator-only. |
+| Transactional email (Mail Hub) | Messaging | `messaging.send_email`, `messaging.get_config` | Ecosystem email templates — skill `agentstack-messaging`. Admin ops (`messaging.send_test_email`, etc.) are operator-only. |
 | Hosted vertical workspace | Vertical workspace | `vertical_workspace.bootstrap`, `checklist.get` | EDITFLOW / Key2Unity — skill `agentstack-hosted-vertical`; `POST /mcp` + flagship `X-Project-ID`. |
 | Tenant safe cycle | Generation | `generation.diff_vs_prod`, `generation.gates`, `generation.promote` | Command `/agentstack-safe-cycle` · prompt `agentstack_safe_project_cycle` — sandbox before prod DNA. |
 
@@ -202,6 +244,8 @@ Credentials are returned **once** at the top level. Configure the MCP client or 
 ---
 
 ## Discovery hierarchy (recommended agent flow)
+
+Canonical order is `instruction_plane.http_bootstrap_ladder()` then `machine_discovery_ladder()` (`agents.work_next` before `discovery.status`). The list below is an expanded reference, not a second ladder.
 
 0. **`GET /mcp/prompts/get?name=agentstack_session_setup`** — mandatory session ladder (auth → project → `context.project_id`). Recipe: `mcp_session_setup`.
 1. **`GET /mcp/ai_prompt?mode=contract`** — slim contract + `execute_examples` (not full catalog).

@@ -195,12 +195,16 @@ Step 3.  Выполнить шаги из промпта через agentstack.e
 |------|--------|-----------|-----------|
 | 1 | projects.create_project_anonymous | name, description | project_id, user_id |
 | 2 | buffs.create_buff | name, duration_days, effects, revert_on_expire | buff_id |
-| 3 | logic.create | triggers: user.created, space: вызов apply_buff | logic_id |
-| 4 | buffs.apply_buff | buff_id (from s2), entity_kind: user, entity_id | — |
-| 5 | buffs.create_buff | (шаблон подписки) | buff_id_premium |
-| 6 | payments.create | (при оплате) | payment_id |
-| 7 | buffs.revert_buff | (триал) + buffs.apply_buff (premium) | — |
-| 8 | scheduler.create_task | cron для проверки истекших триалов | task_id |
+| 3 | logic.create | triggers: user.created, space: вызов apply_buff (trial) | logic_id |
+| 4 | buffs.apply_buff | buff_id (from s2), entity_kind: user, entity_id | trial active |
+| 5 | buffs.create_buff | tenant SKU template | buff_id_premium |
+| 6 | commerce.sell.activate | subscription_entitlement + buff_template_id | sell live |
+| 7 | payments.create | intent=subscription, recipient_project_id | payment_id |
+| 8 | *(auto)* | webhook/C24 → grant_tenant_plan_buff | paid buff |
+| 9 | buffs.revert_buff | (триал) при конверсии | — |
+| 10 | scheduler.create_task | cron renewal / expiry | task_id |
+
+**Manual/support (без checkout):** `buffs.grant_tenant_subscription` · **Platform:** `buffs.grant_subscription` (PID=1).
 
 ### 6.4 Ресурсы + инструменты (актуальные данные после изменений)
 
@@ -235,7 +239,7 @@ Step 3.  Выполнить шаги из промпта через agentstack.e
 
 | Step | Action | Параметры | Результат |
 |------|--------|-----------|-----------|
-| 1 | analytics.get_usage | project_id, (период) | usage |
+| 1 | analytics.project_snapshot | project_id, include: ['activity'] | KPI snapshot (activity slice) |
 | 2 | buffs.get_effective_limits | project_id, user_id? | limits |
 | 3 | logic.create | триггер по метрике/порогу | logic_id |
 | 4 | buffs.apply_temporary_effect | при достижении порога — временное повышение лимитов | — |
@@ -248,11 +252,11 @@ Step 3.  Выполнить шаги из промпта через agentstack.e
 |---------|------------------------|-----------|
 | user_with_trial | projects.create_project_anonymous → buffs.create_buff → buffs.apply_buff | saas |
 | scheduled_rewards | logic.create → scheduler.create_task → buffs.apply_temporary_effect | game |
-| payment_to_subscription | payments.create → buffs.create_buff → buffs.apply_buff → scheduler.create_task | saas |
-| trial_to_premium | payments.create → buffs.revert_buff → buffs.apply_buff | saas |
+| payment_to_subscription | commerce.sell.activate → payments.create → webhook grant → scheduler.create_task | saas |
+| trial_to_paid_tier | buffs.revert_buff → commerce.sell.activate → payments.create → grant_tenant_subscription (manual fallback) | saas |
 | game_setup | projects.create_project_anonymous → commands.execute → logic.create (x3) | game |
 | crud_with_logic | commands.execute → logic.create → logic.execute | backend_api |
-| usage_monitoring | analytics.get_usage → logic.create → buffs.apply_temporary_effect | saas |
+| usage_monitoring | analytics.project_snapshot → logic.create → buffs.apply_temporary_effect | saas |
 | apply_custom_buff_to_user | projects.get_projects/get_project → projects.get_users → buffs.list_active_buffs → buffs.create_buff → buffs.apply_buff | buffs |
 | rbac_manage_members | projects.get_project → projects.get_users → rbac.get_roles → rbac.assign_role / rbac.revoke_role / rbac.check_permission | rbac |
 
@@ -263,7 +267,7 @@ Step 3.  Выполнить шаги из промпта через agentstack.e
 ## 8. Зависимости инструментов (кратко)
 
 - **Перед вызовом:** buffs.apply_buff требует buffs.create_buff; logic.execute требует logic.create; scheduler.* требуют project context; commands.execute — project context.
-- **Часто вместе:** projects.get_project + projects.get_users + rbac.get_roles; buffs.apply_buff + payments.create; logic.create + scheduler.create_task.
+- **Часто вместе:** projects.get_project + projects.get_users + rbac.get_roles; commerce.sell.activate + payments.create + grant rails; logic.create + scheduler.create_task.
 - **Конфликты:** buffs.extend_buff vs buffs.revert_buff; auth.register vs projects.create_project_anonymous (разные пути пользователя).
 
 Полный граф: `mcp/tool_graph.py` — TOOL_DEPENDENCIES, get_required_tools, get_related_tools, suggest_next_tools, validate_tool_sequence.
@@ -275,7 +279,7 @@ Step 3.  Выполнить шаги из промпта через agentstack.e
 1. **Нужен проект** → steps: `projects.create_project_anonymous` (или `projects.create`); `project_id` + neutral `bootstrap` для заголовков клиента (не память модели). **Cursor plugin:** OAuth Device Code.
 2. **Нужны валюты** → steps: assets.create (type: currency) для каждой валюты; assets.list для списка.
 3. **Кошельки** → wallets.create → wallets.deposit / wallets.transfer; баланс — payments.get_balance.
-4. **Триалы/подписки** → buffs.create_buff + logic.create (триггер) + buffs.apply_buff / apply_temporary_effect.
+4. **Триалы/подписки** → trial: buffs.apply_buff; paid tenant: commerce.sell.activate + webhook grant; manual: grant_tenant_subscription; platform: grant_subscription.
 5. **Периодические задачи** → scheduler.create_task (cron); обновление — scheduler.update_task; отмена — scheduler.cancel_task.
 6. **Участники и роли** → projects.get_users; rbac.get_roles; rbac.assign_role / revoke_role; projects.update_user_role при правах.
 7. **Проверка прав** → rbac.check_permission(project_id, permission, user_id?).

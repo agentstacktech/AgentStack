@@ -67,7 +67,7 @@ One plugin — one artifact (Decomposition). Shared MCP endpoint and ecosystem; 
 ### Claude and OAuth
 
 - **Claude Code (CLI plugin):** preferred path is **Device Code** with `--scope-preset=full` (`device-login.mjs` or `/agentstack:login`), then `claude mcp add` with Bearer — see `MCP_QUICKSTART.md`.
-- **Claude web / MCP connector:** use **OAuth Connect** at `https://agentstack.tech/mcp` (same OAuth2 endpoints as ChatGPT Connect), not a manual scoped API key as the first step.
+- **Claude web / MCP connector:** use **OAuth Connect** at `https://agentstack.tech/mcp` (same OAuth2 endpoints as ChatGPT Connect), not a manual scoped API key as the first step. Runbook: [MCP_OAUTH_CONNECT_RUNBOOK.md](MCP_OAUTH_CONNECT_RUNBOOK.md).
 - **Fallback:** `X-API-Key` for headless automation only; interactive users should not be steered to scoped keys before Connect/Device Code full login.
 - AgentStack OAuth2: `/api/oauth2/authorize`, `/api/oauth2/token`, device authorize `/api/oauth2/device/authorize`.
 - **Connect:** interactive login uses the OAuth endpoints above. `auth.get_profile` → `auth_surface.recommended_reauth` tells the client when to reconnect.

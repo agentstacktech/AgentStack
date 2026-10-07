@@ -188,11 +188,11 @@ Packages are one-time purchases that add capacity to the business plan. Projects
 - **STARTER+:** Advanced API access
 
 ### Analytics
-- **FREE/ANONYMOUS:** Basic analytics (7 days retention)
-- **STARTER/BASIC:** Advanced analytics (30 days retention)
-- **PRO:** Custom analytics (90 days retention)
-- **PREMIUM:** Custom analytics (365 days retention)
-- **ENTERPRISE:** Custom analytics (unlimited retention)
+- **FREE/ANONYMOUS/PREMIUM/VIP:** 7 days high-detail + 7 days coarse day roots
+- **STARTER (Launch $29):** 14 days high-detail, 30 days coarse day roots
+- **BASIC (Business $69):** 60 days high-detail + coarse roots
+- **PRO (Scale $199):** 90 days high-detail + coarse roots
+- **ENTERPRISE:** 96 days (platform `RING_MAX` cap, not unlimited)
 
 ### Webhooks
 - **FREE/ANONYMOUS:** Not available

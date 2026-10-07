@@ -20,7 +20,7 @@
 
 ## What's new (through September 2026)
 
-Themes shipped through **0.4.18**: unified **8DNA** data plane, **resilience / RAG** hardening, **offline-friendly messenger** (delta sync, consistent ordering, background workers where supported), **dual-shell + triple-shell** SPA audiences (`/user/*`, `/dev/*`, `/platform/*`), **Agents Fleet** as first-class project DNA, **project support** on the messenger plane, **SDK media v2** (capture denoise + photo ladder), **Web Push** reliability for DMs, **support search** for staff flows, and **MCP scale** — <!-- stats:total_actions -->656<!-- /stats:total_actions --> catalog actions / <!-- stats:mcp_domains -->57<!-- /stats:mcp_domains --> domains via one `agentstack.execute` entry ([MCP_SCALE.md](MCP_SCALE.md), [capability matrix](MCP_CAPABILITY_MATRIX.md)).
+Themes shipped through **0.4.18**: unified **8DNA** data plane, **resilience / RAG** hardening, **offline-friendly messenger** (delta sync, consistent ordering, background workers where supported), **dual-shell + triple-shell** SPA audiences (`/user/*`, `/dev/*`, `/platform/*`), **Agents Fleet** as first-class project DNA, **project support** on the messenger plane, **SDK media v2** (capture denoise + photo ladder), **Web Push** reliability for DMs, **support search** for staff flows, and **MCP scale** — <!-- stats:total_actions -->714<!-- /stats:total_actions --> catalog actions / <!-- stats:mcp_domains -->58<!-- /stats:mcp_domains --> domains via one `agentstack.execute` entry ([MCP_SCALE.md](MCP_SCALE.md), [capability matrix](MCP_CAPABILITY_MATRIX.md)).
 
 **Narrative (monorepo journal):** see the evolution note linked from the main repo `docs/EVOLUTION_AND_RELEASE_2026-05.md` on GitHub (`master` branch).
 

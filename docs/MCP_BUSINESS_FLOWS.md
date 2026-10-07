@@ -5,6 +5,17 @@
 **All actions** are valid `step.action` values unless marked `REST-only`.  
 **Full action catalog:** `GET /mcp/actions`
 
+### AgentStack platform billing (two planes)
+
+Scenarios below use **tenant-app** buff SKUs (your product tiers). Do not conflate with **AgentStack platform** planes:
+
+| Plane | Tiers | `entity_kind` |
+|-------|-------|---------------|
+| Personal (user) | free, premium ($15), vip ($45) | `user` |
+| Business (project) | sandbox → launch → business → scale → enterprise | `project` |
+
+Personal Premium/VIP never raises project API/member/sandbox quotas. Platform upgrade: https://agentstack.tech/pricing · SoT: `shared/subscription/` · MCP copy: `shared/mcp/subscription_plane_copy.py`
+
 `scheduler.create_task` accepts `cron_expression` as `cron`, `run_at` as `execute_at` (`now` is the current UTC time), and `task_type` `once` / `cron` as `one_time` / `recurring`. `payload.action` runs only when it is a registered scheduler action (`storage.cleanup_temp`, `payments.reconcile_pending`, and the list returned as `registered_scheduler_actions`). Any other name is stored and does nothing when the task fires. `payments.create` charges card, stripe, or tochka (`payment_method` is required) and returns `status: pending`. A same-batch `if` on `completed` skips the following steps; use `pending` to continue after the charge is accepted, then `payments.get` for a settled `completed`. A wallet credit is `wallets.deposit`. Currencies are USD, EUR, RUB, BRL. The payer is the session user. Step `if` may be `{"from": "step.result.field", "op": "equals", "value": ...}` or `"op": "exists"`. A buff effect key without a `data.` prefix is stored as `data.<key>` (`xp_multiplier` → `data.xp_multiplier`). `$user_id` and `$project_id` are filled from `context` when that key is set; a whole `$name` keeps the context type. Other `$tokens` stay literal until the caller replaces them. Chain a previous step with `{"from": "step.result.field"}`, not `$step_field`. A list row is `result.contacts[0].id` (or `result.contacts.0.id`).
 
 ---
@@ -28,6 +39,7 @@
 15. [Generation safe mutation + canary promote](#15-generation-safe-mutation--canary-promote)
 16. [Business composite bootstrap](#16-business-composite-bootstrap)
 17. [Services inquiry + downstream MCP](#17-services-inquiry--downstream-mcp)
+18. [Platform grant + tenant subscription monetization](#18-platform-grant--tenant-subscription-monetization)
 
 ---
 
@@ -203,22 +215,13 @@ Each transition must be atomic with automatic revert on failure.
 }
 ```
 
-### Phase B — Convert to Paid
+### Phase B — Convert to Paid (three-rail)
+
+> **Canonical (tenant SaaS):** `buffs.create_buff` (SKU template) → `commerce.sell.activate` → `payments.create` (`intent=subscription`, `metadata.recipient_project_id`) → **webhook/C24 auto-grant**. Manual comp: `buffs.grant_tenant_subscription`. Do **not** chain `payments.create` → `buffs.apply_buff`.
 
 ```json
 {
   "steps": [
-    {
-      "id": "charge",
-      "action": "payments.create",
-      "params": {
-        "amount": 29.0,
-        "currency": "USD",
-        "description": "Pro Plan - Monthly",
-        "payment_method": "card",
-        "metadata": {"plan": "pro", "period": "monthly"}
-      }
-    },
     {
       "id": "remove_trial",
       "action": "buffs.revert_buff",
@@ -226,30 +229,38 @@ Each transition must be atomic with automatic revert on failure.
         "application_id": "$trial_application_id",
         "entity_id": "$user_id",
         "entity_kind": "user"
-      },
-      "if": {"from": "charge.result.status", "op": "equals", "value": "pending"}
+      }
     },
     {
-      "id": "pro_buff",
-      "action": "buffs.create_buff",
+      "id": "go_live",
+      "action": "commerce.sell.activate",
       "params": {
-        "name": "Pro Subscription",
-        "duration_days": 30,
-        "effects": {"plan": "pro", "api_calls_limit": 50000, "team_members_limit": 20},
-        "revert_on_expire": true,
-        "on_expire": [{"command": "event.subscription_expired"}]
-      },
-      "if": {"from": "charge.result.status", "op": "equals", "value": "pending"}
+        "project_id": "$tenant_project_id",
+        "subscription_entitlement": true,
+        "preset_inputs": {"buff_template_id": "$pro_buff_template_id"}
+      }
     },
     {
-      "id": "apply_pro",
-      "action": "buffs.apply_buff",
+      "id": "charge",
+      "action": "payments.create",
       "params": {
-        "buff_id": {"from": "pro_buff.result.buff_id"},
+        "amount": 29.0,
+        "currency": "USD",
+        "intent": "subscription",
+        "metadata": {
+          "plan": "pro_monthly",
+          "recipient_project_id": "$tenant_project_id"
+        }
+      }
+    },
+    {
+      "id": "verify_grant",
+      "action": "buffs.list_active_buffs",
+      "params": {
         "entity_id": "$user_id",
-        "entity_kind": "user"
-      },
-      "if": {"from": "charge.result.status", "op": "equals", "value": "pending"}
+        "entity_kind": "user",
+        "project_id": "$tenant_project_id"
+      }
     },
     {
       "id": "renewal_task",
@@ -258,15 +269,16 @@ Each transition must be atomic with automatic revert on failure.
         "name": "Monthly renewal",
         "task_type": "once",
         "run_at": "$next_billing_date",
-        "payload": {"action": "process_renewal", "user_id": "$user_id", "plan": "pro"}
-      },
-      "if": {"from": "charge.result.status", "op": "equals", "value": "pending"}
+        "payload": {"action": "process_renewal", "user_id": "$user_id", "plan": "pro_monthly"}
+      }
     }
   ]
 }
 ```
 
 ### Phase C — Plan Upgrade (Pro → Enterprise)
+
+> **Paid upgrade:** new checkout with upgraded SKU → webhook/C24 grant. **Manual/support:** `buffs.grant_tenant_subscription` with new `plan_id`. Platform operator tiers: `buffs.grant_subscription` (PID=1).
 
 ```json
 {
@@ -277,9 +289,12 @@ Each transition must be atomic with automatic revert on failure.
       "params": {
         "amount": 71.0,
         "currency": "USD",
-        "description": "Upgrade Pro → Enterprise (prorated)",
-        "payment_method": "card",
-        "metadata": {"from_plan": "pro", "to_plan": "enterprise"}
+        "intent": "subscription",
+        "metadata": {
+          "from_plan": "pro_monthly",
+          "to_plan": "enterprise_monthly",
+          "recipient_project_id": "$tenant_project_id"
+        }
       }
     },
     {
@@ -289,18 +304,16 @@ Each transition must be atomic with automatic revert on failure.
         "application_id": "$pro_application_id",
         "entity_id": "$user_id",
         "entity_kind": "user"
-      },
-      "if": {"from": "prorate_charge.result.status", "op": "equals", "value": "pending"}
+      }
     },
     {
-      "id": "enterprise_buff",
-      "action": "buffs.apply_buff",
+      "id": "verify_upgrade",
+      "action": "buffs.list_active_buffs",
       "params": {
-        "buff_id": "$enterprise_buff_template_id",
         "entity_id": "$user_id",
-        "entity_kind": "user"
-      },
-      "if": {"from": "prorate_charge.result.status", "op": "equals", "value": "pending"}
+        "entity_kind": "user",
+        "project_id": "$tenant_project_id"
+      }
     }
   ]
 }
@@ -309,7 +322,7 @@ Each transition must be atomic with automatic revert on failure.
 **Key synergies:**
 
 - `payments.create` + `if` condition = payment-gated buff activation
-- `buffs.revert_buff` on old plan + `buffs.apply_buff` new plan = seamless upgrade
+- Paid upgrade: new checkout → webhook/C24 grant; manual: `buffs.grant_tenant_subscription` with new `plan_id`
 - `scheduler.create_task` for each future event = event-driven billing
 
 ---
@@ -595,8 +608,8 @@ schedule a follow-up. Stock writes stay on `projects.patch_data`.
     },
     {
       "id": "checkout_health",
-      "action": "analytics.get_metrics",
-      "params": {}
+      "action": "analytics.project_snapshot",
+      "params": {"include": ["activity", "finance", "product_events"]}
     }
   ]
 }
@@ -607,7 +620,7 @@ schedule a follow-up. Stock writes stay on `projects.patch_data`.
 - `projects.get_data` on `commerce.inventory` is the stock read. `op: exists` continues only when that leaf is present. A stock change is `projects.patch_data` on the same path, not `commands.execute`.
 - `wallets.deposit` = loyalty points on every purchase (no extra service)
 - `scheduler.create_task` with `run_at: now` stores a one-time task. `trigger_fulfillment` is not a registered action, so the create response sets `action_registered` to false.
-- `analytics.get_metrics` reads project health after checkout. It does not record a purchase.
+- `analytics.project_snapshot` reads project health KPIs after checkout. It does not record a purchase.
 
 ---
 
@@ -1308,7 +1321,10 @@ and tiered seasonal rewards.
 ### Pattern A — Payment-gated feature activation
 
 ```
-payments.create → (if completed) → buffs.apply_buff
+Tenant paid SKU: commerce.sell.activate → payments.create → webhook/C24 auto-grant
+Tenant manual: buffs.grant_tenant_subscription
+Platform operator: buffs.grant_subscription (context.project_id=1)
+IAP / loyalty only: payments.create → (if completed) → buffs.apply_persistent_effect
 ```
 
 ### Pattern B — Reactive logic chain
@@ -1326,7 +1342,7 @@ buffs.create_buff (revert_on_expire) → buffs.apply_buff (entity_kind: project)
 ### Pattern D — Scheduled economy
 
 ```
-scheduler.create_task (cron) → wallets.deposit OR payments.create OR buffs.apply_buff
+scheduler.create_task (cron) → wallets.deposit OR payments.create (tenant subscription: webhook grant) OR buffs.apply_temporary_effect (non-subscription perks)
 ```
 
 ### Pattern E — Safe agent provisioning
@@ -1730,4 +1746,84 @@ is REST-only; staff follow up via CRM MCP on ecosystem project 1.
 - No MCP action for guest submit — use REST BFF; staff use `crm.*` after acceptance
 
 **Gene:** `frontend.public.services_offers.gen1` · Hub: `/services` (not `/pricing` SaaS tiers)
+
+---
+
+## 18. Platform grant + tenant subscription monetization
+
+**Problem:** Ecosystem operator grants AgentStack tiers (two planes) OR a tenant project sells subscription SKUs to end users.
+
+### Two rails (do not conflate)
+
+| Rail | Who | Buff target | Entry |
+|------|-----|-------------|-------|
+| **Platform operator** | Lance / ecosystem op | user premium/vip OR project launch/business/scale | `buffs.grant_subscription` or prompt `agentstack_platform_subscription_grant` |
+| **Tenant monetization** | Tenant sells to buyer | buyer `entity_kind=user` on tenant PID | prompt `agentstack_tenant_subscription_monetization` |
+| **Tenant manual grant** | Tenant operator (support/comp) | buyer `entity_kind=user` on tenant PID | `buffs.grant_tenant_subscription` · prompt `agentstack_tenant_buff_grant` |
+
+### Platform operator — one-shot grant
+
+```json
+{
+  "context": { "project_id": 1 },
+  "steps": [
+    {
+      "action": "buffs.grant_subscription",
+      "params": { "plane": "personal", "tier": "vip", "entity_id": 1170, "verify": true }
+    }
+  ]
+}
+```
+
+**Project Scale example:**
+
+```json
+{
+  "action": "buffs.grant_subscription",
+  "params": { "plane": "project", "tier": "scale", "entity_id": 1444 }
+}
+```
+
+**Energy side-effect:** Personal premium/vip also tops up AI energy via `shared/subscription/personal_energy_grant.py` on `buffs.apply_buff` (not limits-only).
+
+**SoT:** `shared/mcp/platform_subscription_grant.py` · `resolve_platform_grant_buff_params`
+
+### Tenant monetization ladder
+
+1. `buffs.create_buff` — tenant SKU template (before sell.activate)
+2. `commerce.sell.activate` — `subscription_entitlement` + `preset_inputs.buff_template_id`
+3. `payments.create` — `intent=subscription`, `metadata.recipient_project_id` = tenant PID
+4. Verify — `buffs.list_active_buffs` on buyer
+
+**Post-purchase:**
+- **Card:** webhook → `grant_tenant_plan_buff` (`shared/mcp/tenant_buff_grant.py`)
+- **Shop:** `commerce.order.completed` → C24 inline hook in `commerce_events.py`
+
+### Tenant manual entitlement (support / comp — no checkout)
+
+| SKU type | MCP action | SDK |
+|----------|------------|-----|
+| Subscription buff | `buffs.grant_tenant_subscription` | `grantTenantSubscription()` from `@agentstack/sdk/commerce/subscription` |
+| Digital goods inventory | `commerce.participant.grant_holding` | `grantParticipantHolding()` from `@agentstack/sdk/commerce/participant` |
+
+```json
+{
+  "context": { "project_id": 1472 },
+  "steps": [
+    {
+      "action": "buffs.grant_tenant_subscription",
+      "params": {
+        "user_id": 12345,
+        "plan_id": "pro_monthly",
+        "project_id": 1472,
+        "verify": true
+      }
+    }
+  ]
+}
+```
+
+**Recipe:** `mcp_tenant_manual_entitlement_grant` · **Idempotency:** webhook uses `payment:{payment_id}`; shop C24 uses `order:{order_id}:{buff_template_id}` (`shared/mcp/tenant_grant_idempotency.py`).
+
+**Genes:** `shared.subscription.two_plane.gen1` · `core.commerce.seller_activation.gen1` · `core.commerce.assets.presets.gen1`
 

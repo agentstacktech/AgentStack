@@ -3,7 +3,7 @@
 **Genetic tag:** `docs.plugins.setup.gen1`  
 **Endpoint:** `https://agentstack.tech/mcp`  
 **Execute tool:** `agentstack.execute`  
-**Live catalog:** `GET https://agentstack.tech/mcp/actions` (558 public actions · 47 domains — check `/mcp/actions/summary` for current totals)
+**Live catalog:** `GET https://agentstack.tech/mcp/actions` — current `catalog_actions_public` and domain totals: `GET https://agentstack.tech/mcp/actions/summary`
 
 Copy-paste blocks below. For client-specific quirks see [MCP_CLIENT_COMPATIBILITY_MATRIX.md](MCP_CLIENT_COMPATIBILITY_MATRIX.md).
 

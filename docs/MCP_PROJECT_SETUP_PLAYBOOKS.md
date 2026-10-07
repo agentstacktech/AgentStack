@@ -647,8 +647,13 @@ Full guide: `docs/API_KEY_SERVICE_CAPS.md`
 
 ## 9. Buff Templates Library
 
-**Use when:** Pre-create all buff templates for a project so they can be instantly
-applied to any user/project without re-creating.
+**Subscription entitlements (three-rail):** Plan/trial/SKU grants use grant rails — not create+apply for paid tiers.
+- **Paid tenant checkout:** recipe `mcp_tenant_subscription_monetization` (`commerce.sell.activate` → `payments.create` → webhook/C24)
+- **Manual/support/comp:** `buffs.grant_tenant_subscription` · prompt `agentstack_tenant_buff_grant`
+- **Platform operator (PID=1):** `buffs.grant_subscription` · prompt `agentstack_platform_subscription_grant`
+- `buffs.create_buff` + `buffs.apply_buff` in this section = **non-subscription** templates only (events, welcome bonus, throttle)
+
+**Use when:** Pre-create buff templates for perks, trials (DIY), or as `buff_template_id` inputs to monetization recipes.
 
 ```json
 {
@@ -731,22 +736,25 @@ applied to any user/project without re-creating.
 }
 ```
 
-**Applying a template to a user:**
+**Grant trial/subscription to a user (preferred):**
 ```json
 {
   "steps": [
     {
-      "id": "apply",
-      "action": "buffs.apply_buff",
+      "id": "grant_trial",
+      "action": "buffs.grant_tenant_subscription",
       "params": {
-        "buff_id": "$pro_trial_buff_id",
-        "entity_id": "$user_id",
-        "entity_kind": "user"
+        "user_id": "$user_id",
+        "plan_id": "pro_trial",
+        "project_id": "$tenant_project_id",
+        "buff_template_id": "$pro_trial_buff_id"
       }
     }
   ]
 }
 ```
+
+**Non-subscription perk only** (welcome bonus, XP event): use `buffs.apply_buff` with `$welcome_buff_id` — not for paid plan SKUs.
 
 ---
 
@@ -792,9 +800,10 @@ in the correct order in one session.
       "params": {"name": "Free Plan", "effects": {"plan": "free", "api_calls_limit": 100}, "revert_on_expire": false}
     },
     {
-      "id": "pro_buff",
+      "id": "pro_buff_template",
       "action": "buffs.create_buff",
-      "params": {"name": "Pro Plan", "duration_days": 30, "effects": {"plan": "pro", "api_calls_limit": 50000}, "revert_on_expire": true}
+      "params": {"name": "Pro Plan SKU", "duration_days": 30, "effects": {"plan": "pro_monthly", "api_calls_limit": 50000}, "revert_on_expire": true},
+      "comment": "Template only — activate via mcp_tenant_subscription_monetization (sell.activate + payments) or grant_tenant_subscription"
     },
     {
       "id": "counter_rule",
@@ -855,7 +864,7 @@ rules, scheduler, 2 API keys, RAG collection — ready for users.
 
 ### 11.1 Bulk-apply buff to many users
 
-Use `commands.execute_batch` for O(N) users without N round-trips:
+Use `commands.execute_batch` for O(N) users without N round-trips. **Non-subscription perks only** — for plan/trial/SKU migration use `buffs.grant_tenant_subscription` per user (§11.4).
 
 ```json
 {
@@ -952,14 +961,25 @@ Use `commands.execute_batch` for O(N) users without N round-trips:
       }
     },
     {
-      "id": "apply_new_plan",
+      "id": "grant_new_plan",
       "action": "commands.execute_batch",
       "params": {
         "commands": "$user_ids",
         "template": {
-          "command_type": "buff",
-          "command_name": "apply_buff",
-          "payload": {"buff_id": "$new_plan_buff_id", "entity_id": "$item", "entity_kind": "user"}
+          "command_type": "mcp",
+          "command_name": "agentstack.execute",
+          "payload": {
+            "context": {"project_id": "$tenant_project_id"},
+            "steps": [{
+              "action": "buffs.grant_tenant_subscription",
+              "params": {
+                "user_id": "$item",
+                "plan_id": "$new_plan_slug",
+                "project_id": "$tenant_project_id",
+                "buff_template_id": "$new_plan_buff_id"
+              }
+            }]
+          }
         }
       }
     }

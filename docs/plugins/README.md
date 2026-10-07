@@ -30,7 +30,7 @@ All plugins are published as separate GitHub repositories (see table below). On 
 2. **Get an API key** — no signup (anonymous project) or from [AgentStack](https://agentstack.tech) in project settings.
 3. **Follow Quick Start** for your plugin (links below) — connect in a few minutes.
 
-**What plugins provide:** one MCP endpoint (`https://agentstack.tech/mcp`) and **<!-- stats:total_actions -->656<!-- /stats:total_actions --> catalog actions** for projects, 8DNA data, Rules Engine, payments, Buffs, auth, agents, **hosted static sites** (`hosting.*`), **project files** (`storage.*`), support, messenger, and more. Scale facts: [PLATFORM_SCALE.md](../publication/PLATFORM_SCALE.md). Full list: [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md).
+**What plugins provide:** one MCP endpoint (`https://agentstack.tech/mcp`) and **<!-- stats:total_actions -->714<!-- /stats:total_actions --> catalog actions** for projects, 8DNA data, Rules Engine, payments, Buffs, auth, agents, **hosted static sites** (`hosting.*`), **project files** (`storage.*`), support, messenger, and more. Scale facts: [PLATFORM_SCALE.md](../publication/PLATFORM_SCALE.md). Full list: [MCP_CAPABILITY_MATRIX.md](../MCP_CAPABILITY_MATRIX.md).
 
 ---
 

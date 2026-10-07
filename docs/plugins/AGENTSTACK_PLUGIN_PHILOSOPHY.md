@@ -134,7 +134,7 @@ Every subsequent development or skill edit is explicitly checked against this ch
 
 ## Summary
 
-The AgentStack plugin for Cursor is not "another plugin against Supabase" but **creating an offer**: a full backend ecosystem with 8DNA, Rules Engine, Buffs, and one MCP tool (`agentstack.execute`) with live actions. Each component is modular, minimally sufficient, and aligned with PHILOSOPHY_INDEX.
+The AgentStack plugin for Cursor is not "another plugin against Supabase" but **creating an offer**: a Work Graph control plane — session → `context.project_id` → `agents.work_next` (recipe `mcp_work_loop_v1`) — over one MCP tool (`agentstack.execute`) with live catalog actions for 8DNA, Logic Engine, Buffs, hosting, and agents. Each component is modular, minimally sufficient, and aligned with PHILOSOPHY_INDEX.
 
 ---
 

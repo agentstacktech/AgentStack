@@ -1,6 +1,6 @@
 # AgentStack platform scale (public facts)
 
-**As of:** 2026-08-20 · **Core line:** <!-- stats:platform_version -->0.4.18<!-- /stats:platform_version -->  
+**As of:** 2026-08-20 · **Core line:** <!-- stats:platform_version -->0.4.21<!-- /stats:platform_version -->  
 **Use for:** LinkedIn, marketplace listings, investor one-liners, plugin copy — **do not hand-edit counts**; refresh via the platform stats codegen chain (`docs.freshness.living.gen1`).
 
 **Russian edition:** [PLATFORM_SCALE_RU.md](PLATFORM_SCALE_RU.md)
@@ -13,9 +13,9 @@
 
 | Metric | Value | Notes |
 |--------|------:|-------|
-| **MCP catalog actions** | **<!-- stats:total_actions -->656<!-- /stats:total_actions -->** | `GET /mcp/actions` / `MCP_CAPABILITY_MATRIX.md` Total actions |
-| **Action domains** | **<!-- stats:mcp_domains -->57<!-- /stats:mcp_domains -->** | Domain sections in capability matrix (codegen) |
-| **MCP tools registered** | **<!-- stats:registry_tools -->695<!-- /stats:registry_tools -->** | `MCP_TOOLS_REGISTERED` = `len(MCP_TOOLS_REGISTRY)` at codegen — not catalog actions |
+| **MCP catalog actions** | **<!-- stats:total_actions -->714<!-- /stats:total_actions -->** | `GET /mcp/actions` / `MCP_CAPABILITY_MATRIX.md` Total actions |
+| **Action domains** | **<!-- stats:mcp_domains -->58<!-- /stats:mcp_domains -->** | Domain sections in capability matrix (codegen) |
+| **MCP tools registered** | **<!-- stats:registry_tools -->756<!-- /stats:registry_tools -->** | `MCP_TOOLS_REGISTERED` = `len(MCP_TOOLS_REGISTRY)` at codegen — not catalog actions |
 | **IDE entry tool** | **1** | `agentstack.execute` — batch steps, discovery via `/mcp/actions` |
 | **Plugin surfaces** | **4** | Cursor, Claude Code, GPT, VS Code |
 
@@ -27,9 +27,9 @@
 
 | Metric | Example | Use |
 |--------|--------:|-----|
-| **Catalog actions (public)** | <!-- stats:total_actions -->656<!-- /stats:total_actions --> | Marketing, `GET /mcp/actions`, `MCP_CATALOG_ACTIONS` |
-| **Registry tools (runtime)** | ~<!-- stats:registry_tools -->695<!-- /stats:registry_tools --> | `GET /mcp/health` → `tools_count`; startup log `mcp_registry_tools` |
-| **MCP tools registered (constant)** | <!-- stats:registry_tools -->695<!-- /stats:registry_tools --> | `MCP_TOOLS_REGISTERED` — synced at codegen; **not** catalog actions |
+| **Catalog actions (public)** | <!-- stats:total_actions -->714<!-- /stats:total_actions --> | Marketing, `GET /mcp/actions`, `MCP_CATALOG_ACTIONS` |
+| **Registry tools (runtime)** | ~<!-- stats:registry_tools -->756<!-- /stats:registry_tools --> | `GET /mcp/health` → `tools_count`; startup log `mcp_registry_tools` |
+| **MCP tools registered (constant)** | <!-- stats:registry_tools -->756<!-- /stats:registry_tools --> | `MCP_TOOLS_REGISTERED` — synced at codegen; **not** catalog actions |
 
 Never rewrite SEO copy from `tools_count` alone (MET-01).
 

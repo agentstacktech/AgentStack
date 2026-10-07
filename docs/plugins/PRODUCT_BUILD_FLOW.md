@@ -28,7 +28,8 @@
 | 1 Authenticate | MCP identity | Plugin OAuth, Device Code, or `auth.login` |
 | 2 Project | Workspace scope | `projects.get_projects` → pick id |
 | 3 Bind context | Tenant isolation | `context.project_id` on every batch (OAuth often defaults to `1`) |
-| 4 Domain work | Feature actions | Recipe `mcp_session_setup` then domain playbook |
+| 4 Work Graph route | Route → plan → verify | Recipe `mcp_work_loop_v1` · `agents.work_next` → follow `packet.next_action` before domain CRUD |
+| 5 Domain work | Feature actions | Recipe `mcp_session_setup` then domain playbook or `agentstack_safe_project_cycle` (tenant) |
 
 Prompt: `GET /mcp/prompts/get?name=agentstack_session_setup` · Command: `/agentstack-product-flow`
 

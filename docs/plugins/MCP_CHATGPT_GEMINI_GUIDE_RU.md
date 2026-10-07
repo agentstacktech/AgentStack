@@ -35,7 +35,7 @@
 
 **Один backend, один endpoint:** `https://agentstack.tech/mcp`  
 **Один инструмент в `tools/list`:** `agentstack.execute`  
-**Полный каталог действий:** `GET /mcp/actions` (<!-- stats:total_actions -->656<!-- /stats:total_actions --> actions, <!-- stats:mcp_domains -->57<!-- /stats:mcp_domains --> domains)
+**Полный каталог действий:** `GET /mcp/actions` (<!-- stats:total_actions -->714<!-- /stats:total_actions --> actions, <!-- stats:mcp_domains -->58<!-- /stats:mcp_domains --> domains)
 
 Продакшн-проверка ChatGPT scanner: `initialize` и `tools/list` → **200 OK**; `notifications/initialized` → **200 + JSON** только для User-Agent `openai-mcp` (legacy). Codex/Claude/Cursor (MCP **2025-11-25**) → **202 Accepted**, пустое тело. Live probe: `https://agentstack.tech/mcp`.
 
@@ -85,7 +85,7 @@ flowchart TB
 | Плоскость | Что видит клиент | Где SoT |
 |-----------|------------------|---------|
 | **Transport** | `tools/list` → 1 tool | `POST /mcp` handler `_tools_list_result()` |
-| **Catalog** | <!-- stats:total_actions -->656<!-- /stats:total_actions --> action names | `GET /mcp/actions`, `MCP_CAPABILITY_MATRIX.md` |
+| **Catalog** | <!-- stats:total_actions -->714<!-- /stats:total_actions --> action names | `GET /mcp/actions`, `MCP_CAPABILITY_MATRIX.md` |
 | **Routing** | «когда X → domain Y» | [CONTEXT_FOR_AI.md](CONTEXT_FOR_AI.md) |
 | **Auth** | API key / OAuth / Bearer | [AUTHENTICATION.md](../architecture/AUTHENTICATION.md) |
 
@@ -194,7 +194,7 @@ curl -X POST https://agentstack.tech/mcp/tools/projects.create_project_anonymous
 
 3. **Заполнить метаданные:**
    - **Name:** AgentStack
-   - **Description:** Backend-as-a-service: projects, 8DNA data, rules, payments, agents, hosting
+   - **Description:** Work Graph control plane: bound project starts at agents.work_next (recipe mcp_work_loop_v1) via one MCP tool (agentstack.execute). Catalog search is fallback.
    - **MCP server URL:** `https://agentstack.tech/mcp`
 
 4. **Аутентификация** — выберите один из вариантов:

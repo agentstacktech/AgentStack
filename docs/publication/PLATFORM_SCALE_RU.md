@@ -1,6 +1,6 @@
 # Масштаб платформы AgentStack (публичные факты)
 
-**На дату:** 20.08.2026 · **Линия Core:** <!-- stats:platform_version -->0.4.18<!-- /stats:platform_version -->  
+**На дату:** 20.08.2026 · **Линия Core:** <!-- stats:platform_version -->0.4.21<!-- /stats:platform_version -->  
 **Назначение:** LinkedIn, маркетплейсы плагинов, инвесторские слайды — **цифры не править вручную**; обновлять через codegen цепочку stats (`docs.freshness.living.gen1`).
 
 **English:** [PLATFORM_SCALE.md](PLATFORM_SCALE.md)
@@ -13,9 +13,9 @@
 
 | Показатель | Значение | Пояснение |
 |------------|--------:|-----------|
-| **Действий в каталоге** | **<!-- stats:total_actions -->656<!-- /stats:total_actions -->** | `GET /mcp/actions` / Total actions в capability matrix |
-| **Доменов действий** | **<!-- stats:mcp_domains -->57<!-- /stats:mcp_domains -->** | Секции доменов в matrix (codegen) |
-| **Инструментов в реестре** | **<!-- stats:registry_tools -->695<!-- /stats:registry_tools -->** | `MCP_TOOLS_REGISTERED` = `len(MCP_TOOLS_REGISTRY)`; не catalog actions |
+| **Действий в каталоге** | **<!-- stats:total_actions -->714<!-- /stats:total_actions -->** | `GET /mcp/actions` / Total actions в capability matrix |
+| **Доменов действий** | **<!-- stats:mcp_domains -->58<!-- /stats:mcp_domains -->** | Секции доменов в matrix (codegen) |
+| **Инструментов в реестре** | **<!-- stats:registry_tools -->756<!-- /stats:registry_tools -->** | `MCP_TOOLS_REGISTERED` = `len(MCP_TOOLS_REGISTRY)`; не catalog actions |
 | **Точка входа для IDE** | **1** | `agentstack.execute` — батч шагов, discovery через `/mcp/actions` |
 | **Поверхности плагинов** | **4** | Cursor, Claude Code, GPT, VS Code |
 
@@ -27,9 +27,9 @@
 
 | Метрика | Пример | Назначение |
 |---------|--------:|------------|
-| **Действия каталога (public)** | <!-- stats:total_actions -->656<!-- /stats:total_actions --> | Маркетинг, `GET /mcp/actions` |
-| **Инструменты реестра (runtime)** | ~<!-- stats:registry_tools -->695<!-- /stats:registry_tools --> | `GET /mcp/health` → `tools_count` |
-| **MCP tools registered (константа)** | <!-- stats:registry_tools -->695<!-- /stats:registry_tools --> | `MCP_TOOLS_REGISTERED` при codegen |
+| **Действия каталога (public)** | <!-- stats:total_actions -->714<!-- /stats:total_actions --> | Маркетинг, `GET /mcp/actions` |
+| **Инструменты реестра (runtime)** | ~<!-- stats:registry_tools -->756<!-- /stats:registry_tools --> | `GET /mcp/health` → `tools_count` |
+| **MCP tools registered (константа)** | <!-- stats:registry_tools -->756<!-- /stats:registry_tools --> | `MCP_TOOLS_REGISTERED` при codegen |
 
 Не обновлять SEO по `tools_count` без сверки с catalog (MET-01).
 
