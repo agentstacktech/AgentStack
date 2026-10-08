@@ -3,9 +3,9 @@
 > **Integrator reference.** Action IDs match `GET https://agentstack.tech/mcp/actions`. Tenant-facing catalog only; platform-operator actions are omitted.
 
 - Source: in-process `mcp.routes._build_mcp_actions_catalog_payload`
-- Generated: 2026-10-07 18:39 UTC
+- Generated: 2026-10-08 18:17 UTC
 - Audience: **public (tenant only)**
-- Total actions: **714**
+- Total actions: **726**
 - Gene: `repo.plugins.capability_routing.gen1` · `docs.public.classification.gen1`
 
 <!-- BEGIN:AUTOGEN-CAPABILITY-MATRIX -->
@@ -74,7 +74,7 @@
 | `agents.instruction_rules_list` | `mcp_read` | List merged platform instruction rules (fixture + ecosystem overlay). |
 | `agents.instruction_rules_upsert` | `project_admin` | Upsert one instruction rule on ecosystem project overlay (8DNA leaf). |
 | `agents.kill` | `agents_admin` | Set agent lifecycle state to killed (hard stop for new runs). |
-| `agents.list` | `agents_run` | List Agents Fleet rows for a project (8DNA entity_type=agent). |
+| `agents.list` | `agents_run` | List Agents Fleet rows. Default projection=summary reads the fleet index card (uuid, title, status), not agent_spec. projection=full loads the agent row. |
 | `agents.list_pending_approvals` | `mcp_read` | List runs waiting for approval across project or personal agent scope. |
 | `agents.metrics` | `agents_run` | Read rollup metrics for an agent (ecosystem.agents_metrics). |
 | `agents.orchestrate` | `mcp_read` | Run the project AI orchestrator for a channel (workspace\|messenger\|bot\|mcp\|api). |
@@ -102,7 +102,7 @@
 | `agents.run_get` | `agents_run` | Get a run row plus normalized RunDetailDTO for cockpit/audit views. |
 | `agents.run_resume_packet` | `mcp_read` | Cross-provider continuation: goal, step, packet, skills — no chat transcript. |
 | `agents.run_with_agnt_credits` | `agents_run` | Demo orchestration: purchase compute credits (AGNT) then enqueue an agent run. |
-| `agents.runs_list` | `agents_run` | List agent runs with REST/SDK filters and lightweight audit fields. |
+| `agents.runs_list` | `agents_run` | Rows are uuid, status, event_count, and timestamps. Event bodies stay on agents.run_get. Status and the event count are read in SQL. |
 | `agents.skills_get` | `project_admin` | Fetch one skill card with progressive disclosure (full text). |
 | `agents.skills_list` | `project_admin` | List ecosystem skill cards (fixture + optional ecosystem overlay). |
 | `agents.skills_preview` | `project_admin` | Short skill preview for instruction packet (title + excerpt). |
@@ -114,8 +114,8 @@
 | `agents.traces` | `agents_run` | Return stored run events (trace buffer) for a run. |
 | `agents.update` | `agents_admin` | Update an agent. `section`+`section_value` or `path_updates` load the current AgentSpec, merge objects (lists replace), validate, then `update_agent_spec` (Logic sync for workflow, reactions, schedule |
 | `agents.version_timeline` | `mcp_read` | List agent version lineage (generation tree — REST GET /timeline parity). |
-| `agents.work_next` | `mcp_read` | Agent-native next-work packet: goal summary, best executable node, eligibility, instruction slice, and suggested claim/execute actions. Read-only unless claim=true. Optional env_uuid for sandbox slice |
-| `agents.work_status` | `mcp_read` | Plan summary only — task counts and execution-ready leaves (no node pick). |
+| `agents.work_next` | `mcp_read` | Agent-native next-work packet. Default detail=compact: state, next_action, reason, revision. Pass detail=full for instruction_packet, blocked_work, and plan_summary. Read-only unless claim=true. Optio |
+| `agents.work_status` | `mcp_read` | Plan summary only: task counts and execution-ready leaves. The packet is small; the server still reads the plan leaf to count it. No node pick. |
 
 ## ai_builder (11)
 
@@ -168,14 +168,14 @@
 |--------|--------------|---------|
 | `auth.channel_identities.list` | `mcp_read` | List bot channel identities linked to the authenticated user profile. |
 | `auth.channel_identities.revoke` | `project_admin` | Revoke a channel identity link by id (owner-only). |
-| `auth.email_otp.login` | `—` | Verify email OTP and mint a session. MFA-enrolled users receive mfa_required on first call; retry with mfa_ticket + mfa_code (+ optional mfa_method). |
-| `auth.email_otp.send` | `—` | Request a passwordless email sign-in code (anti-enumeration: always returns sent=true when email is valid). Uses Mail Hub template `email_otp`. Pair with `auth.email_otp.login`. |
-| `auth.get_profile` | `—` | Get user profile information. |
+| `auth.email_otp.login` | `—` | Verify the email code and mint a session. data.sessions[jti] survives a process restart. The SDK stores the bearer. Hosted flagship sends body.p. MFA: retry with mfa_ticket and mfa_code. |
+| `auth.email_otp.send` | `—` | One-time sign-in code. purpose=login\|register\|convert. No auth.convert_anonymous_user tool. sent=true hides whether the account exists. needs_human: ask the human. UI: AuthWidget or <agentstack-auth>. |
+| `auth.get_profile` | `—` | Get the session card for the current API key. |
 | `auth.identity.conflicts` | `mcp_read` | List project member emails that diverge from ecosystem canonical auth email. |
 | `auth.identity.resolve` | `mcp_read` | Resolve canonical vs display email for a user (support / debug). |
-| `auth.login` | `—` | Login to the system. |
+| `auth.login` | `—` | Email+password tenant sign-in — not Cursor MCP Connect. Passwordless: auth.email_otp.send → login. Session live: omit email → get_profile. |
 | `auth.password_reset.request` | `—` | Request a self-service password reset email for an ecosystem user. Always returns the same success message (enumeration-safe). The user opens the link in the email, sets a new password, then signs in. |
-| `auth.register` | `—` | Register a new user. |
+| `auth.register` | `—` | New platform user (email+password). Passwordless: auth.email_otp.send purpose=register → login. Then auth.get_profile. |
 | `auth.switch_project` | `—` | Mint a session for an accessible target project (Session OS switch contour). |
 | `auth.update_profile` | `project_admin` | Update user profile. |
 
@@ -196,7 +196,7 @@
 | `bots.get` | `bots_run` | MCP tool bots.get |
 | `bots.go_live` | `bots_admin` | Activate bot webhooks and set lifecycle live (Telegram / MAX / WhatsApp channels). |
 | `bots.health` | `bots_run` | MCP tool bots.health |
-| `bots.list` | `bots_run` | MCP tool bots.list |
+| `bots.list` | `bots_run` | Default projection=summary rows are uuid, title, deployment_state, and record_status. projection=full is bot_spec. |
 | `bots.pause` | `bots_admin` | MCP tool bots.pause |
 | `bots.send_commerce_offer` | `bots_run` | Send a commerce offer card to a bot conversation (listing UUID → outbound attachment). |
 | `bots.set_brain` | `bots_admin` | MCP tool bots.set_brain |
@@ -255,7 +255,7 @@
 | `cardgame.dna.read_rows` | `mcp_read` | List up to ``limit`` rows for a cardgame 8DNA entity type using DNA CRUD get (same permission model as the SPA). Use for match room / cell snapshots when building agent context. |
 | `cardgame.rules.execute` | `project_admin` | Execute a Logic Engine command for ArcaneStack (e.g. ``cardgame.match.play_card``) with the same payload shape as the game client. Requires authenticated MCP context. |
 
-## channels (10)
+## channels (11)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
@@ -267,7 +267,8 @@
 | `channels.list_event_triggers` | `mcp_read` | Catalog of normalized channel neural_event kinds for Logic subscriptions. |
 | `channels.list_failed_deliveries` | `mcp_read` | Recent failed/skipped delivery receipts for the user. |
 | `channels.list_identities` | `mcp_read` | List linked bot channel identities for the signed-in user. |
-| `channels.resolve_routing` | `mcp_read` | Preview effective channels after prefs ∩ sources ∩ project policy. |
+| `channels.resolve_routing` | `mcp_read` | Preview effective channels after prefs ∩ sources ∩ project policy. Reads those prefs on the server and does not return the profile. |
+| `channels.route` | `mcp_read` | List, put, or remove one channel binding for the signed-in user. op=list returns the stored rows and the email plan. |
 | `channels.test_delivery` | `mcp_read` | Enqueue a short test message on one channel (self or admin). |
 
 ## checklist (5)
@@ -349,11 +350,12 @@
 | `rest.marketplace.list_listings` | `—` | List marketplace listings with filters. |
 | `rest.marketplace.place_bid` | `—` | Place bid on auction listing. |
 
-## context (2)
+## context (3)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
 | `context.get` | `rag.read` | Prefetch RAG + memory context for a task. |
+| `context.hint_use_params_project_id` | `mcp_read` | Instruction-only: there is no MCP context.set tool. Pass params.project_id on each execute step; use auth.switch_project to change JWT scope. |
 | `context.resolve` | `mcp_read` | Resolve effective project_id for the session; surfaces ambiguous_project_context. |
 
 ## crm (21)
@@ -369,15 +371,15 @@
 | `crm.get_crm_config` | `crm` | Project CRM config (saved_views, settings blob). |
 | `crm.get_deal_timeline` | `crm` | Activity timeline for a CRM deal (notes, tasks linked to deal_id). |
 | `crm.import_contacts` | `crm` | Batch import CRM contacts with email dedupe. |
-| `crm.list_board` | `crm` | Pipeline kanban board with stage columns and deals. |
-| `crm.list_companies` | `crm` | List CRM companies for a project. |
-| `crm.list_contacts` | `crm` | List CRM contacts for a project (paginated BFF). |
+| `crm.list_board` | `crm` | Pipeline board. Default deals are cards: entity_id, title, status, updated_at. projection=full is the deal record. Stage columns stay. |
+| `crm.list_companies` | `crm` | Default projection=summary rows are entity_id, kind, title, status, and updated_at. projection=full is the company record. |
+| `crm.list_contacts` | `crm` | Default projection=summary rows are entity_id, kind, title, status, and updated_at. projection=full is the contact record. |
 | `crm.log_activity` | `crm` | Log a CRM activity (note, call, task, etc.). |
 | `crm.magic_fill` | `crm` | AI/heuristic autofill for quick-create (dry-run, no write). |
 | `crm.merge_contacts` | `crm` | Merge duplicate contact into primary (absorb duplicate). |
 | `crm.move_deal_stage` | `crm` | Move a deal to another pipeline stage. |
 | `crm.patch_crm_config` | `crm` | Patch project CRM config (writers may update saved_views only). |
-| `crm.search` | `crm` | Search CRM contacts by query string. |
+| `crm.search` | `crm` | Search CRM contacts. Default projection=summary is the card (entity_id, kind, title, status, updated_at). projection=full is the hit record. |
 | `crm.suggest_field` | `crm` | Suggest values for a CRM field from partial context. |
 | `crm.update_deal` | `crm` | Patch a CRM deal (title, amount, due_at, stage_id, contact_ids, custom). |
 | `crm.upsert_contact` | `crm` | Create or update a CRM contact (dedupe by email). |
@@ -545,7 +547,7 @@
 | `hosting.storage.import_folder` | `project_admin` | Import a project storage folder into a hosting bucket. |
 | `hosting.visual.inspect` | `mcp_read` | Capture viewport screenshots for visual QA (375 and 1440). Requires preview_url. |
 
-## integrations (52)
+## integrations (53)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
@@ -572,7 +574,7 @@
 | `integrations.import_zapier_preview` | `mcp_read` | Dry-run preview: map Zapier export JSON to recipe + logic block draft. |
 | `integrations.install_recipe` | `project_admin` | Install a recipe: creates connection + declarative logic rule. |
 | `integrations.list_apps` | `mcp_read` | List integration app catalog entries (connectors + recipe metadata). |
-| `integrations.list_connections` | `mcp_read` | List integration connections for project or personal (ecosystem user) scope. |
+| `integrations.list_connections` | `mcp_read` | List integration connections for project or personal scope. Each row is id plus spec.provider, spec.label, and spec.status. webhook_activation, routing, and logic_id are null here. The nested card_row |
 | `integrations.list_dlq_deliveries` | `mcp_read` | List integration outbound deliveries in DLQ or terminal failure state. |
 | `integrations.list_inbox_events` | `mcp_read` | List durable integration inbox audit rows for a project. |
 | `integrations.list_issues` | `mcp_read` | Cluster failed outbound deliveries into issues (Hookdeck-style). |
@@ -581,6 +583,7 @@
 | `integrations.list_recipes` | `mcp_read` | List integration recipe templates (Stripe, GitHub, Telegram, etc.). |
 | `integrations.list_scenario_runs` | `mcp_read` | List recorded test/run history for a scenario. |
 | `integrations.list_scenarios` | `mcp_read` | List integration scenarios for a project scope. |
+| `integrations.mailbox` | `mcp_read` | Read or send mail on a connected Gmail or Microsoft mailbox. op is list, get, or send. Tokens stay on the connection. list returns id, subject, from, snippet (max 10). get returns plain text. send del |
 | `integrations.migrate_legacy_webhooks` | `mcp_read` | Copy projects.config.webhooks into integration_connection rows. |
 | `integrations.oauth_begin` | `mcp_read` | Start OAuth 2.0 PKCE flow for an integration connection (returns authorization_url). |
 | `integrations.poll_connection` | `mcp_read` | Run connector polling for a connection (cursor watermark in config.poll_state). |
@@ -685,12 +688,21 @@
 | `mentor.principal_link.bind_code` | `bots_run` | MCP tool mentor.principal_link.bind_code |
 | `mentor.principal_link.upsert` | `bots_run` | MCP tool mentor.principal_link.upsert |
 
-## messaging (3)
+## messaging (12)
 
 | Action | Required cap | Summary |
 |--------|--------------|---------|
 | `messaging.get_auth_email_readiness` | `social_read` | Probe auth email plane — provider secrets, email_confirmation + password_reset + email_otp templates. |
+| `messaging.inbox.get` | `social_read` | Read one thread as text for the signed-in user. |
+| `messaging.inbox.list` | `social_read` | List inbox cards for the signed-in user. Bodies are not included. |
+| `messaging.inbox.reply` | `social_read` | Reply to the latest noticed letter from the signed-in mailbox. |
 | `messaging.list_suppressions` | `social_read` | List ecosystem email suppression list (bounces/complaints). |
+| `messaging.mail.send` | `social_read` | Send one letter from the signed-in @agentstack.tech address. |
+| `messaging.mailbox.agent.set` | `social_read` | Save or clear the agent id on the signed-in mailbox. A later letter queues that agent. This call does not start a run. |
+| `messaging.mailbox.alias.add` | `social_read` | Add one alias on the signed-in mailbox. Cap is 5. |
+| `messaging.mailbox.alias.remove` | `social_read` | Remove one alias from the signed-in mailbox. |
+| `messaging.mailbox.claim` | `social_read` | Claim local@agentstack.tech for the signed-in user. |
+| `messaging.mailbox.get` | `social_read` | Read the signed-in user's @agentstack.tech address, aliases, and notify toggles. Only the mailbox leaf is read. The rest of the profile stays in Postgres. |
 | `messaging.send_email` | `social_read` | Send email to any address (ecosystem admin). Use template_name + template_data for auth templates. |
 
 ## notifications (11)
@@ -705,9 +717,9 @@
 | `notifications.mark_read` | `mcp_read` | Mark one project inbox notification as read (parity with PATCH …/read). |
 | `notifications.register_category` | `mcp_read` | Register a logical push category in user messenger prefs (persisted). |
 | `notifications.send_push` | `mcp_read` | Enqueue OS web push for a user (self or admin). |
-| `notifications.send_with_fallback` | `mcp_read` | Deliver with category fallback chain (security/auth/billing) and in_app escalation when all channels fail. |
+| `notifications.send_with_fallback` | `mcp_read` | Deliver with category fallback chain (security/auth/billing) and in_app escalation when all channels fail. Prefs are read on the server; the profile is not returned. |
 | `notifications.subscribe_push` | `mcp_read` | Returns VAPID status; browser must still call PushManager.subscribe. |
-| `notifications.update_prefs` | `project_admin` | Patch messenger prefs and/or category×channel notification matrix. |
+| `notifications.update_prefs` | `project_admin` | Patch messenger prefs and/or category×channel notification matrix. One channel: patch {category, channel, enabled} calls set_category_channel and does not replace the rest of the matrix. work_graph + |
 
 ## organelle (1)
 
@@ -755,15 +767,15 @@
 | `projects.cancel_deletion` | `mcp_read` | Cancel a scheduled project deletion (PSDP cancel twin). |
 | `projects.catalog_summaries` | `mcp_read` | Batch light KPI rows for project catalog tiles (ids max 40). |
 | `projects.create_project` | `project_admin` | Create a new project. |
-| `projects.create_project_anonymous` | `project_admin` | Create a new anonymous project for MCP clients without prior authentication. |
+| `projects.create_project_anonymous` | `project_admin` | Anonymous bootstrap: one-time anon_ask_* key + project_id. Upgrade: auth.email_otp.send purpose=convert with same X-API-Key — no convert tool. |
 | `projects.delete_project` | `project_admin` | Delete a project (PSDP). |
 | `projects.deletion_status` | `mcp_read` | Read PSDP deletion status for a project. |
 | `projects.execute_deletion` | `project_admin` | Execute scheduled or immediate deletion with execution token. |
-| `projects.get_data` | `mcp_read` | Read one nested path under project.data (REST GET /projects/{id}/data?path=). Use before projects.patch_data when you need the current leaf. |
+| `projects.get_data` | `mcp_read` | Read one nested path under project.data (REST GET /projects/{id}/data?path=). The leaf value stays whole. Pass detail=compact to sketch a wide value. |
 | `projects.get_deletion_inventory` | `mcp_read` | Pre-delete inventory: blockers, warnings, and execution_token for safe delete. |
-| `projects.get_my_data` | `mcp_read` | Read the signed-in member's project data (REST GET /projects/{id}/users/me/data). path is optional. |
+| `projects.get_my_data` | `mcp_read` | Read the signed-in member's project data (REST GET /projects/{id}/users/me/data). A path returns that leaf whole; siblings stay in Postgres. Omit path and Postgres returns only top-level names and typ |
 | `projects.get_notify_policy` | `mcp_read` | Read project.data.notify_policy (channel plane tenant defaults). |
-| `projects.get_project` | `mcp_read` | Get detailed information about a specific project. |
+| `projects.get_project` | `mcp_read` | Get one project. |
 | `projects.get_projects` | `mcp_read` | Get list of projects for the current user. |
 | `projects.get_stats` | `mcp_read` | Get project statistics. |
 | `projects.get_users` | `mcp_read` | Get list of users in a project. |
