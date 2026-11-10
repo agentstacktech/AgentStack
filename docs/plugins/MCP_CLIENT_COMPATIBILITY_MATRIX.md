@@ -2,7 +2,7 @@
 
 **Genetic tag:** `core.mcp.universal_client.gen1`  
 **Endpoint:** `https://agentstack.tech/mcp`  
-**Execute tool:** `agentstack.execute` (alias `agentstack_execute` on `tools/call`)  
+**Execute tool:** `agentstack.execute` (`tools/call` also accepts `agentstack_execute` and ChatGPT double-prefix `agentstack.agentstack.execute`)  
 **Catalog:** `GET https://agentstack.tech/mcp/actions`
 
 ---
@@ -16,9 +16,9 @@
 **Anonymous API key (no signup):**
 
 ```bash
-curl -X POST https://agentstack.tech/mcp/tools/projects.create_project_anonymous \
+curl -X POST https://agentstack.tech/mcp \
   -H "Content-Type: application/json" \
-  -d '{"params": {"name": "My AI Project"}}'
+  -d '{"tool": "projects.create_project_anonymous", "params": {"name": "My AI Project"}}'
 ```
 
 Response: top-level `user_api_key` / `session_token` + neutral `bootstrap` metadata (header/field names only). Configure the MCP client once — see [CONTEXT_FOR_AI_MCP.md](CONTEXT_FOR_AI_MCP.md) § Anonymous bootstrap. **Cursor:** prefer Device Code ([MCP_QUICKSTART](https://github.com/agentstacktech/cursor-plugin/blob/main/MCP_QUICKSTART.md)).
@@ -28,11 +28,12 @@ Response: top-level `user_api_key` / `session_token` + neutral `bootstrap` metad
 | Client | Transport | Auth | Setup doc | Request shape |
 |--------|-----------|------|-----------|---------------|
 | **Cursor** | Streamable HTTP JSON-RPC | Device Code → Bearer; or `X-API-Key` | [cursor-plugin MCP quick start](https://github.com/agentstacktech/cursor-plugin/blob/main/MCP_QUICKSTART.md) | `{steps:[{action,params}]}` |
-| **Claude Code** | Streamable HTTP | `X-API-Key` or Bearer | [claude-plugin MCP quick start](https://github.com/agentstacktech/claude-plugin/blob/main/MCP_QUICKSTART.md) | JSON-RPC `tools/call` |
-| **VS Code** | Extension HTTP | SecretStorage API key | [vscode-plugin MCP quick start](https://github.com/agentstacktech/vscode-plugin/blob/main/MCP_QUICKSTART.md) | JSON-RPC |
+| **Claude Code** | Plugin `.mcp.json` `type: http` (Streamable HTTP) | OAuth on 401; Device Code bearer is the fallback | [claude-plugin MCP quick start](https://github.com/agentstacktech/claude-plugin/blob/main/MCP_QUICKSTART.md) | JSON-RPC `tools/call` |
+| **VS Code** | Extension HTTP and native `servers.*.type: http` | Device Code bearer in SecretStorage, or OAuth on the native server | [vscode-plugin MCP quick start](https://github.com/agentstacktech/vscode-plugin/blob/main/MCP_QUICKSTART.md) | JSON-RPC |
 | **ChatGPT Custom GPT** | GPT Actions OpenAPI | `X-API-Key` or ecosystem OAuth | [gpt-plugin GPT quick start](https://github.com/agentstacktech/gpt-plugin/blob/main/GPT_QUICKSTART.md) | `{tool, params}` → adapter normalizes |
 | **ChatGPT MCP Connector** | Streamable HTTP | Token (= API key) or well-known OAuth | [chatgpt-mcp-connector template](https://github.com/agentstacktech/gpt-plugin/blob/main/templates/chatgpt-mcp-connector.template.json) | JSON-RPC |
-| **Gemini CLI** | `--transport http` | `X-API-Key` or `/mcp auth` | [gemini-plugin CLI quick start](https://github.com/agentstacktech/gemini-plugin/blob/main/GEMINI_CLI_QUICKSTART.md) | JSON-RPC |
+| **Perplexity (and other Agent Plugins hosts)** | Streamable HTTP from `gpt-plugin/mcp.json` | OAuth DCR on connect | [gpt-plugin README](https://github.com/agentstacktech/gpt-plugin/blob/master/README.md) | JSON-RPC `agentstack.execute` |
+| **Gemini CLI** | `httpUrl` Streamable HTTP (`url` alone is SSE) | OAuth (`oauth.enabled`), API key header as fallback | [gemini-plugin CLI quick start](https://github.com/agentstacktech/gemini-plugin/blob/main/GEMINI_CLI_QUICKSTART.md) | JSON-RPC |
 | **AgentStack npm CLI** (`@agentstack/cli`) | First-party terminal product — SDK REST + MCP JSON-RPC (not an IDE MCP host) | Device Code (`agentstack-cli`) or `AGENTSTACK_API_KEY` | [CLI_QUICKSTART.md](../CLI_QUICKSTART.md) | Curated verbs + `execute --action` |
 | **Gemini Spark** | Connected Apps MCP URL | DCR + OAuth | [gemini-plugin Spark quick start](https://github.com/agentstacktech/gemini-plugin/blob/main/GEMINI_SPARK_QUICKSTART.md) | JSON-RPC |
 | **Gemini Managed Agents** | `mcp_server` tool in API | Headers / credential refresh | [gemini-plugin Managed Agents](https://github.com/agentstacktech/gemini-plugin/blob/main/GEMINI_MANAGED_AGENTS.md) | Platform SDK |
@@ -66,7 +67,9 @@ Response: top-level `user_api_key` / `session_token` + neutral `bootstrap` metad
 | `GET /mcp/prompts/list` · `GET /mcp/prompts/get` | Named multi-step instruction templates |
 | `GET /mcp/recipes` | Curated workflows (`card_game_basic`, `saas_trial_system`, …) |
 | `GET /mcp/ai_prompt` | Opt-in narrative (incl. `#anonymous-bootstrap`) |
-| `GET /mcp/.well-known/oauth-authorization-server` | OAuth metadata (RFC 8414) |
+| `GET /mcp/.well-known/oauth-authorization-server` | OAuth metadata (RFC 8414) — canonical issuer `…/mcp` |
+| `GET /.well-known/oauth-authorization-server` | **302** → `…/oauth-authorization-server/mcp` (strict origin-scoped clients) |
+| `GET /mcp/connect` · `/mcp/connect/return` | Native ChatGPT (`chatgpt_scheme__`) HTML handoff + copyable browser URL |
 | `GET /mcp/.well-known/oauth-protected-resource` | Protected resource (RFC 9728) |
 
 ---
@@ -87,8 +90,16 @@ node provided_plugins/scripts/validate-all-plugins.mjs
 | Per-action `tools/list` explosion | `agentstack.execute` + `GET /mcp/actions` |
 | Hard-coded action counts in docs | Live `GET /mcp/actions/summary` |
 | Device Code in ChatGPT/Gemini browser | API key or OAuth |
-| stdio MCP to prod | Streamable HTTP only for remote |
+| stdio / Local connector for AgentStack | Remote plugin `gpt-plugin/mcp.json` (`streamable-http` → `https://agentstack.tech/mcp`). Local is unavailable on Perplexity web and is not shipped. |
 | Per-action tools in `tools/list` | One tool + catalog (ADR MCP_TOOL_NAMING_CONTRACT) |
+
+## tools/list size and packs
+
+| Topic | Contract |
+|-------|----------|
+| Static tool context | One row `agentstack.execute`; CI ratchet `TOOLS_LIST_MAX_BYTES` (see `shared/mcp/execute_budget.py`) |
+| Full batch schema | `GET /mcp/actions` → `execute_budget.packs` (session.v1 / batch.v1 / result.v1) |
+| Runtime pointer | `agent_os` on execute batch root + `next_step` when inverse playbook is active |
 
 ## Rate limits
 
@@ -98,7 +109,7 @@ MCP shares platform HTTP rate limits with REST. On **HTTP 429**, honor `Retry-Af
 
 ## JSON-RPC wire branches
 
-Resolver: `agentstack-core/mcp/client_transport_profile.py` · CI: `check_mcp_client_compat.py`
+Resolver: MCP `client_transport_profile` (transport branches) · CI: `check_mcp_client_compat.py`
 
 | Branch | Trigger | HTTP / body | Safe to change? |
 |--------|---------|-------------|-----------------|
@@ -108,7 +119,9 @@ Resolver: `agentstack-core/mcp/client_transport_profile.py` · CI: `check_mcp_cl
 | Cursor auth errors | `User-Agent` contains `cursor` | **200** JSON-RPC + `isError` | **No** |
 | Lifecycle `id` synthesis | Request method without `id` member | Server generates UUID in response | **No** — scanner compatibility |
 | Explicit `id: null` | `"id": null` in request | Echo `null` in response | **No** |
+| `message/send` (ChatGPT connector probe) | Unauthenticated or pre-OAuth connector | **200** JSON-RPC `-32601` + `error.data.use_tools_call` → `tools/call` + `agentstack.execute` | **No** — recovery contract; not a full message transport |
 | JSON-RPC batch arrays | POST body is `[{...},{...}]` | Single `-32600` Invalid Request | Documented non-goal (see `MCP_FORWARD_COMPAT_2026.md`) |
-| `GET /mcp` SSE fallback | `Accept: text/event-stream` | SSE `event: endpoint` + heartbeat | Cursor streamable-http |
+| `GET /mcp` legacy SSE | `Accept: text/event-stream` and no protocol header | SSE `event: endpoint` + heartbeat | Old SSE clients only |
+| `GET /mcp` streamable | `MCP-Protocol-Version` or Cursor user-agent | SSE comment `: streamable-http` + heartbeat. No `event: endpoint` | Cursor session stays on this URL |
 
 **Probes:** `run_gpt_scanner_compat_checks`, `run_cursor_compat_checks`, `run_claude_compat_checks`, `run_gemini_compat_checks` in `gpt_scanner_probe.py`.

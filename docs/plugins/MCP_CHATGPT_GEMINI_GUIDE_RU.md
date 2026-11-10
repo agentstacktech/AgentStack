@@ -35,7 +35,8 @@
 
 **Один backend, один endpoint:** `https://agentstack.tech/mcp`  
 **Один инструмент в `tools/list`:** `agentstack.execute`  
-**Полный каталог действий:** `GET /mcp/actions` (<!-- stats:total_actions -->714<!-- /stats:total_actions --> actions, <!-- stats:mcp_domains -->58<!-- /stats:mcp_domains --> domains)
+**Вызов:** всегда имя из `tools/list` — **не** `agentstack.agentstack.execute` (это склейка connector id + tool; сервер принимает как alias, но модель не должна изобретать).  
+**Полный каталог действий:** `GET /mcp/actions` (<!-- stats:total_actions -->752<!-- /stats:total_actions --> actions, <!-- stats:mcp_domains -->59<!-- /stats:mcp_domains --> domains)
 
 Продакшн-проверка ChatGPT scanner: `initialize` и `tools/list` → **200 OK**; `notifications/initialized` → **200 + JSON** только для User-Agent `openai-mcp` (legacy). Codex/Claude/Cursor (MCP **2025-11-25**) → **202 Accepted**, пустое тело. Live probe: `https://agentstack.tech/mcp`.
 
@@ -85,7 +86,7 @@ flowchart TB
 | Плоскость | Что видит клиент | Где SoT |
 |-----------|------------------|---------|
 | **Transport** | `tools/list` → 1 tool | `POST /mcp` handler `_tools_list_result()` |
-| **Catalog** | <!-- stats:total_actions -->714<!-- /stats:total_actions --> action names | `GET /mcp/actions`, `MCP_CAPABILITY_MATRIX.md` |
+| **Catalog** | <!-- stats:total_actions -->752<!-- /stats:total_actions --> action names | `GET /mcp/actions`, `MCP_CAPABILITY_MATRIX.md` |
 | **Routing** | «когда X → domain Y» | [CONTEXT_FOR_AI.md](CONTEXT_FOR_AI.md) |
 | **Auth** | API key / OAuth / Bearer | [AUTHENTICATION.md](../architecture/AUTHENTICATION.md) |
 
@@ -141,9 +142,9 @@ POST на `/mcp` с телом `{tool, params}` — упрощённый кон�
 ### Получение API-ключа (без регистрации)
 
 ```bash
-curl -X POST https://agentstack.tech/mcp/tools/projects.create_project_anonymous \
+curl -X POST https://agentstack.tech/mcp \
   -H "Content-Type: application/json" \
-  -d '{"params": {"name": "My AI Project"}}'
+  -d '{"tool": "projects.create_project_anonymous", "params": {"name": "My AI Project"}}'
 ```
 
 Из ответа сохраните `user_api_key` или `project_api_key`.

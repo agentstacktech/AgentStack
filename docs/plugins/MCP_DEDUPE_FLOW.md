@@ -9,7 +9,7 @@
 |---------|-------|----------------|
 | Cursor MCP servers | 1–2 | Plugin Connect (`plugin-agentstack-*`) + optional Device Code `user-agentstack` |
 | JSON-RPC `tools/list` | 1 | `agentstack.execute` |
-| `tools/call` entry names | 2 accepted | `agentstack.execute` + `agentstack_execute` (Postel) |
+| `tools/call` entry names | 4 accepted | `agentstack.execute` + `agentstack_execute` + ChatGPT `agentstack.agentstack.execute` / `agentstack_agentstack_execute` (Postel) |
 | Action catalog | N | `GET /mcp/actions` (not tools/list) |
 
 ---
@@ -66,7 +66,7 @@ flowchart TB
 
   Cursor -->|POST /mcp initialize| INFO
   Cursor -->|POST /mcp tools/list| TL
-  Scanner -->|GET /mcp/tools/list| TL
+  Scanner -->|GET /mcp/actions| TL
   Cursor -->|GET /mcp/icon CORS| ICON
   Scanner -->|GET /mcp/discovery| DISC
   Cursor -->|POST /mcp tools/call| TC
@@ -79,7 +79,7 @@ flowchart TB
 **Single SoT for tool row:** `_tools_list_result()` — used by:
 
 - JSON-RPC `tools/list` (POST `/mcp`)
-- `GET /mcp/tools`, `GET/POST /mcp/tools/list`
+- `GET /mcp/actions` (catalog); execute via `POST /mcp` (`tools/call` or slim `{tool,params}`)
 
 `GET /mcp/discovery` builds a parallel execute schema (no icons) plus `api_key_context`; do not treat it as the Cursor chip path.
 
